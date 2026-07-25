@@ -70,21 +70,21 @@ window.CONTENT = {
     {
       id: 'peluches',
       title: 'Peluches & doudous',
-      image: 'assets/img/cat-peluches.jpg',
+      image: 'assets/img/cat-peluches.webp',
       focus: 'center bottom',
       text: 'Lapins, oursons et compagnons au crochet, montés et rembourrés à la main.'
     },
     {
       id: 'bijoux',
       title: 'Bijoux',
-      image: 'assets/img/cat-bijoux.jpg',
+      image: 'assets/img/cat-bijoux.webp',
       focus: 'center',
       text: 'Boucles d’oreilles fleuries au crochet fin, montées sur crochets argentés.'
     },
     {
       id: 'zero-dechet',
       title: 'Zéro déchet',
-      image: 'assets/img/cat-zero-dechet.jpg',
+      image: 'assets/img/cat-zero-dechet.webp',
       focus: 'center bottom',
       text: 'Lingettes et petits accessoires lavables cousus dans des cotons imprimés.'
     }
@@ -97,7 +97,7 @@ window.CONTENT = {
       name: '🐰 Jean – Peluche lapin au crochet, fait main',
       price: 54,
       category: 'peluches',
-      image: 'assets/img/jean.jpg',
+      image: 'assets/img/jean.webp',
       badge: 'Grand format',
       description:
         'Grand lapin crocheté dans un fil chiné, col volanté écru. Une pièce unique, entièrement montée à la main.'
@@ -107,7 +107,7 @@ window.CONTENT = {
       name: '🐰 Justin – Peluche lapin amigurumi au crochet',
       price: 28,
       category: 'peluches',
-      image: 'assets/img/justin.jpg',
+      image: 'assets/img/justin.webp',
       description:
         'Lapin amigurumi bleu ciel au museau brodé, finition douce et col en dentelle crochetée.'
     },
@@ -116,7 +116,7 @@ window.CONTENT = {
       name: '🐰 Lucien – Peluche lapin amigurumi au crochet',
       price: 28,
       category: 'peluches',
-      image: 'assets/img/lucien.jpg',
+      image: 'assets/img/lucien.webp',
       description:
         'Lapin amigurumi écru et son grand nœud blanc, tout en rondeur. Idéal pour une naissance.'
     },
@@ -125,7 +125,7 @@ window.CONTENT = {
       name: 'Polo, le lapin au crochet',
       price: 21,
       category: 'peluches',
-      image: 'assets/img/polo.jpg',
+      image: 'assets/img/polo.webp',
       description:
         'Petit lapin blanc au pull vert et à la besace, format nomade qui tient dans la main.'
     },
@@ -134,7 +134,7 @@ window.CONTENT = {
       name: '🧸 Rubis – L’Ourson Rouge au Grand Cœur 🧸',
       price: 28,
       category: 'peluches',
-      image: 'assets/img/rubis.jpg',
+      image: 'assets/img/rubis.webp',
       badge: 'Coup de cœur',
       description:
         'Ourson rouge vif au nœud papillon blanc, crocheté serré pour un câlin qui dure.'
@@ -144,7 +144,7 @@ window.CONTENT = {
       name: '🌼 Boucles d’oreilles “Bleuet” 🌼',
       price: 19,
       category: 'bijoux',
-      image: 'assets/img/bleuet.jpg',
+      image: 'assets/img/bleuet.webp',
       variants: true,
       description:
         'Fleurs crochetées en fil bleu ciel, cœur de perle nacrée, montées sur crochets argentés.'
@@ -165,7 +165,7 @@ window.CONTENT = {
       name: '🩷 Boucles d’oreilles “Fleur Rose” 🩷',
       price: 19,
       category: 'bijoux',
-      image: 'assets/img/fleur-rose.jpg',
+      image: 'assets/img/fleur-rose.webp',
       variants: true,
       description:
         'Fleurs au crochet rose vif et perle claire au centre. Se portent aussi bien l’été que l’hiver.'
@@ -203,7 +203,7 @@ window.CONTENT = {
 
   about: {
     title: 'L’atelier de Françoise',
-    image: 'assets/img/atelier.jpg',
+    image: 'assets/img/atelier.webp',
     imageAlt: 'Créations de l’atelier : ours en tissu fleuri et poupées au crochet',
     paragraphs: [
       'Couture & Fil, c’est un atelier à taille humaine à Monflanquin, en Lot-et-Garonne. Françoise y crochète et y coud chaque pièce à la main, une par une.',

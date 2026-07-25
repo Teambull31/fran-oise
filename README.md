@@ -59,8 +59,14 @@ vercel.json              configuration du déploiement statique
 
 ## Déploiement
 
-Le site est hébergé sur Vercel. Chaque push sur la branche connectée déclenche un nouveau
-déploiement ; aucune étape de build n'est nécessaire.
+Le site est statique : il n'y a aucune étape de build.
+
+**GitHub Pages** — le workflow `.github/workflows/pages.yml` publie le dépôt à chaque push.
+Prérequis, une seule fois : `Settings → Pages → Build and deployment → Source : GitHub Actions`.
+
+**Vercel** — importer le dépôt depuis <https://vercel.com/new> : framework « Other », aucune
+commande de build, répertoire racine `./`. Le fichier `vercel.json` fournit déjà les en-têtes de
+cache et de sécurité. Chaque push redéploie ensuite automatiquement.
 
 ## Origine des visuels
 
