@@ -22,9 +22,15 @@ existante : <https://couturefil.sumupstore.com/>
 
 Ouvrir **[modifier.html](modifier.html)** (lien « Modifier le site » en bas de chaque page).
 C'est un formulaire : on change les textes et les prix dans de grandes cases, on ajoute ou on
-supprime un produit avec un bouton, puis on clique sur **Enregistrer**. La page explique alors les
-trois clics restants (copier, ouvrir la page GitHub, coller). Le site se met à jour une à deux
-minutes plus tard.
+supprime un produit avec un bouton.
+
+- **👁 Voir le résultat** ouvre le site tel qu'il sera, avec les modifications et les photos pas
+  encore envoyées. Un bandeau vert rappelle que rien n'est publié. Le vrai site n'est pas touché.
+- **📷 Choisir une photo…** prend une photo de l'ordinateur ou du téléphone et la réduit
+  automatiquement (900 px, quelques dizaines de Ko) : aucun logiciel de retouche n'est nécessaire.
+- **✓ Enregistrer** affiche les deux clics restants : un bouton copie les modifications *et* ouvre
+  la bonne page GitHub, il reste à coller et valider. Les nouvelles photos sont listées à part,
+  avec leur bouton de téléchargement et le lien vers la page où les déposer.
 
 Aucun code n'est visible, et le travail en cours est gardé automatiquement sur l'ordinateur tant
 qu'il n'est pas enregistré.
