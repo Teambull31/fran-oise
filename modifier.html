@@ -1,0 +1,706 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Modifier mon site — Couture &amp; Fil</title>
+    <meta name="robots" content="noindex" />
+    <link rel="icon" href="assets/img/logo.png" />
+    <style>
+      /* Page volontairement séparée du site : gros texte, gros boutons,
+         contrastes appuyés, aucune subtilité visuelle à déchiffrer. */
+      :root {
+        --fond: #fffdfa;
+        --carte: #ffffff;
+        --encre: #2e1f29;
+        --encre-douce: #5d4a56;
+        --trait: #e9d6e0;
+        --rose: #c4186b;
+        --rose-vif: #ff3d8b;
+        --vert: #0a7c52;
+        --rouge: #b3261e;
+        --bleu: #0a6f8c;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        background: var(--fond);
+        color: var(--encre);
+        font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+        font-size: 19px;
+        line-height: 1.6;
+      }
+
+      .shell {
+        width: min(100% - 2rem, 940px);
+        margin-inline: auto;
+      }
+
+      header.top {
+        background: linear-gradient(135deg, #ff8a3d 0%, #ff3d8b 100%);
+        color: #fff;
+        padding: 1.5rem 0;
+      }
+
+      header.top h1 {
+        margin: 0 0 0.3rem;
+        font-size: 1.75rem;
+      }
+
+      header.top p {
+        margin: 0;
+        font-size: 1.05rem;
+      }
+
+      main {
+        padding: 1.5rem 0 8rem;
+      }
+
+      h2 {
+        font-size: 1.5rem;
+        margin: 2.5rem 0 0.4rem;
+      }
+
+      .aide-section {
+        color: var(--encre-douce);
+        margin: 0 0 1rem;
+      }
+
+      .carte {
+        background: var(--carte);
+        border: 2px solid var(--trait);
+        border-radius: 16px;
+        padding: 1.25rem;
+        margin-bottom: 1rem;
+      }
+
+      .carte-tete {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        flex-wrap: wrap;
+        margin-bottom: 1rem;
+        padding-bottom: 0.75rem;
+        border-bottom: 2px solid var(--trait);
+      }
+
+      .carte-titre {
+        font-weight: 700;
+        font-size: 1.15rem;
+        margin-right: auto;
+      }
+
+      label {
+        display: block;
+        font-weight: 700;
+        margin: 1rem 0 0.3rem;
+      }
+
+      .aide {
+        font-weight: 400;
+        color: var(--encre-douce);
+        font-size: 0.92rem;
+        display: block;
+        margin-bottom: 0.3rem;
+      }
+
+      input[type="text"],
+      textarea,
+      select {
+        width: 100%;
+        font: inherit;
+        color: inherit;
+        padding: 0.7rem 0.85rem;
+        border: 2px solid var(--trait);
+        border-radius: 10px;
+        background: #fff;
+      }
+
+      textarea {
+        min-height: 6rem;
+        resize: vertical;
+      }
+
+      input:focus,
+      textarea:focus,
+      select:focus,
+      button:focus {
+        outline: 3px solid var(--rose-vif);
+        outline-offset: 2px;
+      }
+
+      .oui-non {
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+        margin-top: 0.4rem;
+      }
+
+      .oui-non input {
+        width: 26px;
+        height: 26px;
+      }
+
+      .photo-ligne {
+        display: flex;
+        gap: 0.85rem;
+        align-items: center;
+      }
+
+      .photo-ligne img {
+        width: 74px;
+        height: 74px;
+        object-fit: cover;
+        border-radius: 10px;
+        border: 2px solid var(--trait);
+        background: #f7eef4;
+        flex: none;
+      }
+
+      button {
+        font: inherit;
+        font-weight: 700;
+        cursor: pointer;
+        border-radius: 999px;
+        border: 2px solid transparent;
+        padding: 0.6rem 1.1rem;
+      }
+
+      .b-clair {
+        background: #fff;
+        border-color: var(--trait);
+        color: var(--encre);
+      }
+
+      .b-clair:hover {
+        border-color: var(--rose);
+        color: var(--rose);
+      }
+
+      .b-rose {
+        background: var(--rose);
+        color: #fff;
+      }
+
+      .b-vert {
+        background: var(--vert);
+        color: #fff;
+      }
+
+      .b-rouge {
+        background: #fff;
+        border-color: var(--rouge);
+        color: var(--rouge);
+      }
+
+      .b-grand {
+        font-size: 1.15rem;
+        padding: 0.9rem 1.6rem;
+      }
+
+      .rangee {
+        display: flex;
+        gap: 0.6rem;
+        flex-wrap: wrap;
+        align-items: center;
+      }
+
+      /* Barre d'enregistrement toujours visible en bas d'écran. */
+      .barre {
+        position: fixed;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: #fff;
+        border-top: 3px solid var(--rose-vif);
+        padding: 0.9rem 0;
+        z-index: 20;
+        box-shadow: 0 -6px 24px rgba(80, 30, 60, 0.12);
+      }
+
+      .barre .shell {
+        display: flex;
+        gap: 0.8rem;
+        align-items: center;
+        flex-wrap: wrap;
+      }
+
+      .barre .etat {
+        margin-left: auto;
+        color: var(--encre-douce);
+        font-size: 0.95rem;
+      }
+
+      dialog {
+        border: 0;
+        border-radius: 18px;
+        padding: 0;
+        width: min(100% - 1.5rem, 720px);
+        color: var(--encre);
+      }
+
+      dialog::backdrop {
+        background: rgba(46, 31, 41, 0.55);
+      }
+
+      .fenetre {
+        padding: 1.5rem;
+      }
+
+      .fenetre h2 {
+        margin-top: 0;
+      }
+
+      ol.etapes {
+        padding-left: 1.3rem;
+        margin: 0 0 1.2rem;
+      }
+
+      ol.etapes li {
+        margin-bottom: 0.7rem;
+      }
+
+      #texte-final {
+        width: 100%;
+        min-height: 9rem;
+        font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+        font-size: 0.85rem;
+      }
+
+      .message {
+        background: #eafaf2;
+        border: 2px solid var(--vert);
+        color: #0a5c3e;
+        border-radius: 12px;
+        padding: 0.8rem 1rem;
+        margin: 1rem 0;
+      }
+
+      .message.attention {
+        background: #fff4e5;
+        border-color: #b26a00;
+        color: #7a4700;
+      }
+
+      .sr {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        overflow: hidden;
+        clip: rect(0 0 0 0);
+        white-space: nowrap;
+      }
+
+      @media (max-width: 620px) {
+        body {
+          font-size: 18px;
+        }
+        .b-grand {
+          width: 100%;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <header class="top">
+      <div class="shell">
+        <h1>Modifier mon site</h1>
+        <p>Changez les textes et les prix, puis cliquez sur « Enregistrer » en bas.</p>
+      </div>
+    </header>
+
+    <main class="shell">
+      <div id="chargement" class="message">Chargement du contenu…</div>
+      <div id="formulaire"></div>
+    </main>
+
+    <div class="barre">
+      <div class="shell">
+        <button type="button" id="enregistrer" class="b-vert b-grand">
+          ✓ Enregistrer mes modifications
+        </button>
+        <a class="b-clair b-grand" href="index.html" style="text-decoration: none; display: inline-block">
+          Voir le site
+        </a>
+        <span class="etat" id="etat"></span>
+      </div>
+    </div>
+
+    <dialog id="fenetre-enregistrer">
+      <div class="fenetre">
+        <h2>Dernière étape</h2>
+        <p>
+          Vos modifications sont prêtes. Il reste à les envoyer sur le site, en trois clics.
+        </p>
+        <ol class="etapes">
+          <li>
+            <button type="button" id="copier" class="b-rose">1. Copier mes modifications</button>
+            <span id="copie-ok" style="color: var(--vert); font-weight: 700"></span>
+          </li>
+          <li>
+            <a id="lien-github" class="b-rose" style="text-decoration: none; display: inline-block" target="_blank" rel="noopener">
+              2. Ouvrir la page du site
+            </a>
+            — un onglet s’ouvre sur une page remplie de texte.
+          </li>
+          <li>
+            Dans cette page : tout sélectionner (<strong>Ctrl + A</strong>), coller
+            (<strong>Ctrl + V</strong>), puis cliquer sur le bouton vert
+            <strong>« Commit changes »</strong> en haut à droite.
+          </li>
+        </ol>
+        <p>Le site se met à jour tout seul une à deux minutes plus tard.</p>
+
+        <details>
+          <summary>Voir le texte (pas nécessaire)</summary>
+          <textarea id="texte-final" readonly></textarea>
+          <p><button type="button" id="telecharger" class="b-clair">Télécharger le fichier</button></p>
+        </details>
+
+        <p class="rangee" style="margin-top: 1.2rem">
+          <button type="button" id="fermer" class="b-clair b-grand">Fermer</button>
+        </p>
+      </div>
+    </dialog>
+
+    <script src="assets/js/contenu-format.js"></script>
+    <script>
+      (function () {
+        'use strict';
+
+        var Format = window.ContenuFormat;
+        var FICHIER = 'contenu.txt';
+        var BROUILLON = 'couture-fil:brouillon';
+        // Adresse de modification du fichier sur GitHub.
+        var GITHUB = 'https://github.com/Teambull31/fran-oise/edit/main/contenu.txt';
+
+        var blocs = [];
+        var formulaire = document.getElementById('formulaire');
+        var etat = document.getElementById('etat');
+
+        /* ----- fabrication du formulaire ----- */
+
+        function champ(modele, bloc, description) {
+          var bloc_id = 'c' + Math.random().toString(36).slice(2, 9);
+          var enveloppe = document.createElement('div');
+
+          var etiquette = document.createElement('label');
+          etiquette.setAttribute('for', bloc_id);
+          etiquette.textContent = description.cle;
+          enveloppe.appendChild(etiquette);
+
+          if (description.aide) {
+            var aide = document.createElement('span');
+            aide.className = 'aide';
+            aide.textContent = description.aide;
+            enveloppe.appendChild(aide);
+          }
+
+          var valeur = bloc.champs[description.cle];
+          var saisie;
+
+          if (description.type === 'long') {
+            saisie = document.createElement('textarea');
+            saisie.value = valeur == null ? '' : String(valeur);
+          } else if (description.type === 'liste') {
+            saisie = document.createElement('textarea');
+            saisie.value = (Array.isArray(valeur) ? valeur : []).join('\n');
+            saisie.dataset.liste = 'oui';
+          } else if (description.type === 'choix') {
+            saisie = document.createElement('select');
+            description.valeurs.forEach(function (option) {
+              var noeud = document.createElement('option');
+              noeud.value = option;
+              noeud.textContent = option;
+              if (Format.normalise(option) === Format.normalise(valeur)) noeud.selected = true;
+              saisie.appendChild(noeud);
+            });
+          } else if (description.type === 'oui-non') {
+            saisie = document.createElement('input');
+            saisie.type = 'checkbox';
+            saisie.checked = Format.normalise(valeur) === 'oui';
+          } else {
+            saisie = document.createElement('input');
+            saisie.type = 'text';
+            saisie.value = valeur == null ? '' : String(valeur);
+            if (description.type === 'prix') saisie.inputMode = 'decimal';
+          }
+
+          saisie.id = bloc_id;
+
+          saisie.addEventListener('input', function () {
+            enregistrerChamp(bloc, description, saisie);
+          });
+          saisie.addEventListener('change', function () {
+            enregistrerChamp(bloc, description, saisie);
+          });
+
+          if (description.type === 'oui-non') {
+            var ligne = document.createElement('div');
+            ligne.className = 'oui-non';
+            ligne.appendChild(saisie);
+            var texte = document.createElement('span');
+            texte.textContent = 'Oui, afficher « Autres variantes disponibles »';
+            ligne.appendChild(texte);
+            enveloppe.appendChild(ligne);
+          } else if (description.type === 'photo') {
+            var ligne2 = document.createElement('div');
+            ligne2.className = 'photo-ligne';
+            var apercu = document.createElement('img');
+            apercu.alt = '';
+            var rafraichir = function () {
+              var nom = saisie.value.trim();
+              apercu.src = nom ? (/^(https?:)?\/\//.test(nom) ? nom : 'assets/img/' + nom) : '';
+              apercu.style.visibility = nom ? 'visible' : 'hidden';
+            };
+            rafraichir();
+            saisie.addEventListener('input', rafraichir);
+            ligne2.appendChild(apercu);
+            ligne2.appendChild(saisie);
+            enveloppe.appendChild(ligne2);
+          } else {
+            enveloppe.appendChild(saisie);
+          }
+
+          return enveloppe;
+        }
+
+        function enregistrerChamp(bloc, description, saisie) {
+          if (description.type === 'oui-non') {
+            bloc.champs[description.cle] = saisie.checked ? 'oui' : '';
+          } else if (saisie.dataset && saisie.dataset.liste === 'oui') {
+            bloc.champs[description.cle] = saisie.value
+              .split('\n')
+              .map(function (ligne) {
+                return ligne.trim();
+              })
+              .filter(Boolean);
+          } else {
+            bloc.champs[description.cle] = saisie.value;
+          }
+          brouillonner();
+        }
+
+        function carte(modele, bloc, index, total) {
+          var element = document.createElement('section');
+          element.className = 'carte';
+
+          var tete = document.createElement('div');
+          tete.className = 'carte-tete';
+
+          var titre = document.createElement('span');
+          titre.className = 'carte-titre';
+          titre.textContent =
+            bloc.champs['Nom'] || bloc.champs['Titre'] || bloc.champs['Gros texte'] || modele.titre;
+          tete.appendChild(titre);
+
+          if (!modele.unique) {
+            if (index > 0) tete.appendChild(bouton('↑ Monter', 'b-clair', function () {
+              echanger(modele.type, index, index - 1);
+            }));
+            if (index < total - 1) tete.appendChild(bouton('↓ Descendre', 'b-clair', function () {
+              echanger(modele.type, index, index + 1);
+            }));
+            tete.appendChild(
+              bouton('Supprimer', 'b-rouge', function () {
+                var nom = bloc.champs['Nom'] || bloc.champs['Titre'] || 'cet élément';
+                if (window.confirm('Supprimer « ' + nom + ' » ?\n\nRien n’est perdu tant que vous n’avez pas enregistré.')) {
+                  blocs.splice(blocs.indexOf(bloc), 1);
+                  dessiner();
+                  brouillonner();
+                }
+              })
+            );
+          }
+
+          element.appendChild(tete);
+
+          modele.champs.forEach(function (description) {
+            element.appendChild(champ(modele, bloc, description));
+          });
+
+          // Le titre de la carte suit ce qui est tapé, pour ne pas
+          // laisser croire que la modification n'a pas été prise.
+          element.addEventListener('input', function () {
+            titre.textContent =
+              bloc.champs['Nom'] || bloc.champs['Titre'] || bloc.champs['Gros texte'] || modele.titre;
+          });
+
+          return element;
+        }
+
+        function bouton(texte, classe, action) {
+          var b = document.createElement('button');
+          b.type = 'button';
+          b.className = classe;
+          b.textContent = texte;
+          b.addEventListener('click', action);
+          return b;
+        }
+
+        function echanger(type, de, vers) {
+          var concernes = blocs.filter(function (bloc) {
+            return bloc.type === type;
+          });
+          var a = blocs.indexOf(concernes[de]);
+          var b = blocs.indexOf(concernes[vers]);
+          var tampon = blocs[a];
+          blocs[a] = blocs[b];
+          blocs[b] = tampon;
+          dessiner();
+          brouillonner();
+        }
+
+        function dessiner() {
+          formulaire.textContent = '';
+
+          Format.BLOCS.forEach(function (modele) {
+            var concernes = blocs.filter(function (bloc) {
+              return bloc.type === modele.type;
+            });
+
+            var titre = document.createElement('h2');
+            titre.textContent = modele.titre;
+            formulaire.appendChild(titre);
+
+            if (modele.unique && !concernes.length) {
+              var neuf = { type: modele.type, champs: {} };
+              blocs.push(neuf);
+              concernes = [neuf];
+            }
+
+            concernes.forEach(function (bloc, index) {
+              formulaire.appendChild(carte(modele, bloc, index, concernes.length));
+            });
+
+            if (!modele.unique) {
+              var ajouter = bouton('+ Ajouter un(e) ' + modele.singulier, 'b-rose b-grand', function () {
+                blocs.push({ type: modele.type, champs: {} });
+                dessiner();
+                brouillonner();
+                var cartes = formulaire.querySelectorAll('.carte');
+                if (cartes.length) cartes[cartes.length - 1].scrollIntoView({ block: 'center' });
+              });
+              var rangee = document.createElement('p');
+              rangee.appendChild(ajouter);
+              formulaire.appendChild(rangee);
+            }
+          });
+        }
+
+        /* ----- brouillon automatique ----- */
+
+        var minuteur;
+        function brouillonner() {
+          etat.textContent = 'Modifications en cours…';
+          clearTimeout(minuteur);
+          minuteur = setTimeout(function () {
+            try {
+              localStorage.setItem(BROUILLON, Format.ecrire(blocs));
+              etat.textContent = 'Brouillon gardé sur cet ordinateur';
+            } catch (erreur) {
+              etat.textContent = '';
+            }
+          }, 500);
+        }
+
+        /* ----- enregistrement ----- */
+
+        var fenetre = document.getElementById('fenetre-enregistrer');
+        var zoneTexte = document.getElementById('texte-final');
+
+        document.getElementById('enregistrer').addEventListener('click', function () {
+          zoneTexte.value = Format.ecrire(blocs);
+          document.getElementById('lien-github').href = GITHUB;
+          document.getElementById('copie-ok').textContent = '';
+          if (fenetre.showModal) fenetre.showModal();
+          else fenetre.setAttribute('open', '');
+        });
+
+        document.getElementById('fermer').addEventListener('click', function () {
+          if (fenetre.close) fenetre.close();
+          else fenetre.removeAttribute('open');
+        });
+
+        document.getElementById('copier').addEventListener('click', function () {
+          var marque = document.getElementById('copie-ok');
+          var fini = function () {
+            marque.textContent = '✓ copié';
+          };
+          if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(zoneTexte.value).then(fini, function () {
+              zoneTexte.select();
+              document.execCommand('copy');
+              fini();
+            });
+          } else {
+            zoneTexte.select();
+            document.execCommand('copy');
+            fini();
+          }
+        });
+
+        document.getElementById('telecharger').addEventListener('click', function () {
+          var lien = document.createElement('a');
+          lien.href = URL.createObjectURL(new Blob([zoneTexte.value], { type: 'text/plain' }));
+          lien.download = 'contenu.txt';
+          lien.click();
+          URL.revokeObjectURL(lien.href);
+        });
+
+        /* ----- démarrage ----- */
+
+        function demarrer(texte, brouillon) {
+          blocs = Format.lire(texte);
+          document.getElementById('chargement').remove();
+
+          if (brouillon) {
+            var avis = document.createElement('div');
+            avis.className = 'message attention';
+            avis.innerHTML =
+              'Des modifications non enregistrées ont été retrouvées sur cet ordinateur. ';
+            var reprendre = bouton('Les reprendre', 'b-rose', function () {
+              blocs = Format.lire(brouillon);
+              dessiner();
+              avis.remove();
+            });
+            var jeter = bouton('Les oublier', 'b-clair', function () {
+              localStorage.removeItem(BROUILLON);
+              avis.remove();
+            });
+            avis.appendChild(reprendre);
+            avis.appendChild(document.createTextNode(' '));
+            avis.appendChild(jeter);
+            formulaire.parentNode.insertBefore(avis, formulaire);
+          }
+
+          dessiner();
+        }
+
+        var brouillon = null;
+        try {
+          brouillon = localStorage.getItem(BROUILLON);
+        } catch (erreur) {
+          brouillon = null;
+        }
+
+        fetch(FICHIER, { cache: 'no-cache' })
+          .then(function (reponse) {
+            if (!reponse.ok) throw new Error('introuvable');
+            return reponse.text();
+          })
+          .then(function (texte) {
+            demarrer(texte, brouillon);
+          })
+          .catch(function () {
+            demarrer(brouillon || '', null);
+          });
+      })();
+    </script>
+  </body>
+</html>

@@ -18,14 +18,37 @@ existante : <https://couturefil.sumupstore.com/>
 
 ## Modifier le contenu
 
-**Tout le texte, les prix et les photos sont pilotés par un seul fichier :**
+### La façon simple : la page « Modifier »
+
+Ouvrir **[modifier.html](modifier.html)** (lien « Modifier le site » en bas de chaque page).
+C'est un formulaire : on change les textes et les prix dans de grandes cases, on ajoute ou on
+supprime un produit avec un bouton, puis on clique sur **Enregistrer**. La page explique alors les
+trois clics restants (copier, ouvrir la page GitHub, coller). Le site se met à jour une à deux
+minutes plus tard.
+
+Aucun code n'est visible, et le travail en cours est gardé automatiquement sur l'ordinateur tant
+qu'il n'est pas enregistré.
+
+### La façon directe : le fichier texte
+
+Tout le contenu vit dans **`contenu.txt`**, à la racine du dépôt, en français :
 
 ```
-assets/js/content.js
+[PRODUIT]
+Nom: Polo, le lapin au crochet
+Prix: 21
+Rayon: Peluches & doudous
+Photo: polo.avif
+Description: Petit lapin blanc au pull vert…
 ```
 
-Nom de la boutique, produits, prix, catégories, services, texte de l'atelier, coordonnées : tout
-s'y trouve. Les points encore à confirmer sont marqués `TODO` dans ce fichier :
+On modifie le texte après les deux-points. Le lecteur est volontairement tolérant : accents
+oubliés, majuscules, espaces en trop, deux-points manquants, lignes inconnues, champs ou blocs
+vides — rien de tout cela n'empêche le site de s'afficher. Les rayons de la boutique se déduisent
+tout seuls des produits ; il n'y a aucune liste de catégories à tenir à jour.
+
+`assets/js/content.js` ne sert plus que de filet de sécurité si `contenu.txt` devenait
+introuvable. Les points restant à confirmer :
 
 - le paragraphe de présentation (le PDF source coupait le début de chaque ligne) ;
 - l'e-mail, le téléphone, l'adresse et les horaires (absents de la source) ;
@@ -34,8 +57,8 @@ s'y trouve. Les points encore à confirmer sont marqués `TODO` dans ce fichier 
   s'affiche à la place ;
 - les prestations et tarifs de la section « Sur mesure », qui ne figuraient pas sur la boutique.
 
-Pour ajouter une photo : déposer le fichier dans `assets/img/` et renseigner son chemin dans
-`content.js` (`image: 'assets/img/mon-fichier.jpg'`).
+Pour ajouter une photo : déposer le fichier dans `assets/img/`, puis écrire son nom seul sur la
+ligne `Photo:` (par exemple `Photo: lapin.jpg`).
 
 ## Lancer en local
 
