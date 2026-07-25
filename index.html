@@ -1,0 +1,301 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Couture &amp; Fil — Peluches au crochet, bijoux et créations faites main</title>
+    <meta
+      name="description"
+      content="Couture & Fil, l'atelier de Françoise à Monflanquin (Lot-et-Garonne) : peluches et amigurumis au crochet, doudous en tissu, bijoux et accessoires faits main en pièces uniques."
+    />
+    <meta name="theme-color" content="#f0562a" />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="fr_FR" />
+    <meta property="og:title" content="Couture & Fil — Peluches au crochet faites main" />
+    <meta
+      property="og:description"
+      content="Peluches et amigurumis au crochet, doudous, bijoux et accessoires faits main à Monflanquin (Lot-et-Garonne)."
+    />
+    <meta property="og:image" content="assets/img/rubis.jpg" />
+    <link rel="icon" href="assets/img/logo.png" />
+    <link rel="apple-touch-icon" href="assets/img/logo.png" />
+    <link rel="stylesheet" href="assets/css/styles.css" />
+  </head>
+
+  <body>
+    <a class="skip-link" href="#creations">Aller au contenu</a>
+
+    <div class="demo-banner" id="demo-banner" role="note"></div>
+
+    <header class="site-header" id="site-header">
+      <div class="shell header-inner">
+        <a class="brand" href="#top">
+          <img src="assets/img/logo.png" alt="" width="48" height="48" />
+          <span>
+            <strong>Couture &amp; Fil</strong>
+            <small>Fait main à Monflanquin</small>
+          </span>
+        </a>
+
+        <nav class="site-nav" id="site-nav" aria-label="Navigation principale">
+          <a href="#creations">Créations</a>
+          <a href="#boutique">Boutique</a>
+          <a href="#services">Sur mesure</a>
+          <a href="#atelier">L’atelier</a>
+          <a href="#contact">Contact</a>
+        </nav>
+
+        <div class="header-actions">
+          <button class="cart-button" id="cart-button" type="button" aria-haspopup="dialog">
+            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+              <path
+                d="M6 6h15l-1.6 8.2a2 2 0 0 1-2 1.6H9.3a2 2 0 0 1-2-1.7L5.6 4.6A1 1 0 0 0 4.6 3.8H2.5"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.8"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+              <circle cx="10" cy="20" r="1.4" fill="currentColor" />
+              <circle cx="18" cy="20" r="1.4" fill="currentColor" />
+            </svg>
+            <span class="visually-hidden">Ouvrir le panier</span>
+            <span class="cart-count" id="cart-count" aria-hidden="true">0</span>
+          </button>
+
+          <button
+            class="menu-toggle"
+            id="menu-toggle"
+            type="button"
+            aria-controls="site-nav"
+            aria-expanded="false"
+          >
+            <span class="visually-hidden">Menu</span>
+            <span class="burger" aria-hidden="true"></span>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <main id="top">
+      <!-- HERO -->
+      <section class="hero">
+        <div class="hero-blob hero-blob--1" aria-hidden="true"></div>
+        <div class="hero-blob hero-blob--2" aria-hidden="true"></div>
+
+        <div class="shell hero-inner">
+          <div class="hero-copy">
+            <p class="eyebrow" id="hero-eyebrow"></p>
+            <h1 id="hero-title"></h1>
+            <p class="lead" id="hero-lead"></p>
+            <div class="hero-cta">
+              <a class="btn btn--primary" href="#boutique">Voir les créations</a>
+              <a class="btn btn--ghost" href="#contact">Demander une pièce sur mesure</a>
+            </div>
+            <ul class="highlights" id="highlights"></ul>
+          </div>
+
+          <div class="hero-media">
+            <figure class="hero-photo hero-photo--main">
+              <img
+                src="assets/img/rubis.jpg"
+                alt="Rubis, ourson rouge au crochet avec un nœud papillon blanc"
+                width="900"
+                height="900"
+                loading="eager"
+              />
+            </figure>
+            <figure class="hero-photo hero-photo--small">
+              <img
+                src="assets/img/polo.jpg"
+                alt="Polo, petit lapin blanc au crochet avec un pull vert"
+                width="900"
+                height="900"
+                loading="lazy"
+              />
+            </figure>
+            <figure class="hero-photo hero-photo--tiny">
+              <img
+                src="assets/img/fleur-rose.jpg"
+                alt="Boucles d’oreilles fleur rose au crochet"
+                width="900"
+                height="900"
+                loading="lazy"
+              />
+            </figure>
+          </div>
+        </div>
+      </section>
+
+      <!-- UNIVERS -->
+      <section class="section" id="creations">
+        <div class="shell">
+          <header class="section-head reveal">
+            <p class="eyebrow">Les univers</p>
+            <h2>Trois familles de créations</h2>
+            <p class="section-lead">
+              Tout est crocheté ou cousu à la main dans l’atelier, en petites quantités.
+            </p>
+          </header>
+          <div class="universe-grid" id="universe-grid"></div>
+        </div>
+      </section>
+
+      <!-- BOUTIQUE -->
+      <section class="section section--tinted" id="boutique">
+        <div class="shell">
+          <header class="section-head reveal">
+            <p class="eyebrow">La boutique</p>
+            <h2>Pièces uniques disponibles</h2>
+            <p class="section-lead">
+              Chaque création est réalisée une seule fois : quand elle est partie, elle est partie.
+            </p>
+          </header>
+
+          <div class="filters" id="filters" role="group" aria-label="Filtrer par catégorie"></div>
+
+          <div class="product-grid" id="product-grid"></div>
+          <p class="grid-empty" id="grid-empty" hidden>Aucune création dans cette catégorie.</p>
+        </div>
+      </section>
+
+      <!-- SERVICES -->
+      <section class="section" id="services">
+        <div class="shell">
+          <header class="section-head reveal">
+            <p class="eyebrow">Sur mesure</p>
+            <h2>Une idée précise en tête ?</h2>
+            <p class="section-lead">
+              Les modèles se déclinent : coloris, taille, prénom brodé. Écrivez-moi, on en parle.
+            </p>
+          </header>
+          <div class="service-grid" id="service-grid"></div>
+        </div>
+      </section>
+
+      <!-- ATELIER -->
+      <section class="section section--tinted" id="atelier">
+        <div class="shell about">
+          <figure class="about-media reveal">
+            <img id="about-image" src="" alt="" width="680" height="630" loading="lazy" />
+          </figure>
+          <div class="about-copy reveal">
+            <p class="eyebrow">L’atelier</p>
+            <h2 id="about-title"></h2>
+            <div id="about-text"></div>
+            <ul class="skills" id="about-skills"></ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- CONTACT -->
+      <section class="section" id="contact">
+        <div class="shell contact">
+          <div class="contact-copy reveal">
+            <p class="eyebrow">Contact</p>
+            <h2>Parlons de votre projet</h2>
+            <p class="section-lead">
+              Une commande personnalisée, une question sur une pièce, un cadeau à préparer :
+              écrivez-moi et je vous réponds.
+            </p>
+            <ul class="contact-infos" id="contact-infos"></ul>
+          </div>
+
+          <form class="contact-form reveal" id="contact-form" novalidate>
+            <div class="field">
+              <label for="field-name">Votre nom</label>
+              <input id="field-name" name="name" type="text" required autocomplete="name" />
+            </div>
+            <div class="field">
+              <label for="field-email">Votre e-mail</label>
+              <input id="field-email" name="email" type="email" required autocomplete="email" />
+            </div>
+            <div class="field">
+              <label for="field-message">Votre message</label>
+              <textarea id="field-message" name="message" rows="5" required></textarea>
+            </div>
+            <button class="btn btn--primary" type="submit">Envoyer le message</button>
+            <p class="form-status" id="form-status" role="status"></p>
+          </form>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="shell footer-inner">
+        <div>
+          <img src="assets/img/logo.png" alt="" width="56" height="56" />
+          <p id="footer-tagline"></p>
+        </div>
+        <nav aria-label="Liens de pied de page" id="footer-links"></nav>
+        <p class="footer-legal">
+          © <span id="year"></span> Couture &amp; Fil — Site de démonstration.
+          <a id="footer-sumup" href="https://couturefil.sumupstore.com/" rel="noopener">
+            Voir la boutique officielle
+          </a>
+        </p>
+      </div>
+    </footer>
+
+    <!-- PANIER -->
+    <div class="overlay" id="overlay" hidden></div>
+
+    <aside
+      class="cart-drawer"
+      id="cart-drawer"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="cart-title"
+      hidden
+    >
+      <header class="cart-head">
+        <h2 id="cart-title">Votre panier</h2>
+        <button class="icon-button" id="cart-close" type="button">
+          <span class="visually-hidden">Fermer le panier</span>
+          <span aria-hidden="true">×</span>
+        </button>
+      </header>
+
+      <div class="cart-body" id="cart-body"></div>
+
+      <footer class="cart-foot">
+        <div class="cart-total">
+          <span>Total</span>
+          <strong id="cart-total">0,00 €</strong>
+        </div>
+        <button class="btn btn--primary btn--block" id="cart-checkout" type="button">
+          Finaliser la commande
+        </button>
+        <p class="cart-note">Panier de démonstration : aucun paiement n’est déclenché.</p>
+      </footer>
+    </aside>
+
+    <div
+      class="modal"
+      id="checkout-modal"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="checkout-title"
+      hidden
+    >
+      <div class="modal-card">
+        <h2 id="checkout-title">C’est une démonstration 💛</h2>
+        <p>
+          Ce site est une maquette : le panier fonctionne, mais aucun paiement n’est possible ici.
+          Les vraies commandes passent par la boutique en ligne.
+        </p>
+        <div class="modal-actions">
+          <a class="btn btn--primary" id="modal-sumup" href="#" rel="noopener">
+            Aller à la boutique
+          </a>
+          <button class="btn btn--ghost" id="checkout-close" type="button">Revenir au site</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+    <script src="assets/js/content.js"></script>
+    <script src="assets/js/app.js"></script>
+  </body>
+</html>
