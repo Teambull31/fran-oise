@@ -61,8 +61,9 @@ vercel.json              configuration du déploiement statique
 
 Le site est statique : il n'y a aucune étape de build.
 
-**GitHub Pages** — le workflow `.github/workflows/pages.yml` publie le dépôt à chaque push.
-Prérequis, une seule fois : `Settings → Pages → Build and deployment → Source : GitHub Actions`.
+**GitHub Pages** — le dépôt est déjà configuré en « Deploy from a branch » sur `main`. Fusionner
+la branche de démo dans `main` suffit à publier le site sur
+<https://teambull31.github.io/fran-oise/> (le fichier `.nojekyll` évite tout traitement Jekyll).
 
 **Vercel** — importer le dépôt depuis <https://vercel.com/new> : framework « Other », aucune
 commande de build, répertoire racine `./`. Le fichier `vercel.json` fournit déjà les en-têtes de
