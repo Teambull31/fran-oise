@@ -1,136 +1,18 @@
 /* =========================================================
-   Couture & Fil — lecture du fichier contenu.txt
+   Couture & Fil — chargement du contenu du site
 
-   Ce fichier traduit le texte simple de « contenu.txt » en
-   données pour le site. Il est volontairement très tolérant :
-   accents, majuscules, espaces en trop, champs vides, blocs
-   incomplets ou clés inconnues ne cassent jamais l'affichage.
+   Lit contenu.txt (via assets/js/contenu-format.js), le traduit
+   en données pour l'affichage, puis démarre le site.
 
-   Françoise n'a jamais besoin d'ouvrir ce fichier : elle
-   modifie uniquement contenu.txt.
+   Françoise n'a jamais besoin d'ouvrir ce fichier : elle passe
+   par la page « modifier », ou modifie contenu.txt.
    ========================================================= */
 (function () {
   'use strict';
 
   var FICHIER = 'contenu.txt';
   var DOSSIER_PHOTOS = 'assets/img/';
-
-  /** « Étiquette » → « etiquette » : compare sans accent ni casse. */
-  function normalise(texte) {
-    return texte
-      .normalize('NFD')
-      .replace(/[̀-ͯ]/g, '')
-      .toLowerCase()
-      .replace(/[^a-z0-9]+/g, ' ')
-      .trim();
-  }
-
-  /** Plusieurs façons d'écrire une même clé sont acceptées. */
-  var CLES = {
-    nom: 'nom',
-    titre: 'titre',
-    'sous titre': 'sousTitre',
-    'grand titre': 'grandTitre',
-    'mots en couleur': 'motsEnCouleur',
-    'phrase d accueil': 'accueil',
-    description: 'description',
-    ville: 'ville',
-    departement: 'departement',
-    region: 'departement',
-    adresse: 'adresse',
-    'e mail': 'email',
-    mail: 'email',
-    courriel: 'email',
-    telephone: 'telephone',
-    facebook: 'facebook',
-    instagram: 'instagram',
-    'boutique en ligne': 'boutique',
-    'bandeau en haut': 'bandeau',
-    'gros texte': 'grosTexte',
-    'petit texte': 'petitTexte',
-    prix: 'prix',
-    rayon: 'rayon',
-    categorie: 'rayon',
-    photo: 'photo',
-    image: 'photo',
-    cadrage: 'cadrage',
-    etiquette: 'etiquette',
-    'autres couleurs': 'autresCouleurs',
-    texte: 'texte',
-    'texte de la photo': 'texteDeLaPhoto',
-    point: 'point',
-    paragraphe: 'paragraphe',
-    'savoir faire': 'savoirFaire'
-  };
-
-  /** Les clés qui peuvent revenir plusieurs fois dans un bloc. */
-  var MULTIPLES = { point: true, paragraphe: true, savoirFaire: true };
-
-  var BLOCS = {
-    boutique: 'boutique',
-    chiffre: 'chiffre',
-    famille: 'famille',
-    univers: 'famille',
-    produit: 'produit',
-    creation: 'produit',
-    service: 'service',
-    atelier: 'atelier'
-  };
-
-  /**
-   * Découpe le fichier en blocs. Une valeur peut se poursuivre
-   * sur les lignes suivantes tant qu'elles ne commencent pas
-   * par une nouvelle clé — pratique pour les longs textes.
-   */
-  function decouper(texte) {
-    var blocs = [];
-    var bloc = null;
-    var derniereCle = null;
-
-    texte.split(/\r?\n/).forEach(function (ligne) {
-      var brut = ligne.trim();
-
-      if (!brut || brut.charAt(0) === '#') {
-        derniereCle = null;
-        return;
-      }
-
-      var entete = brut.match(/^\[\s*([^\]]+?)\s*\]$/);
-      if (entete) {
-        var type = BLOCS[normalise(entete[1])];
-        bloc = type ? { type: type, champs: {} } : null;
-        if (bloc) blocs.push(bloc);
-        derniereCle = null;
-        return;
-      }
-
-      if (!bloc) return;
-
-      var paire = brut.match(/^([^:]{1,40}):\s*(.*)$/);
-      if (paire) {
-        var cle = CLES[normalise(paire[1])];
-        derniereCle = null;
-        if (!cle) return;
-
-        var valeur = paire[2].trim();
-        if (MULTIPLES[cle]) {
-          if (!valeur) return;
-          (bloc.champs[cle] = bloc.champs[cle] || []).push(valeur);
-        } else {
-          bloc.champs[cle] = valeur;
-          derniereCle = cle;
-        }
-        return;
-      }
-
-      // Suite d'un texte commencé à la ligne précédente.
-      if (derniereCle && bloc.champs[derniereCle]) {
-        bloc.champs[derniereCle] += ' ' + brut;
-      }
-    });
-
-    return blocs;
-  }
+  var Format = window.ContenuFormat;
 
   function premier(blocs, type) {
     for (var i = 0; i < blocs.length; i++) {
@@ -152,13 +34,17 @@
   /** « 54 », « 54,00 € », « 54.5 » → nombre. Sinon 0. */
   function prix(valeur) {
     if (!valeur) return 0;
-    var nombre = parseFloat(String(valeur).replace(/[^0-9,.]/g, '').replace(',', '.'));
+    var nombre = parseFloat(
+      String(valeur)
+        .replace(/[^0-9,.]/g, '')
+        .replace(',', '.')
+    );
     return isNaN(nombre) ? 0 : nombre;
   }
 
   /** Accepte « lapin.jpg », « assets/img/lapin.jpg » ou une adresse web. */
   function photo(valeur) {
-    var nom = (valeur || '').trim();
+    var nom = String(valeur || '').trim();
     if (!nom) return '';
     if (/^(https?:)?\/\//.test(nom) || nom.indexOf('assets/') === 0) return nom;
     return DOSSIER_PHOTOS + nom.replace(/^\/+/, '');
@@ -166,47 +52,47 @@
 
   /** « bas », « haut », « centre » → valeur CSS object-position. */
   function cadrage(valeur) {
-    var mot = normalise(valeur || '');
+    var mot = Format.normalise(valeur);
     if (mot.indexOf('bas') === 0) return 'center bottom';
     if (mot.indexOf('haut') === 0) return 'center top';
     return 'center';
   }
 
   function vraiFaux(valeur) {
-    var mot = normalise(valeur || '');
+    var mot = Format.normalise(valeur);
     return mot === 'oui' || mot === 'o' || mot === 'yes' || mot === 'x' || mot === 'vrai';
   }
 
-  /** Identifiant technique stable, déduit du nom du produit. */
+  /** Identifiant technique stable, déduit du nom. */
   function identifiant(nom, secours) {
-    var base = normalise(nom).replace(/\s+/g, '-');
-    return base || secours;
+    return Format.normalise(nom).replace(/\s+/g, '-') || secours;
   }
 
   function construire(texte) {
-    var blocs = decouper(texte);
+    var blocs = Format.lire(texte);
     var b = premier(blocs, 'boutique');
     var atelier = premier(blocs, 'atelier');
 
     var produits = tous(blocs, 'produit')
       .filter(function (p) {
-        return (p.nom || '').trim();
+        return String(p['Nom'] || '').trim();
       })
       .map(function (p, index) {
+        var rayon = String(p['Rayon'] || '').trim();
         return {
-          id: identifiant(p.nom, 'produit-' + index),
-          name: p.nom.trim(),
-          price: prix(p.prix),
-          rayon: (p.rayon || '').trim(),
-          category: normalise(p.rayon || 'autres').replace(/\s+/g, '-') || 'autres',
-          image: photo(p.photo),
-          badge: (p.etiquette || '').trim(),
-          variants: vraiFaux(p.autresCouleurs),
-          description: (p.description || '').trim()
+          id: identifiant(p['Nom'], 'produit-' + index),
+          name: String(p['Nom']).trim(),
+          price: prix(p['Prix']),
+          rayon: rayon,
+          category: identifiant(rayon, 'autres'),
+          image: photo(p['Photo']),
+          badge: String(p['Étiquette'] || '').trim(),
+          variants: vraiFaux(p['Autres couleurs']),
+          description: String(p['Description'] || '').trim()
         };
       });
 
-    // Les rayons du filtre sont déduits des produits : rien à régler.
+    // Les rayons de la boutique se déduisent des produits : rien à régler.
     var rayons = [];
     produits.forEach(function (p) {
       if (
@@ -220,25 +106,25 @@
     });
 
     var reseaux = [];
-    if (b.facebook) reseaux.push({ label: 'Facebook', url: b.facebook });
-    if (b.instagram) reseaux.push({ label: 'Instagram', url: b.instagram });
+    if (b['Facebook']) reseaux.push({ label: 'Facebook', url: b['Facebook'] });
+    if (b['Instagram']) reseaux.push({ label: 'Instagram', url: b['Instagram'] });
 
-    var boutique = (b.boutique || '').trim();
+    var boutique = String(b['Boutique en ligne'] || '').trim();
 
     return {
       shop: {
-        name: b.nom || 'Couture & Fil',
-        tagline: b.description || '',
-        subtitle: b.sousTitre || '',
-        heroTitle: b.grandTitre || b.description || '',
-        heroHighlight: b.motsEnCouleur || '',
-        intro: [b.accueil || ''],
-        city: b.ville || '',
-        region: b.departement || '',
+        name: b['Nom'] || 'Couture & Fil',
+        tagline: b['Description'] || '',
+        subtitle: b['Sous-titre'] || '',
+        heroTitle: b['Grand titre'] || b['Description'] || '',
+        heroHighlight: b['Mots en couleur'] || '',
+        intro: [b['Phrase d’accueil'] || ''],
+        city: b['Ville'] || '',
+        region: b['Département'] || '',
         sumupUrl: boutique,
-        email: b.email || '',
-        phone: b.telephone || '',
-        address: b.adresse || '',
+        email: b['E-mail'] || '',
+        phone: b['Téléphone'] || '',
+        address: b['Adresse'] || '',
         hours: [],
         socials: reseaux,
         legalLinks: boutique
@@ -251,18 +137,18 @@
       },
 
       highlights: tous(blocs, 'chiffre').map(function (c) {
-        return { value: c.grosTexte || '', label: c.petitTexte || '' };
+        return { value: c['Gros texte'] || '', label: c['Petit texte'] || '' };
       }),
 
       categories: [{ id: 'all', label: 'Tout voir' }].concat(rayons),
 
       universes: tous(blocs, 'famille').map(function (f) {
         return {
-          id: normalise(f.rayon || f.titre || '').replace(/\s+/g, '-'),
-          title: f.titre || '',
-          image: photo(f.photo),
-          focus: cadrage(f.cadrage),
-          text: f.texte || ''
+          id: identifiant(f['Rayon'] || f['Titre'], 'famille'),
+          title: f['Titre'] || '',
+          image: photo(f['Photo']),
+          focus: cadrage(f['Cadrage']),
+          text: f['Texte'] || ''
         };
       }),
 
@@ -270,22 +156,22 @@
 
       services: tous(blocs, 'service').map(function (s) {
         return {
-          title: s.titre || '',
-          price: s.prix || '',
-          description: s.description || '',
-          points: s.point || []
+          title: s['Titre'] || '',
+          price: s['Prix'] || '',
+          description: s['Description'] || '',
+          points: s['Point'] || []
         };
       }),
 
       about: {
-        title: atelier.titre || '',
-        image: photo(atelier.photo),
-        imageAlt: atelier.texteDeLaPhoto || '',
-        paragraphs: atelier.paragraphe || [],
-        skills: atelier.savoirFaire || []
+        title: atelier['Titre'] || '',
+        image: photo(atelier['Photo']),
+        imageAlt: atelier['Texte de la photo'] || '',
+        paragraphs: atelier['Paragraphe'] || [],
+        skills: atelier['Savoir-faire'] || []
       },
 
-      demoNotice: b.bandeau || ''
+      demoNotice: b['Bandeau en haut'] || ''
     };
   }
 
@@ -296,9 +182,9 @@
   }
 
   /**
-   * Le contenu de secours (assets/js/content.js) sert uniquement
-   * si contenu.txt est introuvable — ouverture du fichier en
-   * local, coupure réseau… Le site reste alors affiché.
+   * Le contenu de secours (assets/js/content.js) ne sert que si
+   * contenu.txt est introuvable ou vide : le site reste affiché
+   * au lieu de devenir une page blanche.
    */
   var secours = window.CONTENT;
 
@@ -309,12 +195,7 @@
     })
     .then(function (texte) {
       var contenu = construire(texte);
-      // Un fichier vidé par erreur ne doit pas effacer le site.
-      if (!contenu.products.length && secours) {
-        window.CONTENT = secours;
-      } else {
-        window.CONTENT = contenu;
-      }
+      window.CONTENT = !contenu.products.length && secours ? secours : contenu;
     })
     .catch(function () {
       if (secours) window.CONTENT = secours;
