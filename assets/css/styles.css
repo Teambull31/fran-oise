@@ -7,23 +7,31 @@
 :root {
   color-scheme: light dark;
 
-  --cream: #fff8f3;
-  --cream-deep: #fdeee4;
+  --cream: #fffdfa;
+  --cream-deep: #fff2e8;
   --surface: #ffffff;
-  --surface-alt: #fff3ea;
-  --ink: #32211a;
-  --ink-soft: #6f574c;
-  --line: #f0dccf;
+  --surface-alt: #fff0f6;
+  --ink: #3a2733;
+  --ink-soft: #6f5a67;
+  --line: #ffe1ec;
 
-  --coral: #ea5324;
-  --coral-dark: #c53f16;
-  --pink: #e02a7b;
-  --berry: #a51f63;
-  --sky: #2f93ba;
-  --gold: #f0a51e;
+  --coral: #ff6b35;
+  --coral-dark: #d64a12;
+  --pink: #ff3d8b;
+  --berry: #c4186b;
+  --berry-deep: #ad0f5c;
+  --sky: #1499bd;
+  --mint: #12b394;
+  --gold: #ffb703;
+  /* Versions assombries : les teintes vives ci-dessus ne passent pas le
+     contraste AA en petit texte sur fond clair. */
+  --sky-text: #0a6f8c;
+  --mint-text: #067a64;
 
-  --grad-warm: linear-gradient(135deg, #f5722f 0%, #e02a7b 100%);
-  --grad-soft: linear-gradient(135deg, #fff1e6 0%, #ffe6f1 100%);
+  --grad-warm: linear-gradient(135deg, #ff8a3d 0%, #ff3d8b 100%);
+  --grad-cool: linear-gradient(135deg, #35c8e8 0%, #7b6cf6 100%);
+  /* Fond des sections teintées : pêche → rose → bleu très clairs. */
+  --grad-soft: linear-gradient(135deg, #fff0e0 0%, #ffe8f3 48%, #eaf6ff 100%);
 
   --radius-sm: 12px;
   --radius: 20px;
@@ -44,21 +52,25 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --cream: #1a1210;
-    --cream-deep: #221714;
-    --surface: #241a16;
-    --surface-alt: #2c1f1a;
-    --ink: #f8ece5;
-    --ink-soft: #c6ada1;
-    --line: #3d2c25;
+    --cream: #1b1319;
+    --cream-deep: #241820;
+    --surface: #271b23;
+    --surface-alt: #32212c;
+    --ink: #fbeef4;
+    --ink-soft: #cdb3c2;
+    --line: #422c39;
 
-    --coral: #ff7a4d;
-    --coral-dark: #ff905f;
-    --pink: #ff5fa2;
-    --berry: #ff7cb4;
-    --sky: #61bcdd;
+    --coral: #ff9061;
+    --coral-dark: #ffa87f;
+    --pink: #ff77b0;
+    --berry: #ff8fc0;
+    --berry-deep: #ff77b0;
+    --sky: #6fd0ea;
+    --mint: #59dcbf;
+    --sky-text: #6fd0ea;
+    --mint-text: #59dcbf;
 
-    --grad-soft: linear-gradient(135deg, #2c1d18 0%, #33191f 100%);
+    --grad-soft: linear-gradient(135deg, #2e1d1a 0%, #331a26 55%, #1e2330 100%);
     --shadow-sm: 0 2px 10px rgba(0, 0, 0, 0.4);
     --shadow: 0 14px 34px rgba(0, 0, 0, 0.45);
     --shadow-lg: 0 26px 60px rgba(0, 0, 0, 0.55);
@@ -262,10 +274,11 @@ textarea {
 /* ---------- bandeau démo + header ---------- */
 
 .demo-banner {
-  background: var(--ink);
-  color: var(--cream);
+  background: var(--grad-warm);
+  color: #fff;
   text-align: center;
   font-size: 0.85rem;
+  font-weight: 550;
   padding: 0.5rem var(--gutter);
 }
 
@@ -474,7 +487,7 @@ textarea {
   max-height: 560px;
   top: -12%;
   right: -8%;
-  background: radial-gradient(circle, rgba(240, 120, 40, 0.55), transparent 68%);
+  background: radial-gradient(circle, rgba(255, 150, 60, 0.7), transparent 68%);
 }
 
 .hero-blob--2 {
@@ -484,7 +497,24 @@ textarea {
   max-height: 460px;
   bottom: -18%;
   left: -10%;
-  background: radial-gradient(circle, rgba(224, 42, 123, 0.4), transparent 68%);
+  background: radial-gradient(circle, rgba(255, 61, 139, 0.55), transparent 68%);
+}
+
+/* Troisième tache, plus froide, pour élargir la gamme de couleurs. */
+.hero::after {
+  content: "";
+  position: absolute;
+  width: 34vw;
+  height: 34vw;
+  max-width: 400px;
+  max-height: 400px;
+  right: 18%;
+  bottom: -22%;
+  border-radius: 50%;
+  filter: blur(60px);
+  opacity: 0.45;
+  pointer-events: none;
+  background: radial-gradient(circle, rgba(53, 200, 232, 0.6), transparent 68%);
 }
 
 .hero-inner {
@@ -669,6 +699,14 @@ textarea {
   font-size: 0.92rem;
 }
 
+.universe-card:nth-child(2) .more {
+  color: var(--sky-text);
+}
+
+.universe-card:nth-child(3) .more {
+  color: var(--mint-text);
+}
+
 /* ---------- filtres ---------- */
 
 .filters {
@@ -802,7 +840,7 @@ textarea {
   font-weight: 650;
   letter-spacing: 0.05em;
   text-transform: uppercase;
-  color: var(--sky);
+  color: var(--sky-text);
 }
 
 .product-foot {
@@ -825,8 +863,8 @@ textarea {
   cursor: pointer;
   border-radius: 999px;
   padding: 0.6rem 1.05rem;
-  background: var(--ink);
-  color: var(--cream);
+  background: var(--berry-deep);
+  color: #fff;
   font-size: 0.88rem;
   font-weight: 650;
   transition: background 0.18s ease, transform 0.18s ease;
@@ -835,6 +873,14 @@ textarea {
 .add-button:hover {
   background: var(--coral-dark);
   transform: translateY(-2px);
+}
+
+/* En thème sombre les accents sont clairs : le texte du bouton repasse en foncé. */
+@media (prefers-color-scheme: dark) {
+  .add-button,
+  .add-button:hover {
+    color: #2a1620;
+  }
 }
 
 .grid-empty {
@@ -860,6 +906,32 @@ textarea {
   background-image: linear-gradient(var(--surface), var(--surface)), var(--grad-warm);
   background-origin: border-box;
   background-clip: padding-box, border-box;
+}
+
+/* Chaque prestation prend un liseré de couleur différent. */
+.service-card:nth-child(2) {
+  background-image: linear-gradient(var(--surface), var(--surface)), var(--grad-cool);
+}
+
+.service-card:nth-child(3) {
+  background-image: linear-gradient(var(--surface), var(--surface)),
+    linear-gradient(135deg, #12b394 0%, #ffb703 100%);
+}
+
+.service-card:nth-child(2) .service-price {
+  color: var(--sky-text);
+}
+
+.service-card:nth-child(3) .service-price {
+  color: var(--mint-text);
+}
+
+.service-card:nth-child(2) li::before {
+  color: var(--sky);
+}
+
+.service-card:nth-child(3) li::before {
+  color: var(--mint);
 }
 
 .service-card h3 {
@@ -1049,9 +1121,11 @@ textarea {
 /* ---------- footer ---------- */
 
 .site-footer {
-  background: var(--ink);
-  color: var(--cream);
+  background: var(--grad-soft);
+  color: var(--ink);
   padding: clamp(2.5rem, 5vw, 3.5rem) 0 2rem;
+  border-top: 4px solid transparent;
+  border-image: var(--grad-warm) 1;
 }
 
 .footer-inner {
@@ -1071,7 +1145,7 @@ textarea {
 
 .site-footer p {
   margin: 0;
-  color: color-mix(in srgb, var(--cream) 75%, transparent);
+  color: var(--ink-soft);
   font-size: 0.93rem;
   max-width: 46ch;
 }
@@ -1085,12 +1159,13 @@ textarea {
 
 .footer-inner nav a,
 .footer-legal a {
-  color: var(--cream);
+  color: var(--berry);
+  font-weight: 600;
   font-size: 0.9rem;
 }
 
 .footer-legal {
-  border-top: 1px solid color-mix(in srgb, var(--cream) 18%, transparent);
+  border-top: 1px solid var(--line);
   padding-top: 1.25rem;
   width: 100%;
   font-size: 0.85rem !important;
@@ -1102,7 +1177,7 @@ textarea {
   position: fixed;
   inset: 0;
   z-index: 50;
-  background: rgba(40, 20, 12, 0.5);
+  background: rgba(58, 25, 48, 0.45);
   backdrop-filter: blur(3px);
   opacity: 0;
   transition: opacity 0.25s ease;
@@ -1288,7 +1363,7 @@ textarea {
   display: grid;
   place-items: center;
   padding: var(--gutter);
-  background: rgba(40, 20, 12, 0.55);
+  background: rgba(58, 25, 48, 0.5);
   backdrop-filter: blur(4px);
   opacity: 0;
   transition: opacity 0.25s ease;
