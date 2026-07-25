@@ -14,6 +14,36 @@
   var DOSSIER_PHOTOS = 'assets/img/';
   var Format = window.ContenuFormat;
 
+  /* ---------------------------------------------------------
+     Mode aperçu
+
+     Quand on arrive depuis la page « Modifier » avec ?apercu,
+     le site s'affiche à partir du brouillon gardé dans le
+     navigateur, photos non encore envoyées comprises. Rien
+     n'est publié : c'est seulement visible sur cet ordinateur.
+     --------------------------------------------------------- */
+
+  var APERCU = /[?&]apercu\b/.test(window.location.search);
+  var CLE_APERCU = 'couture-fil:apercu';
+  var CLE_PHOTOS = 'couture-fil:photos';
+
+  function depuisLeNavigateur(cle) {
+    try {
+      return localStorage.getItem(cle);
+    } catch (erreur) {
+      return null;
+    }
+  }
+
+  var photosEnAttente = {};
+  if (APERCU) {
+    try {
+      photosEnAttente = JSON.parse(depuisLeNavigateur(CLE_PHOTOS) || '{}') || {};
+    } catch (erreur) {
+      photosEnAttente = {};
+    }
+  }
+
   function premier(blocs, type) {
     for (var i = 0; i < blocs.length; i++) {
       if (blocs[i].type === type) return blocs[i].champs;
@@ -46,6 +76,8 @@
   function photo(valeur) {
     var nom = String(valeur || '').trim();
     if (!nom) return '';
+    // En aperçu, une photo choisie mais pas encore envoyée s'affiche quand même.
+    if (photosEnAttente[nom]) return photosEnAttente[nom];
     if (/^(https?:)?\/\//.test(nom) || nom.indexOf('assets/') === 0) return nom;
     return DOSSIER_PHOTOS + nom.replace(/^\/+/, '');
   }
@@ -176,9 +208,36 @@
   }
 
   function demarrer() {
+    if (APERCU) bandeauApercu();
     var script = document.createElement('script');
     script.src = 'assets/js/app.js';
     document.body.appendChild(script);
+  }
+
+  /** Rappel visible qu'on regarde un brouillon, pas le site publié. */
+  function bandeauApercu() {
+    var bandeau = document.createElement('div');
+    bandeau.setAttribute('role', 'note');
+    bandeau.style.cssText = [
+      'position:fixed', 'left:0', 'right:0', 'bottom:0', 'z-index:90',
+      'background:#0a7c52', 'color:#fff', 'padding:0.85rem 1rem', 'text-align:center',
+      'font:600 1rem/1.4 system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif',
+      'box-shadow:0 -4px 18px rgba(0,0,0,0.25)'
+    ].join(';');
+
+    bandeau.appendChild(
+      document.createTextNode('Aperçu de vos modifications — rien n’est encore publié. ')
+    );
+
+    var retour = document.createElement('a');
+    retour.href = 'modifier.html';
+    retour.textContent = 'Revenir aux modifications';
+    retour.style.cssText = 'color:#fff;font-weight:800';
+    bandeau.appendChild(retour);
+
+    document.body.appendChild(bandeau);
+    // Le bandeau ne doit pas masquer la fin de la page.
+    document.body.style.paddingBottom = '4.5rem';
   }
 
   /**
@@ -187,6 +246,14 @@
    * au lieu de devenir une page blanche.
    */
   var secours = window.CONTENT;
+
+  var brouillon = APERCU ? depuisLeNavigateur(CLE_APERCU) : null;
+  if (brouillon) {
+    var apercu = construire(brouillon);
+    window.CONTENT = !apercu.products.length && secours ? secours : apercu;
+    demarrer();
+    return;
+  }
 
   fetch(FICHIER, { cache: 'no-cache' })
     .then(function (reponse) {

@@ -321,12 +321,10 @@
 
     <div class="barre">
       <div class="shell">
+        <button type="button" id="apercu" class="b-rose b-grand">👁 Voir le résultat</button>
         <button type="button" id="enregistrer" class="b-vert b-grand">
           ✓ Enregistrer mes modifications
         </button>
-        <a class="b-clair b-grand" href="index.html" style="text-decoration: none; display: inline-block">
-          Voir le site
-        </a>
         <span class="etat" id="etat"></span>
       </div>
     </div>
@@ -337,16 +335,16 @@
         <p>
           Vos modifications sont prêtes. Il reste à les envoyer sur le site, en trois clics.
         </p>
+        <div id="photos-a-envoyer"></div>
+
         <ol class="etapes">
           <li>
-            <button type="button" id="copier" class="b-rose">1. Copier mes modifications</button>
+            <button type="button" id="copier" class="b-rose b-grand">
+              1. Copier et ouvrir la page du site
+            </button>
             <span id="copie-ok" style="color: var(--vert); font-weight: 700"></span>
-          </li>
-          <li>
-            <a id="lien-github" class="b-rose" style="text-decoration: none; display: inline-block" target="_blank" rel="noopener">
-              2. Ouvrir la page du site
-            </a>
-            — un onglet s’ouvre sur une page remplie de texte.
+            <br />
+            Un onglet s’ouvre sur une page remplie de texte.
           </li>
           <li>
             Dans cette page : tout sélectionner (<strong>Ctrl + A</strong>), coller
@@ -382,6 +380,75 @@
         var blocs = [];
         var formulaire = document.getElementById('formulaire');
         var etat = document.getElementById('etat');
+
+        /* ----- photos choisies mais pas encore envoyées ----- */
+
+        var CLE_PHOTOS = 'couture-fil:photos';
+        var CLE_APERCU = 'couture-fil:apercu';
+        var GITHUB_PHOTOS = 'https://github.com/Teambull31/fran-oise/upload/main/assets/img';
+        var photosEnAttente = {};
+
+        try {
+          photosEnAttente = JSON.parse(localStorage.getItem(CLE_PHOTOS) || '{}') || {};
+        } catch (erreur) {
+          photosEnAttente = {};
+        }
+
+        function garderPhotos() {
+          try {
+            localStorage.setItem(CLE_PHOTOS, JSON.stringify(photosEnAttente));
+          } catch (erreur) {
+            /* mémoire du navigateur pleine : la photo reste utilisable dans l'onglet */
+          }
+        }
+
+        function adressePhoto(nom) {
+          if (photosEnAttente[nom]) return photosEnAttente[nom];
+          return /^(https?:)?\/\//.test(nom) ? nom : 'assets/img/' + nom;
+        }
+
+        /** Nom de fichier sans accent ni espace, toujours en .jpg. */
+        function nomDeFichier(nom) {
+          var base = Format.normalise(nom.replace(/\.[a-z0-9]+$/i, '')).replace(/\s+/g, '-');
+          return (base || 'photo') + '.jpg';
+        }
+
+        /**
+         * Réduit la photo dans le navigateur : les photos de téléphone
+         * font plusieurs mégaoctets, ce qui rendrait le site très lent.
+         */
+        function reduirePhoto(fichier) {
+          return new Promise(function (resoudre, rejeter) {
+            var lecteur = new FileReader();
+            lecteur.onerror = rejeter;
+            lecteur.onload = function () {
+              var image = new Image();
+              image.onerror = rejeter;
+              image.onload = function () {
+                var maxi = 900;
+                var largeur = image.width;
+                var hauteur = image.height;
+                if (largeur > maxi || hauteur > maxi) {
+                  var facteur = maxi / Math.max(largeur, hauteur);
+                  largeur = Math.round(largeur * facteur);
+                  hauteur = Math.round(hauteur * facteur);
+                }
+                var toile = document.createElement('canvas');
+                toile.width = largeur;
+                toile.height = hauteur;
+                toile.getContext('2d').drawImage(image, 0, 0, largeur, hauteur);
+                var donnees = toile.toDataURL('image/jpeg', 0.82);
+                resoudre({
+                  nom: nomDeFichier(fichier.name),
+                  donnees: donnees,
+                  poids: Math.round((donnees.length * 0.75) / 1024) + ' Ko'
+                });
+              };
+              image.src = lecteur.result;
+            };
+            lecteur.readAsDataURL(fichier);
+          });
+        }
 
         /* ----- fabrication du formulaire ----- */
 
@@ -451,17 +518,68 @@
           } else if (description.type === 'photo') {
             var ligne2 = document.createElement('div');
             ligne2.className = 'photo-ligne';
+
             var apercu = document.createElement('img');
             apercu.alt = '';
             var rafraichir = function () {
               var nom = saisie.value.trim();
-              apercu.src = nom ? (/^(https?:)?\/\//.test(nom) ? nom : 'assets/img/' + nom) : '';
+              apercu.src = nom ? adressePhoto(nom) : '';
               apercu.style.visibility = nom ? 'visible' : 'hidden';
             };
             rafraichir();
             saisie.addEventListener('input', rafraichir);
+
+            var colonne = document.createElement('div');
+            colonne.style.cssText = 'flex:1;display:grid;gap:0.5rem';
+            colonne.appendChild(saisie);
+
+            // Choisir une photo depuis l'ordinateur ou le téléphone :
+            // elle est réduite automatiquement, sans logiciel à installer.
+            var fichier = document.createElement('input');
+            fichier.type = 'file';
+            fichier.accept = 'image/*';
+            fichier.className = 'sr';
+            fichier.id = bloc_id + '-fichier';
+
+            var choisir = document.createElement('button');
+            choisir.type = 'button';
+            choisir.className = 'b-clair';
+            choisir.textContent = '📷 Choisir une photo…';
+            choisir.addEventListener('click', function () {
+              fichier.click();
+            });
+
+            var info = document.createElement('span');
+            info.className = 'aide';
+
+            fichier.addEventListener('change', function () {
+              var image = fichier.files && fichier.files[0];
+              if (!image) return;
+              info.textContent = 'Réduction de la photo…';
+              reduirePhoto(image)
+                .then(function (resultat) {
+                  photosEnAttente[resultat.nom] = resultat.donnees;
+                  garderPhotos();
+                  saisie.value = resultat.nom;
+                  rafraichir();
+                  enregistrerChamp(bloc, description, saisie);
+                  info.textContent =
+                    'Photo prête (' + resultat.poids + '). Elle part avec vos modifications.';
+                })
+                .catch(function () {
+                  info.textContent = 'Cette image n’a pas pu être lue. Essayez une autre photo.';
+                });
+            });
+
+            var rangeePhoto = document.createElement('div');
+            rangeePhoto.className = 'rangee';
+            rangeePhoto.appendChild(choisir);
+            rangeePhoto.appendChild(fichier);
+            colonne.appendChild(rangeePhoto);
+            colonne.appendChild(info);
+
             ligne2.appendChild(apercu);
-            ligne2.appendChild(saisie);
+            ligne2.appendChild(colonne);
             enveloppe.appendChild(ligne2);
           } else {
             enveloppe.appendChild(saisie);
@@ -614,10 +732,90 @@
         var fenetre = document.getElementById('fenetre-enregistrer');
         var zoneTexte = document.getElementById('texte-final');
 
+        /** Aperçu : le site s'affiche avec le brouillon, photos comprises. */
+        document.getElementById('apercu').addEventListener('click', function () {
+          try {
+            localStorage.setItem(CLE_APERCU, Format.ecrire(blocs));
+            garderPhotos();
+          } catch (erreur) {
+            /* rien à faire : l'aperçu s'ouvrira sur le contenu publié */
+          }
+          window.open('index.html?apercu=1', '_blank', 'noopener');
+        });
+
+        /** Liste les photos choisies ici et pas encore présentes sur le site. */
+        function photosUtilisees() {
+          var noms = [];
+          blocs.forEach(function (bloc) {
+            var nom = String(bloc.champs['Photo'] || '').trim();
+            if (photosEnAttente[nom] && noms.indexOf(nom) === -1) noms.push(nom);
+          });
+          return noms;
+        }
+
+        function dessinerPhotos() {
+          var zone = document.getElementById('photos-a-envoyer');
+          zone.textContent = '';
+          var noms = photosUtilisees();
+          if (!noms.length) return;
+
+          var encadre = document.createElement('div');
+          encadre.className = 'message attention';
+
+          var titre = document.createElement('p');
+          titre.style.marginTop = '0';
+          titre.innerHTML =
+            '<strong>' +
+            noms.length +
+            (noms.length > 1 ? ' nouvelles photos' : ' nouvelle photo') +
+            '</strong> à envoyer aussi. Enregistrez-les, puis déposez-les sur la page des photos.';
+          encadre.appendChild(titre);
+
+          var rangee = document.createElement('p');
+          rangee.className = 'rangee';
+
+          noms.forEach(function (nom) {
+            rangee.appendChild(
+              bouton('⬇ ' + nom, 'b-clair', function () {
+                var lien = document.createElement('a');
+                lien.href = photosEnAttente[nom];
+                lien.download = nom;
+                lien.click();
+              })
+            );
+          });
+
+          var ouvrir = document.createElement('a');
+          ouvrir.href = GITHUB_PHOTOS;
+          ouvrir.target = '_blank';
+          ouvrir.rel = 'noopener';
+          ouvrir.className = 'b-rose';
+          ouvrir.style.cssText = 'text-decoration:none;display:inline-block';
+          ouvrir.textContent = 'Ouvrir la page des photos';
+          rangee.appendChild(ouvrir);
+
+          encadre.appendChild(rangee);
+
+          var fini = document.createElement('p');
+          fini.style.marginBottom = '0';
+          fini.appendChild(
+            bouton('J’ai envoyé les photos', 'b-clair', function () {
+              noms.forEach(function (nom) {
+                delete photosEnAttente[nom];
+              });
+              garderPhotos();
+              dessinerPhotos();
+            })
+          );
+          encadre.appendChild(fini);
+
+          zone.appendChild(encadre);
+        }
+
         document.getElementById('enregistrer').addEventListener('click', function () {
           zoneTexte.value = Format.ecrire(blocs);
-          document.getElementById('lien-github').href = GITHUB;
           document.getElementById('copie-ok').textContent = '';
+          dessinerPhotos();
           if (fenetre.showModal) fenetre.showModal();
           else fenetre.setAttribute('open', '');
         });
@@ -629,19 +827,20 @@
 
         document.getElementById('copier').addEventListener('click', function () {
           var marque = document.getElementById('copie-ok');
-          var fini = function () {
+          var ouvrir = function () {
             marque.textContent = '✓ copié';
+            window.open(GITHUB, '_blank', 'noopener');
           };
           if (navigator.clipboard && navigator.clipboard.writeText) {
-            navigator.clipboard.writeText(zoneTexte.value).then(fini, function () {
+            navigator.clipboard.writeText(zoneTexte.value).then(ouvrir, function () {
               zoneTexte.select();
               document.execCommand('copy');
-              fini();
+              ouvrir();
             });
           } else {
             zoneTexte.select();
             document.execCommand('copy');
-            fini();
+            ouvrir();
           }
         });
 
