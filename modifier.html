@@ -423,6 +423,8 @@
         <p>
           Vos modifications sont prêtes. Il reste à les envoyer sur le site, en trois clics.
         </p>
+        <div id="verification"></div>
+
         <div id="publication-directe"></div>
 
         <div id="photos-a-envoyer"></div>
@@ -1148,6 +1150,124 @@
         }
 
         /* ---------------------------------------------------------
+           Vérification avant publication
+
+           Rien n'est bloquant : il s'agit d'éviter de mettre en ligne
+           une fiche sans prix ou une photo au nom mal orthographié
+           sans s'en apercevoir.
+           --------------------------------------------------------- */
+
+        function anomalies() {
+          var liste = [];
+          var rayons = {};
+
+          blocs.forEach(function (bloc) {
+            if (bloc.type !== 'produit') return;
+            var nom = String(bloc.champs['Nom'] || '').trim();
+            if (!nom) return;
+            if (bloc.champs['Rayon']) rayons[Format.normalise(bloc.champs['Rayon'])] = true;
+
+            var prix = parseFloat(String(bloc.champs['Prix'] || '').replace(',', '.'));
+            if (!prix) liste.push('« ' + nom + ' » n’a pas de prix.');
+            if (!String(bloc.champs['Photo'] || '').trim())
+              liste.push('« ' + nom + ' » n’a pas de photo.');
+            if (!String(bloc.champs['Description'] || '').trim())
+              liste.push('« ' + nom + ' » n’a pas de description.');
+            if (!String(bloc.champs['Rayon'] || '').trim())
+              liste.push('« ' + nom + ' » n’a pas de rayon : il n’apparaîtra dans aucun tri.');
+          });
+
+          blocs.forEach(function (bloc) {
+            if (bloc.type !== 'famille') return;
+            var rayon = String(bloc.champs['Rayon'] || '').trim();
+            if (rayon && !rayons[Format.normalise(rayon)]) {
+              liste.push(
+                'La famille « ' + (bloc.champs['Titre'] || rayon) + ' » ne contient aucun produit.'
+              );
+            }
+          });
+
+          var boutique = blocs.filter(function (bloc) {
+            return bloc.type === 'boutique';
+          })[0];
+          if (boutique && !String(boutique.champs['E-mail'] || '').trim()) {
+            liste.push(
+              'Aucune adresse e-mail : le formulaire de contact est remplacé par un renvoi vers la boutique.'
+            );
+          }
+
+          return liste;
+        }
+
+        /** Vérifie que chaque photo citée existe réellement sur le site. */
+        function photosIntrouvables() {
+          var noms = [];
+          blocs.forEach(function (bloc) {
+            var nom = String(bloc.champs['Photo'] || '').trim();
+            if (!nom || photosEnAttente[nom] || /^(https?:)?\/\//.test(nom)) return;
+            if (noms.indexOf(nom) === -1) noms.push(nom);
+          });
+
+          return Promise.all(
+            noms.map(function (nom) {
+              return fetch('assets/img/' + nom, { method: 'HEAD' })
+                .then(function (reponse) {
+                  return reponse.ok ? null : nom;
+                })
+                .catch(function () {
+                  return nom;
+                });
+            })
+          ).then(function (resultats) {
+            return resultats.filter(Boolean);
+          });
+        }
+
+        function dessinerVerification() {
+          var zone = document.getElementById('verification');
+          zone.textContent = '';
+
+          var soucis = anomalies();
+
+          function afficher(tous) {
+            zone.textContent = '';
+            var encadre = document.createElement('div');
+            encadre.className = tous.length ? 'message attention' : 'message';
+
+            var titre = document.createElement('p');
+            titre.style.margin = '0 0 0.4rem';
+            titre.innerHTML = tous.length
+              ? '<strong>À vérifier avant de publier</strong> — vous pouvez publier quand même.'
+              : '<strong>Tout est en ordre.</strong>';
+            encadre.appendChild(titre);
+
+            if (tous.length) {
+              var ul = document.createElement('ul');
+              ul.style.margin = '0';
+              tous.forEach(function (texte) {
+                var li = document.createElement('li');
+                li.textContent = texte;
+                ul.appendChild(li);
+              });
+              encadre.appendChild(ul);
+            }
+
+            zone.appendChild(encadre);
+          }
+
+          afficher(soucis);
+          photosIntrouvables().then(function (manquantes) {
+            afficher(
+              soucis.concat(
+                manquantes.map(function (nom) {
+                  return 'La photo « ' + nom + ' » est introuvable sur le site.';
+                })
+              )
+            );
+          });
+        }
+
+        /* ---------------------------------------------------------
            Publication directe
 
            Avec un code d'accès GitHub enregistré une fois, la page
@@ -1422,6 +1542,7 @@
         document.getElementById('enregistrer').addEventListener('click', function () {
           zoneTexte.value = Format.ecrire(blocs);
           document.getElementById('copie-ok').textContent = '';
+          dessinerVerification();
           dessinerPublication();
           dessinerPhotos();
           if (fenetre.showModal) fenetre.showModal();
