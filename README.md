@@ -34,6 +34,9 @@ supprime un produit avec un bouton.
   fait glisser la photo au doigt ou à la souris (les flèches du clavier fonctionnent aussi), et le
   curseur « Agrandir » zoome jusqu'à trois fois. « Recentrer » remet tout à zéro. Le cadre a la
   forme réelle de l'emplacement : carré pour un produit, panoramique pour une famille.
+- **Vérification** : au moment d'enregistrer, la page liste ce qui cloche — produit sans prix,
+  sans photo, sans description ou sans rayon, famille vide, photo dont le nom ne correspond à aucun
+  fichier du site. Rien n'est bloquant : on peut publier quand même.
 - **✓ Enregistrer** puis **🚀 Publier maintenant** envoie tout — textes et photos — directement.
   La page vérifie ensuite toute seule que la mise à jour est bien en ligne et affiche
   « ✓ C'est en ligne » quand c'est le cas.
