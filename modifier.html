@@ -693,6 +693,10 @@
             fichier.accept = 'image/*';
             fichier.className = 'sr';
             fichier.id = bloc_id + '-fichier';
+            // Le bouton visible déclenche ce champ : inutile de s'y arrêter
+            // au clavier, et il lui faut malgré tout un nom.
+            fichier.tabIndex = -1;
+            fichier.setAttribute('aria-label', 'Choisir une photo');
 
             var choisir = document.createElement('button');
             choisir.type = 'button';
@@ -754,11 +758,10 @@
           var vue = document.createElement('div');
           vue.className = 'cadreur-vue';
           vue.tabIndex = 0;
-          vue.setAttribute('role', 'application');
-          vue.setAttribute(
-            'aria-label',
-            'Cadrage de la photo : faites glisser, ou utilisez les flèches du clavier'
-          );
+          vue.setAttribute('role', 'group');
+          vue.setAttribute('aria-label', 'Cadrage de la photo');
+          var idConsigne = 'a' + Math.random().toString(36).slice(2, 9);
+          vue.setAttribute('aria-describedby', idConsigne);
           vue.style.aspectRatio = String(description.ratio || 1);
 
           var image = document.createElement('img');
@@ -787,8 +790,20 @@
             bloc.champs['Cadrage'] =
               Math.round(position.x) + '% ' + Math.round(position.y) + '%';
             bloc.champs['Zoom'] = agrandissement === 1 ? '' : String(agrandissement);
+
+            if (horizontal) horizontal.champ.value = String(Math.round(position.x));
+            if (vertical) vertical.champ.value = String(Math.round(position.y));
+            if (annonce) {
+              annonce.textContent =
+                'Cadrage ' + Math.round(position.x) + ' % horizontal, ' +
+                Math.round(position.y) + ' % vertical, agrandissement ' + agrandissement;
+            }
+
             brouillonner();
           }
+
+          // Déclarés plus bas mais utilisés par appliquer() : voir ci-dessous.
+          var horizontal, vertical, annonce;
 
           function borner(valeur) {
             return Math.min(100, Math.max(0, valeur));
@@ -837,6 +852,20 @@
 
           boite.appendChild(vue);
 
+          var consigne = document.createElement('span');
+          consigne.className = 'aide';
+          consigne.id = idConsigne;
+          consigne.textContent =
+            'Faites glisser la photo, ou utilisez les flèches du clavier. ' +
+            'Les curseurs ci-dessous permettent le même réglage.';
+          boite.appendChild(consigne);
+
+          // Annonce parlée des valeurs, sinon le réglage est muet.
+          annonce = document.createElement('span');
+          annonce.className = 'sr';
+          annonce.setAttribute('aria-live', 'polite');
+          boite.appendChild(annonce);
+
           /* --- agrandissement --- */
           var ligneZoom = document.createElement('div');
           ligneZoom.className = 'cadreur-zoom';
@@ -862,6 +891,44 @@
           ligneZoom.appendChild(etiquetteZoom);
           ligneZoom.appendChild(curseur);
           boite.appendChild(ligneZoom);
+
+          function curseurPosition(intitule, axe) {
+            var ligne = document.createElement('div');
+            ligne.className = 'cadreur-zoom';
+
+            var etiquette = document.createElement('label');
+            etiquette.textContent = intitule;
+            etiquette.style.margin = '0';
+            var identifiant = 'p' + Math.random().toString(36).slice(2, 9);
+            etiquette.setAttribute('for', identifiant);
+
+            var champ = document.createElement('input');
+            champ.type = 'range';
+            champ.id = identifiant;
+            champ.min = '0';
+            champ.max = '100';
+            champ.step = '1';
+            champ.value = String(position[axe]);
+            champ.addEventListener('input', function () {
+              position[axe] = parseFloat(champ.value);
+              appliquer();
+            });
+
+            ligne.appendChild(etiquette);
+            ligne.appendChild(champ);
+            return { ligne: ligne, champ: champ };
+          }
+
+          horizontal = curseurPosition('Gauche / droite', 'x');
+          vertical = curseurPosition('Haut / bas', 'y');
+
+          var precis = document.createElement('details');
+          var resume = document.createElement('summary');
+          resume.textContent = 'Réglage précis';
+          precis.appendChild(resume);
+          precis.appendChild(horizontal.ligne);
+          precis.appendChild(vertical.ligne);
+          boite.appendChild(precis);
 
           var recentrer = bouton('Recentrer', 'b-clair', function () {
             position = { x: 50, y: 50 };
