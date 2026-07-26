@@ -316,6 +316,7 @@
 
     <main class="shell">
       <div id="chargement" class="message">Chargement du contenu…</div>
+      <nav id="sommaire" class="rangee" aria-label="Aller à une partie" style="margin: 1rem 0"></nav>
       <div id="formulaire"></div>
     </main>
 
@@ -335,8 +336,12 @@
         <p>
           Vos modifications sont prêtes. Il reste à les envoyer sur le site, en trois clics.
         </p>
+        <div id="publication-directe"></div>
+
         <div id="photos-a-envoyer"></div>
 
+        <details id="methode-longue">
+          <summary>Publier à la main (si la publication directe ne marche pas)</summary>
         <ol class="etapes">
           <li>
             <button type="button" id="copier" class="b-rose b-grand">
@@ -353,6 +358,7 @@
           </li>
         </ol>
         <p>Le site se met à jour tout seul une à deux minutes plus tard.</p>
+        </details>
 
         <details>
           <summary>Voir le texte (pas nécessaire)</summary>
@@ -363,6 +369,54 @@
         <p class="rangee" style="margin-top: 1.2rem">
           <button type="button" id="fermer" class="b-clair b-grand">Fermer</button>
         </p>
+      </div>
+    </dialog>
+
+    <dialog id="fenetre-code">
+      <div class="fenetre">
+        <h2>Publier en un clic</h2>
+        <p>
+          À régler <strong>une seule fois</strong>. Ensuite, le bouton « Publier maintenant »
+          enverra tout — textes et photos — sans passer par aucune autre page.
+        </p>
+
+        <p>
+          Il faut un « code d’accès » que GitHub fournit. C’est une longue suite de lettres et de
+          chiffres, à créer une fois puis à coller ici.
+        </p>
+
+        <ol class="etapes">
+          <li>
+            <a class="b-rose" style="text-decoration: none; display: inline-block"
+               href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener">
+              Ouvrir la page de création du code
+            </a>
+          </li>
+          <li>Donner un nom, par exemple <strong>Modifier mon site</strong>.</li>
+          <li>
+            À « Repository access », choisir <strong>Only select repositories</strong> puis
+            <strong>Teambull31/fran-oise</strong>.
+          </li>
+          <li>
+            À « Permissions » → « Repository permissions » → <strong>Contents</strong>, choisir
+            <strong>Read and write</strong>.
+          </li>
+          <li>Cliquer sur <strong>Generate token</strong>, puis copier le code affiché.</li>
+        </ol>
+
+        <label for="champ-code">Coller le code ici</label>
+        <span class="aide">
+          Ce code permet de modifier le site : gardez-le pour vous. Il reste sur cet ordinateur et
+          n’est envoyé qu’à GitHub.
+        </span>
+        <input type="text" id="champ-code" autocomplete="off" spellcheck="false" />
+
+        <p class="rangee" style="margin-top: 1.2rem">
+          <button type="button" id="verifier-code" class="b-vert b-grand">Vérifier et garder</button>
+          <button type="button" id="oublier-code" class="b-rouge">Oublier ce code</button>
+          <button type="button" id="fermer-code" class="b-clair">Fermer</button>
+        </p>
+        <p id="etat-code" style="font-weight: 700"></p>
       </div>
     </dialog>
 
@@ -379,6 +433,7 @@
 
         var blocs = [];
         var formulaire = document.getElementById('formulaire');
+        var sommaire = document.getElementById('sommaire');
         var etat = document.getElementById('etat');
 
         /* ----- photos choisies mais pas encore envoyées ----- */
@@ -676,13 +731,24 @@
 
         function dessiner() {
           formulaire.textContent = '';
+          sommaire.textContent = '';
 
-          Format.BLOCS.forEach(function (modele) {
+          Format.blocsPourEditeur().forEach(function (modele) {
+            var raccourci = document.createElement('a');
+            raccourci.href = '#section-' + modele.type;
+            raccourci.className = 'b-clair';
+            raccourci.style.cssText = 'text-decoration:none;display:inline-block;font-size:0.95rem';
+            raccourci.textContent = modele.titre;
+            sommaire.appendChild(raccourci);
+          });
+
+          Format.blocsPourEditeur().forEach(function (modele) {
             var concernes = blocs.filter(function (bloc) {
               return bloc.type === modele.type;
             });
 
             var titre = document.createElement('h2');
+            titre.id = 'section-' + modele.type;
             titre.textContent = modele.titre;
             formulaire.appendChild(titre);
 
@@ -812,9 +878,232 @@
           zone.appendChild(encadre);
         }
 
+        /* ---------------------------------------------------------
+           Publication directe
+
+           Avec un code d'accès GitHub enregistré une fois, la page
+           envoie elle-même le texte et les photos : plus de copier-
+           coller, plus de dépôt de fichiers à la main.
+           --------------------------------------------------------- */
+
+        var CLE_CODE = 'couture-fil:code';
+        var DEPOT = 'Teambull31/fran-oise';
+        var BRANCHE = 'main';
+
+        function code() {
+          try {
+            return localStorage.getItem(CLE_CODE) || '';
+          } catch (erreur) {
+            return '';
+          }
+        }
+
+        function entetes() {
+          return {
+            Authorization: 'Bearer ' + code(),
+            Accept: 'application/vnd.github+json',
+            'X-GitHub-Api-Version': '2022-11-28'
+          };
+        }
+
+        /** Encodage base64 d'un texte accentué (btoa ne suffit pas). */
+        function enBase64(texte) {
+          var octets = new TextEncoder().encode(texte);
+          var binaire = '';
+          octets.forEach(function (octet) {
+            binaire += String.fromCharCode(octet);
+          });
+          return btoa(binaire);
+        }
+
+        function adresseFichier(chemin) {
+          return 'https://api.github.com/repos/' + DEPOT + '/contents/' + chemin;
+        }
+
+        /** Récupère l'empreinte du fichier existant (nécessaire pour le remplacer). */
+        function empreinte(chemin) {
+          return fetch(adresseFichier(chemin) + '?ref=' + BRANCHE, { headers: entetes() })
+            .then(function (reponse) {
+              if (reponse.status === 404) return null;
+              if (!reponse.ok) throw reponse;
+              return reponse.json();
+            })
+            .then(function (donnees) {
+              return donnees ? donnees.sha : null;
+            });
+        }
+
+        function envoyer(chemin, contenuBase64, message) {
+          return empreinte(chemin).then(function (sha) {
+            var corps = { message: message, content: contenuBase64, branch: BRANCHE };
+            if (sha) corps.sha = sha;
+            return fetch(adresseFichier(chemin), {
+              method: 'PUT',
+              headers: entetes(),
+              body: JSON.stringify(corps)
+            }).then(function (reponse) {
+              if (!reponse.ok) throw reponse;
+              return reponse.json();
+            });
+          });
+        }
+
+        /** Message compréhensible à partir d'une réponse GitHub. */
+        function expliquer(erreur) {
+          var statut = erreur && erreur.status;
+          if (statut === 401) return 'Le code d’accès n’est pas reconnu. Il faut le refaire.';
+          if (statut === 403 || statut === 404)
+            return 'Ce code n’a pas le droit de modifier le site. Vérifiez « Contents : Read and write ».';
+          if (statut === 409)
+            return 'Le site a changé entre-temps. Rechargez la page et recommencez.';
+          return 'L’envoi n’a pas fonctionné. Vérifiez la connexion internet et réessayez.';
+        }
+
+        function dessinerPublication() {
+          var zone = document.getElementById('publication-directe');
+          var methodeLongue = document.getElementById('methode-longue');
+          zone.textContent = '';
+
+          if (!code()) {
+            methodeLongue.open = true;
+            var invite = document.createElement('p');
+            invite.appendChild(
+              bouton('⚡ Publier en un clic (à régler une fois)', 'b-clair', function () {
+                ouvrirFenetre(fenetreCode);
+              })
+            );
+            zone.appendChild(invite);
+            return;
+          }
+
+          methodeLongue.open = false;
+
+          var publier = bouton('🚀 Publier maintenant', 'b-vert b-grand', function () {
+            publier.disabled = true;
+            var journal = document.getElementById('journal-publication');
+            var photos = photosUtilisees();
+            var etapes = photos.map(function (nom) {
+              return function () {
+                journal.textContent = 'Envoi de la photo ' + nom + '…';
+                return envoyer(
+                  'assets/img/' + nom,
+                  photosEnAttente[nom].split(',')[1],
+                  'Ajoute la photo ' + nom
+                );
+              };
+            });
+
+            etapes.push(function () {
+              journal.textContent = 'Envoi des textes…';
+              return envoyer(
+                'contenu.txt',
+                enBase64(Format.ecrire(blocs)),
+                'Met à jour le contenu du site'
+              );
+            });
+
+            etapes
+              .reduce(function (chaine, etape) {
+                return chaine.then(etape);
+              }, Promise.resolve())
+              .then(function () {
+                photos.forEach(function (nom) {
+                  delete photosEnAttente[nom];
+                });
+                garderPhotos();
+                try {
+                  localStorage.removeItem(BROUILLON);
+                } catch (erreur) {
+                  /* sans importance */
+                }
+                journal.innerHTML =
+                  '<span style="color:var(--vert)">✓ C’est publié.</span> Le site se met à jour ' +
+                  'd’ici une à deux minutes. <a href="index.html">Voir le site</a>';
+                dessinerPhotos();
+              })
+              .catch(function (erreur) {
+                publier.disabled = false;
+                journal.innerHTML = '<span style="color:var(--rouge)">' + expliquer(erreur) + '</span>';
+              });
+          });
+
+          var rangee = document.createElement('p');
+          rangee.className = 'rangee';
+          rangee.appendChild(publier);
+          rangee.appendChild(
+            bouton('Changer le code d’accès', 'b-clair', function () {
+              ouvrirFenetre(fenetreCode);
+            })
+          );
+          zone.appendChild(rangee);
+
+          var journal = document.createElement('p');
+          journal.id = 'journal-publication';
+          journal.style.fontWeight = '700';
+          zone.appendChild(journal);
+        }
+
+        /* ----- fenêtre du code d'accès ----- */
+
+        var fenetreCode = document.getElementById('fenetre-code');
+        var champCode = document.getElementById('champ-code');
+        var etatCode = document.getElementById('etat-code');
+
+        function ouvrirFenetre(cible) {
+          if (cible.showModal) cible.showModal();
+          else cible.setAttribute('open', '');
+        }
+
+        function fermerFenetre(cible) {
+          if (cible.close) cible.close();
+          else cible.removeAttribute('open');
+        }
+
+        document.getElementById('fermer-code').addEventListener('click', function () {
+          fermerFenetre(fenetreCode);
+        });
+
+        document.getElementById('oublier-code').addEventListener('click', function () {
+          try {
+            localStorage.removeItem(CLE_CODE);
+          } catch (erreur) {
+            /* sans importance */
+          }
+          champCode.value = '';
+          etatCode.textContent = 'Code oublié.';
+          dessinerPublication();
+        });
+
+        document.getElementById('verifier-code').addEventListener('click', function () {
+          var saisi = champCode.value.trim();
+          if (!saisi) {
+            etatCode.textContent = 'Collez d’abord le code.';
+            return;
+          }
+          etatCode.textContent = 'Vérification…';
+          try {
+            localStorage.setItem(CLE_CODE, saisi);
+          } catch (erreur) {
+            /* le code restera valable le temps de l'onglet */
+          }
+          empreinte('contenu.txt')
+            .then(function () {
+              etatCode.innerHTML = '<span style="color:var(--vert)">✓ Le code fonctionne.</span>';
+              champCode.value = '';
+              dessinerPublication();
+              setTimeout(function () {
+                fermerFenetre(fenetreCode);
+              }, 900);
+            })
+            .catch(function (erreur) {
+              etatCode.innerHTML = '<span style="color:var(--rouge)">' + expliquer(erreur) + '</span>';
+            });
+        });
+
         document.getElementById('enregistrer').addEventListener('click', function () {
           zoneTexte.value = Format.ecrire(blocs);
           document.getElementById('copie-ok').textContent = '';
+          dessinerPublication();
           dessinerPhotos();
           if (fenetre.showModal) fenetre.showModal();
           else fenetre.setAttribute('open', '');

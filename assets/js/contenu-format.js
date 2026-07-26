@@ -27,6 +27,7 @@
   var BLOCS = [
     {
       type: 'boutique',
+      rangEditeur: 6,
       etiquette: 'BOUTIQUE',
       titre: 'Ma boutique',
       unique: true,
@@ -50,6 +51,7 @@
     },
     {
       type: 'chiffre',
+      rangEditeur: 5,
       etiquette: 'CHIFFRE',
       titre: 'Les arguments d’accueil',
       singulier: 'argument',
@@ -60,6 +62,7 @@
     },
     {
       type: 'famille',
+      rangEditeur: 3,
       etiquette: 'FAMILLE',
       titre: 'Les familles de créations',
       singulier: 'famille',
@@ -73,6 +76,7 @@
     },
     {
       type: 'produit',
+      rangEditeur: 1,
       etiquette: 'PRODUIT',
       titre: 'Mes produits',
       singulier: 'produit',
@@ -88,6 +92,7 @@
     },
     {
       type: 'service',
+      rangEditeur: 2,
       etiquette: 'SERVICE',
       titre: 'Le sur-mesure',
       singulier: 'prestation',
@@ -100,6 +105,7 @@
     },
     {
       type: 'atelier',
+      rangEditeur: 4,
       etiquette: 'ATELIER',
       titre: 'L’atelier',
       unique: true,
@@ -273,8 +279,20 @@
     return morceaux.join('\n') + '\n';
   }
 
+  /**
+   * Ordre d'affichage dans le formulaire de modification : ce qui
+   * change le plus souvent (les produits) arrive en premier. L'ordre
+   * du fichier, lui, reste celui de BLOCS.
+   */
+  function blocsPourEditeur() {
+    return BLOCS.slice().sort(function (a, b) {
+      return (a.rangEditeur || 99) - (b.rangEditeur || 99);
+    });
+  }
+
   window.ContenuFormat = {
     BLOCS: BLOCS,
+    blocsPourEditeur: blocsPourEditeur,
     normalise: normalise,
     description: description,
     lire: lire,

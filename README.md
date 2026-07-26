@@ -28,9 +28,25 @@ supprime un produit avec un bouton.
   encore envoyées. Un bandeau vert rappelle que rien n'est publié. Le vrai site n'est pas touché.
 - **📷 Choisir une photo…** prend une photo de l'ordinateur ou du téléphone et la réduit
   automatiquement (900 px, quelques dizaines de Ko) : aucun logiciel de retouche n'est nécessaire.
-- **✓ Enregistrer** affiche les deux clics restants : un bouton copie les modifications *et* ouvre
-  la bonne page GitHub, il reste à coller et valider. Les nouvelles photos sont listées à part,
-  avec leur bouton de téléchargement et le lien vers la page où les déposer.
+- **✓ Enregistrer** puis **🚀 Publier maintenant** envoie tout — textes et photos — directement.
+  Un seul clic, sans quitter la page.
+
+Les sections sont classées par fréquence de modification : les produits d'abord, le nom de la
+boutique en dernier. Un sommaire en haut permet de sauter directement à une partie.
+
+#### Régler la publication en un clic (une seule fois)
+
+La publication directe a besoin d'un jeton GitHub, à créer une fois puis à coller dans la page
+(bouton « Publier en un clic (à régler une fois) ») :
+
+1. <https://github.com/settings/personal-access-tokens/new>
+2. Repository access → **Only select repositories** → `Teambull31/fran-oise`
+3. Permissions → Repository permissions → **Contents : Read and write**
+
+Le jeton reste dans le navigateur de la personne (`localStorage`) et n'est envoyé qu'à l'API
+GitHub. Il donne le droit d'écrire dans ce dépôt : il ne doit pas être partagé, et le bouton
+« Oublier ce code » l'efface. Tant qu'aucun jeton n'est réglé, la page propose la méthode manuelle
+(copier / coller sur GitHub), qui reste disponible en repli.
 
 Aucun code n'est visible, et le travail en cours est gardé automatiquement sur l'ordinateur tant
 qu'il n'est pas enregistré.
