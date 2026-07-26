@@ -133,16 +133,26 @@
         outline-offset: 2px;
       }
 
+      /* Cible tactile confortable : toute la ligne coche la case. */
       .oui-non {
         display: flex;
         align-items: center;
-        gap: 0.6rem;
+        gap: 0.7rem;
         margin-top: 0.4rem;
+        min-height: 46px;
+        padding: 0.2rem 0.5rem;
+        border-radius: 10px;
+        cursor: pointer;
+      }
+
+      .oui-non:hover {
+        background: #fff0f6;
       }
 
       .oui-non input {
-        width: 26px;
-        height: 26px;
+        width: 30px;
+        height: 30px;
+        flex: none;
       }
 
       .photo-ligne {
@@ -161,13 +171,23 @@
         flex: none;
       }
 
-      button {
+      /* Les liens qui se comportent comme des boutons doivent avoir la
+         même taille de cible que les vrais boutons. */
+      button,
+      a.b-clair,
+      a.b-rose,
+      a.b-vert {
         font: inherit;
         font-weight: 700;
         cursor: pointer;
         border-radius: 999px;
         border: 2px solid transparent;
         padding: 0.6rem 1.1rem;
+        min-height: 46px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        text-decoration: none;
       }
 
       .b-clair {
@@ -322,6 +342,7 @@
 
     <div class="barre">
       <div class="shell">
+        <button type="button" id="annuler" class="b-clair b-grand" disabled>↶ Annuler</button>
         <button type="button" id="apercu" class="b-rose b-grand">👁 Voir le résultat</button>
         <button type="button" id="enregistrer" class="b-vert b-grand">
           ✓ Enregistrer mes modifications
@@ -563,7 +584,9 @@
           });
 
           if (description.type === 'oui-non') {
-            var ligne = document.createElement('div');
+            // Le champ est à l'intérieur du label : l'association est
+            // implicite, sans « for » qui provoquerait un double clic.
+            var ligne = document.createElement('label');
             ligne.className = 'oui-non';
             ligne.appendChild(saisie);
             var texte = document.createElement('span');
@@ -682,7 +705,8 @@
             tete.appendChild(
               bouton('Supprimer', 'b-rouge', function () {
                 var nom = bloc.champs['Nom'] || bloc.champs['Titre'] || 'cet élément';
-                if (window.confirm('Supprimer « ' + nom + ' » ?\n\nRien n’est perdu tant que vous n’avez pas enregistré.')) {
+                if (window.confirm('Supprimer « ' + nom + ' » ?\n\nLe bouton « Annuler » permet de revenir en arrière.')) {
+                  memoriser('suppression de ' + nom);
                   blocs.splice(blocs.indexOf(bloc), 1);
                   dessiner();
                   brouillonner();
@@ -717,6 +741,7 @@
         }
 
         function echanger(type, de, vers) {
+          memoriser('déplacement');
           var concernes = blocs.filter(function (bloc) {
             return bloc.type === type;
           });
@@ -764,6 +789,7 @@
 
             if (!modele.unique) {
               var ajouter = bouton('+ Ajouter un(e) ' + modele.singulier, 'b-rose b-grand', function () {
+                memoriser('ajout d’un(e) ' + modele.singulier);
                 blocs.push({ type: modele.type, champs: {} });
                 dessiner();
                 brouillonner();
@@ -776,6 +802,32 @@
             }
           });
         }
+
+        /* ----- annulation -----
+           Les actions qui font peur (supprimer, déplacer, ajouter)
+           gardent une photographie de l'état précédent. */
+
+        var historique = [];
+        var boutonAnnuler = document.getElementById('annuler');
+
+        function memoriser(intitule) {
+          historique.push({ intitule: intitule, etat: JSON.stringify(blocs) });
+          if (historique.length > 30) historique.shift();
+          boutonAnnuler.disabled = false;
+          boutonAnnuler.textContent = '↶ Annuler : ' + intitule;
+        }
+
+        boutonAnnuler.addEventListener('click', function () {
+          var pas = historique.pop();
+          if (!pas) return;
+          blocs = JSON.parse(pas.etat);
+          dessiner();
+          brouillonner();
+          var precedent = historique[historique.length - 1];
+          boutonAnnuler.disabled = !precedent;
+          boutonAnnuler.textContent = precedent ? '↶ Annuler : ' + precedent.intitule : '↶ Annuler';
+          etat.textContent = 'Action annulée';
+        });
 
         /* ----- brouillon automatique ----- */
 
@@ -959,6 +1011,57 @@
           return 'L’envoi n’a pas fonctionné. Vérifiez la connexion internet et réessayez.';
         }
 
+        /**
+         * Après l'envoi, le site met une à deux minutes à se mettre à
+         * jour. On va vérifier tout seul jusqu'à ce que le texte publié
+         * corresponde, pour ne pas laisser un simple « envoyé » sans
+         * preuve que c'est bien en ligne.
+         */
+        function surveillerMiseEnLigne(journal, attendu) {
+          var debut = Date.now();
+          var limite = 4 * 60 * 1000;
+
+          function dire(html) {
+            journal.innerHTML = html;
+          }
+
+          function regarder() {
+            fetch('contenu.txt?t=' + Date.now(), { cache: 'no-store' })
+              .then(function (reponse) {
+                return reponse.ok ? reponse.text() : '';
+              })
+              .then(function (enLigne) {
+                if (enLigne.trim() === attendu.trim()) {
+                  dire(
+                    '<span style="color:var(--vert)">✓ C’est en ligne.</span> ' +
+                      '<a href="index.html">Voir le site</a>'
+                  );
+                  return;
+                }
+                if (Date.now() - debut > limite) {
+                  dire(
+                    '<span style="color:var(--vert)">✓ Envoyé.</span> Le site met un peu plus ' +
+                      'longtemps que d’habitude à se mettre à jour. ' +
+                      '<a href="index.html">Voir le site</a>'
+                  );
+                  return;
+                }
+                var secondes = Math.round((Date.now() - debut) / 1000);
+                dire('✓ Envoyé. Mise en ligne en cours… (' + secondes + ' s)');
+                setTimeout(regarder, 10000);
+              })
+              .catch(function () {
+                dire(
+                  '<span style="color:var(--vert)">✓ Envoyé.</span> ' +
+                    '<a href="index.html">Voir le site</a>'
+                );
+              });
+          }
+
+          dire('✓ Envoyé. Mise en ligne en cours…');
+          setTimeout(regarder, 4000);
+        }
+
         function dessinerPublication() {
           var zone = document.getElementById('publication-directe');
           var methodeLongue = document.getElementById('methode-longue');
@@ -1016,10 +1119,9 @@
                 } catch (erreur) {
                   /* sans importance */
                 }
-                journal.innerHTML =
-                  '<span style="color:var(--vert)">✓ C’est publié.</span> Le site se met à jour ' +
-                  'd’ici une à deux minutes. <a href="index.html">Voir le site</a>';
+                journal.textContent = '';
                 dessinerPhotos();
+                surveillerMiseEnLigne(journal, Format.ecrire(blocs));
               })
               .catch(function (erreur) {
                 publier.disabled = false;
@@ -1143,6 +1245,24 @@
 
         /* ----- démarrage ----- */
 
+        /**
+         * La barre d'enregistrement est fixée en bas et sa hauteur varie
+         * (les boutons passent à la ligne sur petit écran). On réserve
+         * exactement la place qu'elle occupe, sinon elle recouvre le
+         * dernier champ du formulaire.
+         */
+        function reserverLaPlaceDeLaBarre() {
+          var barre = document.querySelector('.barre');
+          if (!barre) return;
+          var hauteur = barre.getBoundingClientRect().height + 32;
+          document.querySelector('main').style.paddingBottom = hauteur + 'px';
+          // Sans cela, passer d'un champ à l'autre au clavier amène le
+          // champ juste sous la barre, donc invisible.
+          document.documentElement.style.scrollPaddingBottom = hauteur + 'px';
+        }
+
+        window.addEventListener('resize', reserverLaPlaceDeLaBarre);
+
         function demarrer(texte, brouillon) {
           blocs = Format.lire(texte);
           document.getElementById('chargement').remove();
@@ -1168,6 +1288,7 @@
           }
 
           dessiner();
+          reserverLaPlaceDeLaBarre();
         }
 
         var brouillon = null;
