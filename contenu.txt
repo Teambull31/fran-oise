@@ -2,55 +2,40 @@
 #   LE CONTENU DU SITE COUTURE & FIL
 # ============================================================
 #
-#   Tout ce qui s'affiche sur le site est écrit ici.
+#   Tout ce qui s’affiche sur le site est écrit ici.
 #
-#   COMMENT FAIRE :
-#     - Modifiez le texte qui se trouve APRÈS les deux-points.
-#     - Ne changez pas les mots écrits avant les deux-points.
-#     - Les lignes qui commencent par un # sont des notes :
-#       elles ne s'affichent jamais sur le site.
-#     - Laisser une ligne vide ne pose aucun problème.
-#     - Si vous laissez un champ vide, il disparaît simplement
-#       du site. Rien ne se casse.
+#   Le plus simple est de passer par la page « modifier » du
+#   site, qui remplit ce fichier toute seule.
 #
-#   POUR AJOUTER UN PRODUIT :
-#     Recopiez tout un bloc [PRODUIT] plus bas et changez le
-#     texte. L'ordre des blocs = l'ordre d'affichage.
-#
-#   POUR AJOUTER UNE PHOTO :
-#     Envoyez la photo dans le dossier assets/img, puis écrivez
-#     son nom sur la ligne « Photo ». Exemple : Photo: lapin.jpg
+#   Si vous modifiez ce fichier à la main :
+#     - changez le texte APRÈS les deux-points ;
+#     - ne changez pas les mots AVANT les deux-points ;
+#     - les lignes commençant par # sont des notes ;
+#     - un champ laissé vide disparaît simplement du site.
 #
 # ============================================================
 
 
-[BOUTIQUE]
+# --- Ma boutique ---
 
+[BOUTIQUE]
 Nom: Couture & Fil
 Sous-titre: Fait main à Monflanquin
 Grand titre: Peluches au crochet, doudous et bijoux faits main
 Mots en couleur: faits main
-Phrase d'accueil: Bienvenue dans mon univers doux et coloré ! Je suis Françoise, créatrice de peluches et amigurumis faits main au crochet, installée à Monflanquin, en Lot-et-Garonne.
+Phrase d’accueil: Bienvenue dans mon univers doux et coloré ! Je suis Françoise, créatrice de peluches et amigurumis faits main au crochet, installée à Monflanquin, en Lot-et-Garonne.
 Description: Créations de peluches & amigurumi au crochet et en tissu, bijoux et accessoires faits main en pièces uniques
-
 Ville: Monflanquin
-Departement: Lot-et-Garonne
-
-# Laissez vide ce que vous ne voulez pas afficher.
+Département: Lot-et-Garonne
 Adresse:
 E-mail:
 Téléphone:
 Facebook:
 Instagram:
-
 Boutique en ligne: https://couturefil.sumupstore.com/
-
-# Message d'annonce en haut du site. Laissez vide pour ne rien afficher.
-# Exemple : Atelier fermé du 1er au 15 août.
 Bandeau en haut:
 
-
-# --- Les trois petits arguments sous la photo d'accueil ---
+# --- Les arguments d’accueil ---
 
 [CHIFFRE]
 Gros texte: 100 %
@@ -64,9 +49,7 @@ Petit texte: jamais deux fois la même
 Gros texte: Monflanquin
 Petit texte: atelier en Lot-et-Garonne
 
-
-# --- Les grandes familles de créations (page d'accueil) ---
-# « Rayon » doit être écrit pareil que dans les produits plus bas.
+# --- Les familles de créations ---
 
 [FAMILLE]
 Titre: Peluches & doudous
@@ -89,19 +72,16 @@ Photo: cat-zero-dechet.avif
 Cadrage: bas
 Texte: Lingettes et petits accessoires lavables cousus dans des cotons imprimés.
 
-
-# ============================================================
-#   LES PRODUITS
-#   Le « Rayon » crée tout seul le bouton de tri de la
-#   boutique. Écrivez-le toujours de la même façon.
-# ============================================================
+# --- Mes produits ---
 
 [PRODUIT]
 Nom: 🐰 Jean – Peluche lapin au crochet, fait main
 Prix: 54
 Rayon: Peluches & doudous
 Photo: jean.avif
-Etiquette: Grand format
+Étiquette: Grand format
+Autres couleurs:
+Lien boutique:
 Description: Grand lapin crocheté dans un fil chiné, col volanté écru. Une pièce unique, entièrement montée à la main.
 
 [PRODUIT]
@@ -109,7 +89,9 @@ Nom: 🐰 Justin – Peluche lapin amigurumi au crochet
 Prix: 28
 Rayon: Peluches & doudous
 Photo: justin.avif
-Etiquette:
+Étiquette:
+Autres couleurs:
+Lien boutique:
 Description: Lapin amigurumi bleu ciel au museau brodé, finition douce et col en dentelle crochetée.
 
 [PRODUIT]
@@ -117,7 +99,9 @@ Nom: 🐰 Lucien – Peluche lapin amigurumi au crochet
 Prix: 28
 Rayon: Peluches & doudous
 Photo: lucien.avif
-Etiquette:
+Étiquette:
+Autres couleurs:
+Lien boutique:
 Description: Lapin amigurumi écru et son grand nœud blanc, tout en rondeur. Idéal pour une naissance.
 
 [PRODUIT]
@@ -125,7 +109,9 @@ Nom: Polo, le lapin au crochet
 Prix: 21
 Rayon: Peluches & doudous
 Photo: polo.avif
-Etiquette:
+Étiquette:
+Autres couleurs:
+Lien boutique:
 Description: Petit lapin blanc au pull vert et à la besace, format nomade qui tient dans la main.
 
 [PRODUIT]
@@ -133,7 +119,9 @@ Nom: 🧸 Rubis – L’Ourson Rouge au Grand Cœur 🧸
 Prix: 28
 Rayon: Peluches & doudous
 Photo: rubis.avif
-Etiquette: Coup de cœur
+Étiquette: Coup de cœur
+Autres couleurs:
+Lien boutique:
 Description: Ourson rouge vif au nœud papillon blanc, crocheté serré pour un câlin qui dure.
 
 [PRODUIT]
@@ -141,16 +129,19 @@ Nom: 🌼 Boucles d’oreilles “Bleuet” 🌼
 Prix: 19
 Rayon: Bijoux
 Photo: bleuet.avif
+Étiquette:
 Autres couleurs: oui
+Lien boutique:
 Description: Fleurs crochetées en fil bleu ciel, cœur de perle nacrée, montées sur crochets argentés.
 
 [PRODUIT]
 Nom: 💙 Boucles d’oreilles “Bleu Nuit” 💙
 Prix: 19
 Rayon: Bijoux
-# La photo de ce modèle manque : le site affiche « Photo à venir ».
 Photo:
+Étiquette:
 Autres couleurs: oui
+Lien boutique:
 Description: Le même modèle fleuri, décliné dans un bleu profond. Légères et faites une par une.
 
 [PRODUIT]
@@ -158,13 +149,12 @@ Nom: 🩷 Boucles d’oreilles “Fleur Rose” 🩷
 Prix: 19
 Rayon: Bijoux
 Photo: fleur-rose.avif
+Étiquette:
 Autres couleurs: oui
+Lien boutique:
 Description: Fleurs au crochet rose vif et perle claire au centre. Se portent aussi bien l’été que l’hiver.
 
-
-# ============================================================
-#   LA PARTIE « SUR MESURE »
-# ============================================================
+# --- Le sur-mesure ---
 
 [SERVICE]
 Titre: Commande personnalisée
@@ -190,20 +180,14 @@ Point: Crochet fin et perles
 Point: Crochets argentés
 Point: Autres coloris sur demande
 
-
-# ============================================================
-#   LA PARTIE « L'ATELIER »
-# ============================================================
+# --- L’atelier ---
 
 [ATELIER]
-
 Titre: L’atelier de Françoise
 Photo: atelier.avif
 Texte de la photo: Créations de l’atelier : ours en tissu fleuri et poupées au crochet
-
 Paragraphe: Couture & Fil, c’est un atelier à taille humaine à Monflanquin, en Lot-et-Garonne. Françoise y crochète et y coud chaque pièce à la main, une par une.
 Paragraphe: Peluches et amigurumis au crochet, doudous en tissu, bijoux fleuris, accessoires zéro déchet : les créations se font sans série, avec des matières choisies pour durer entre les mains d’un enfant comme dans une chambre d’adulte.
-
 Savoir-faire: Crochet et amigurumi faits main
 Savoir-faire: Couture en tissus imprimés
 Savoir-faire: Matières de qualité, pièces uniques
