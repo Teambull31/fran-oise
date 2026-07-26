@@ -34,6 +34,9 @@ supprime un produit avec un bouton.
   fait glisser la photo au doigt ou à la souris (les flèches du clavier fonctionnent aussi), et le
   curseur « Agrandir » zoome jusqu'à trois fois. « Recentrer » remet tout à zéro. Le cadre a la
   forme réelle de l'emplacement : carré pour un produit, panoramique pour une famille.
+  Le réglage se fait aussi entièrement au clavier : les flèches déplacent la photo, et le volet
+  « Réglage précis » offre deux curseurs (gauche/droite, haut/bas) pour ceux qui ne peuvent pas
+  faire glisser. Les valeurs sont annoncées aux lecteurs d'écran.
 - **Vérification** : au moment d'enregistrer, la page liste ce qui cloche — produit sans prix,
   sans photo, sans description ou sans rayon, famille vide, photo dont le nom ne correspond à aucun
   fichier du site. Rien n'est bloquant : on peut publier quand même.
