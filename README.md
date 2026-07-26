@@ -149,6 +149,20 @@ fusionné dans `main` est publié sur
 commande de build, répertoire racine `./`. Le fichier `vercel.json` fournit déjà les en-têtes de
 cache et de sécurité. Chaque push redéploie ensuite automatiquement.
 
+## Contrastes
+
+Les couleurs ont été mesurées selon le critère WCAG AA (4,5:1 en texte courant, 3:1 en grand
+texte). Deux jeux de teintes coexistent volontairement :
+
+- `--grad-warm` (orange vif → rose vif) reste pour la décoration : taches floues de l'accueil,
+  liseré du pied de page, bordure des cartes « sur mesure ». Aucun texte ne repose dessus.
+- `--grad-warm-texte` (orange profond → framboise) porte tout ce qui contient du texte : boutons
+  principaux, bandeau d'annonce, pastille du panier, mots en couleur du grand titre. Le dégradé vif
+  n'offrait que **2,35:1** avec du blanc ; celui-ci donne **5,18:1 à 7,65:1**.
+
+Même logique pour `--sky-text` et `--mint-text`, versions assombries du bleu et du menthe destinées
+au petit texte.
+
 ## Origine des visuels
 
 Les photos et le logo proviennent de la boutique Couture & Fil et appartiennent à l'atelier. Deux

@@ -30,6 +30,9 @@
   --mint-text: #067a64;
 
   --grad-warm: linear-gradient(135deg, #ff8a3d 0%, #ff3d8b 100%);
+  /* Le dégradé vif ne donne que 2,35:1 avec du texte blanc. Cette version
+     assombrie (5,18:1 à 7,65:1) sert partout où du texte repose dessus. */
+  --grad-warm-texte: linear-gradient(135deg, #c2410c 0%, #a1105c 100%);
   --grad-cool: linear-gradient(135deg, #35c8e8 0%, #7b6cf6 100%);
   /* Fond des sections teintées : pêche → rose → bleu très clairs. */
   --grad-soft: linear-gradient(135deg, #fff0e0 0%, #ffe8f3 48%, #eaf6ff 100%);
@@ -187,7 +190,7 @@ textarea {
 /* ---------- boutons ---------- */
 
 .btn {
-  --btn-bg: var(--grad-warm);
+  --btn-bg: var(--grad-warm-texte);
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -248,7 +251,7 @@ textarea {
 /* ---------- bandeau d’annonce + header ---------- */
 
 .demo-banner {
-  background: var(--grad-warm);
+  background: var(--grad-warm-texte);
   color: #fff;
   text-align: center;
   font-size: 0.85rem;
@@ -365,7 +368,7 @@ textarea {
   height: 21px;
   padding: 0 5px;
   border-radius: 999px;
-  background: var(--grad-warm);
+  background: var(--grad-warm-texte);
   color: #fff;
   font-size: 0.72rem;
   font-weight: 700;
@@ -505,7 +508,7 @@ textarea {
 
 .hero-copy h1 em {
   font-style: normal;
-  background: var(--grad-warm);
+  background: var(--grad-warm-texte);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
@@ -711,7 +714,7 @@ textarea {
 }
 
 .filter[aria-pressed="true"] {
-  background: var(--grad-warm);
+  background: var(--grad-warm-texte);
   color: #fff;
   box-shadow: 0 8px 18px rgba(224, 42, 123, 0.3);
 }
