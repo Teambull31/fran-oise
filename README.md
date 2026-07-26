@@ -18,6 +18,24 @@ renvoie vers la boutique pour le règlement sécurisé.
 - un bandeau d'annonce facultatif en haut de page (« Atelier fermé du 1er au 15 août ») ;
 - aucune dépendance, aucun build, aucune requête vers un service externe.
 
+## Application pour téléphone
+
+Le site est **installable** : sur Android, le navigateur propose lui-même l'installation (le bouton
+« 📱 Installer l'application » apparaît en bas de page) ; sur iPhone et iPad, le même bouton
+explique les deux gestes à faire (Partager → « Sur l'écran d'accueil »).
+
+Une fois installée, l'application a son icône sur l'écran d'accueil, s'ouvre en plein écran sans
+barre d'adresse, et **fonctionne sans réseau** : textes et photos déjà consultés restent
+consultables. Vérifié en coupant la connexion — les huit fiches et leurs photos s'affichent encore.
+
+Ce n'est pas une application de magasin d'applications : pas de compte développeur, pas de frais
+annuels, pas de validation à chaque modification. C'est le site lui-même, et il se met à jour tout
+seul à chaque publication.
+
+Deux stratégies de cache cohabitent dans `sw.js` : le **réseau d'abord** pour les textes (un prix
+modifié ne doit jamais rester périmé) et le **cache d'abord** pour les images, styles et scripts.
+Après une modification du code du site, incrémenter `VERSION` en tête de `sw.js`.
+
 ## Modifier le contenu
 
 ### La façon simple : la page « Modifier »
@@ -126,6 +144,8 @@ Aucune installation n'est nécessaire : le site est un ensemble de fichiers stat
 
 ```
 index.html               structure de la page
+manifest.webmanifest     déclaration de l'application installable
+sw.js                    fonctionnement hors connexion
 contenu.txt              CONTENU — le seul fichier à éditer au quotidien
 modifier.html            formulaire de modification et publication
 assets/css/styles.css    design (couleurs, composants, responsive)
