@@ -217,6 +217,6 @@ window.CONTENT = {
     ]
   },
 
-  demoNotice:
-    'Démonstration — le panier ne déclenche aucun paiement. La vraie boutique reste sur SumUp.'
+  // Bandeau d'annonce en haut du site. Vide = masqué.
+  demoNotice: ''
 };

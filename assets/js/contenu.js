@@ -120,6 +120,7 @@
           image: photo(p['Photo']),
           badge: String(p['Étiquette'] || '').trim(),
           variants: vraiFaux(p['Autres couleurs']),
+          shopUrl: String(p['Lien boutique'] || '').trim(),
           description: String(p['Description'] || '').trim()
         };
       });

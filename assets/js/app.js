@@ -31,7 +31,11 @@
      --------------------------------------------------------- */
 
   function renderHero() {
-    $('#demo-banner').textContent = C.demoNotice;
+    // Bandeau d'annonce : masqué tant qu'il n'y a rien à annoncer.
+    var bandeau = $('#demo-banner');
+    var annonce = (C.demoNotice || '').trim();
+    bandeau.textContent = annonce;
+    bandeau.hidden = !annonce;
     $('#hero-eyebrow').textContent = C.shop.name + ' · ' + C.shop.city + ' (' + C.shop.region + ')';
 
     var title = $('#hero-title');
@@ -115,12 +119,20 @@
     var foot = el('div', 'product-foot');
     foot.append(el('span', 'price', euro.format(product.price)));
 
-    var add = el('button', 'add-button', 'Ajouter');
-    add.type = 'button';
-    add.addEventListener('click', function () {
-      addToCart(product.id);
-    });
-    foot.append(add);
+    if (product.shopUrl) {
+      var lien = el('a', 'add-button', 'Commander');
+      lien.href = product.shopUrl;
+      lien.rel = 'noopener';
+      lien.setAttribute('aria-label', 'Commander ' + product.name + ' sur la boutique');
+      foot.append(lien);
+    } else {
+      var add = el('button', 'add-button', 'Ajouter');
+      add.type = 'button';
+      add.addEventListener('click', function () {
+        addToCart(product.id);
+      });
+      foot.append(add);
+    }
 
     body.append(foot);
     card.append(media, body);
@@ -252,7 +264,7 @@
   }
 
   /* ---------------------------------------------------------
-     Panier de démonstration
+     Panier
      --------------------------------------------------------- */
 
   var cart = loadCart();
@@ -344,7 +356,7 @@
       empty.append(
         el('span', null, '🧺'),
         el('p', null, 'Votre panier est vide.'),
-        el('p', null, 'Ajoutez une création pour voir la démonstration.')
+        el('p', null, 'Ajoutez une création pour préparer votre commande.')
       );
       body.append(empty);
     }
@@ -490,7 +502,32 @@
 
   var modalReturnFocus = null;
 
+  /** Récapitulatif des pièces choisies, pour les retrouver sur la boutique. */
+  function remplirRecapitulatif() {
+    var zone = $('#checkout-recap');
+    if (!zone) return;
+    zone.textContent = '';
+
+    var liste = el('ul', 'recap');
+    cart.forEach(function (line) {
+      var product = findProduct(line.id);
+      if (!product) return;
+      var item = el('li');
+      item.append(
+        el('span', null, (line.qty > 1 ? line.qty + ' × ' : '') + product.name),
+        el('strong', null, euro.format(product.price * line.qty))
+      );
+      liste.append(item);
+    });
+
+    var total = el('p', 'recap-total');
+    total.append(el('span', null, 'Total'), el('strong', null, euro.format(cartTotal())));
+
+    zone.append(liste, total);
+  }
+
   function openModal() {
+    remplirRecapitulatif();
     modalReturnFocus = document.activeElement;
     var modal = $('#checkout-modal');
     modal.hidden = false;
@@ -516,7 +553,7 @@
   }
 
   /* ---------------------------------------------------------
-     Formulaire de contact (démonstration, sans envoi)
+     Formulaire de contact
      --------------------------------------------------------- */
 
   function setupForm() {
@@ -550,9 +587,69 @@
         return;
       }
 
-      form.reset();
-      status.textContent = 'Message bien reçu — démonstration : rien n’est réellement envoyé.';
+      envoyerLeMessage(form, status);
     });
+  }
+
+  /**
+   * Le site est hébergé sans serveur : le message part par le logiciel de
+   * courrier du visiteur, pré-rempli. Si aucune adresse n'est renseignée
+   * dans le contenu, le formulaire n'est pas affiché du tout.
+   */
+  function envoyerLeMessage(form, status) {
+    var nom = form.querySelector('#field-name').value.trim();
+    var courriel = form.querySelector('#field-email').value.trim();
+    var message = form.querySelector('#field-message').value.trim();
+
+    var sujet = 'Message du site — ' + nom;
+    var corps = [message, '', '—', nom, courriel].join('\n');
+
+    // Un lien cliqué plutôt qu'une redirection : mieux supporté par les
+    // navigateurs, et sans risque de blocage de fenêtre surgissante.
+    var lien = document.createElement('a');
+    lien.href =
+      'mailto:' +
+      encodeURIComponent(C.shop.email) +
+      '?subject=' +
+      encodeURIComponent(sujet) +
+      '&body=' +
+      encodeURIComponent(corps);
+    lien.style.display = 'none';
+    document.body.appendChild(lien);
+    lien.click();
+    lien.remove();
+
+    status.textContent =
+      'Votre logiciel de courrier s’ouvre avec le message prêt. Il ne reste qu’à l’envoyer.';
+  }
+
+  /** Sans adresse de contact, un formulaire qui n'envoie rien serait trompeur. */
+  function preparerContact() {
+    var form = $('#contact-form');
+    if (C.shop.email) {
+      setupForm();
+      return;
+    }
+
+    var remplacement = el('div', 'contact-form');
+    remplacement.append(
+      el('h3', null, 'Me contacter'),
+      el(
+        'p',
+        null,
+        'Le plus simple est de passer par la boutique en ligne : les messages y arrivent ' +
+          'directement.'
+      )
+    );
+
+    if (C.shop.sumupUrl) {
+      var lien = el('a', 'btn btn--primary', 'Écrire depuis la boutique');
+      lien.href = C.shop.sumupUrl;
+      lien.rel = 'noopener';
+      remplacement.append(lien);
+    }
+
+    form.replaceWith(remplacement);
   }
 
   /* ---------------------------------------------------------
@@ -623,7 +720,7 @@
   renderContact();
   renderFooter();
   renderCart();
-  setupForm();
+  preparerContact();
   setupNav();
   observeReveals();
 
