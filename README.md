@@ -29,7 +29,10 @@ supprime un produit avec un bouton.
 - **📷 Choisir une photo…** prend une photo de l'ordinateur ou du téléphone et la réduit
   automatiquement (900 px, quelques dizaines de Ko) : aucun logiciel de retouche n'est nécessaire.
 - **✓ Enregistrer** puis **🚀 Publier maintenant** envoie tout — textes et photos — directement.
-  Un seul clic, sans quitter la page.
+  La page vérifie ensuite toute seule que la mise à jour est bien en ligne et affiche
+  « ✓ C'est en ligne » quand c'est le cas.
+- **↶ Annuler** revient sur la dernière suppression, le dernier ajout ou le dernier déplacement
+  (jusqu'à trente en arrière). Le bouton indique ce qui sera annulé.
 
 Les sections sont classées par fréquence de modification : les produits d'abord, le nom de la
 boutique en dernier. Un sommaire en haut permet de sauter directement à une partie.
