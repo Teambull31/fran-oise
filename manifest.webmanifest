@@ -1,0 +1,36 @@
+{
+  "name": "Couture & Fil — créations faites main",
+  "short_name": "Couture & Fil",
+  "description": "Peluches et amigurumis au crochet, doudous, bijoux et accessoires faits main à Monflanquin.",
+  "lang": "fr",
+  "dir": "ltr",
+  "start_url": ".",
+  "scope": ".",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#fffdfa",
+  "theme_color": "#c2410c",
+  "categories": ["shopping", "lifestyle"],
+  "icons": [
+    { "src": "assets/img/icone-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "assets/img/icone-512.png", "sizes": "512x512", "type": "image/png" },
+    {
+      "src": "assets/img/icone-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "La boutique",
+      "url": "index.html#boutique",
+      "icons": [{ "src": "assets/img/icone-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Modifier le site",
+      "url": "modifier.html",
+      "icons": [{ "src": "assets/img/icone-192.png", "sizes": "192x192" }]
+    }
+  ]
+}

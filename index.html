@@ -8,7 +8,7 @@
       name="description"
       content="Couture & Fil, l'atelier de Françoise à Monflanquin (Lot-et-Garonne) : peluches et amigurumis au crochet, doudous en tissu, bijoux et accessoires faits main en pièces uniques."
     />
-    <meta name="theme-color" content="#f0562a" />
+    <meta name="theme-color" content="#c2410c" />
     <meta property="og:type" content="website" />
     <meta property="og:locale" content="fr_FR" />
     <meta property="og:title" content="Couture & Fil — Peluches au crochet faites main" />
@@ -18,7 +18,14 @@
     />
     <meta property="og:image" content="assets/img/og-image.jpg" />
     <link rel="icon" href="assets/img/logo.png" />
-    <link rel="apple-touch-icon" href="assets/img/logo.png" />
+    <link rel="apple-touch-icon" href="assets/img/icone-192.png" />
+
+    <!-- Application installable : icône sur l'écran d'accueil, plein écran,
+         consultation possible sans réseau. -->
+    <link rel="manifest" href="manifest.webmanifest" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="Couture &amp; Fil" />
     <link rel="stylesheet" href="assets/css/styles.css" />
 
     <script type="application/ld+json">
@@ -253,6 +260,9 @@
           </a>
         </p>
         <p class="footer-admin">
+          <button class="btn-admin" id="installer" type="button" hidden>
+            📱 Installer l’application
+          </button>
           <a class="btn-admin" href="modifier.html">✎ Modifier le site</a>
         </p>
       </div>
@@ -315,10 +325,38 @@
       </div>
     </div>
 
+    <div
+      class="modal"
+      id="install-modal"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="install-title"
+      hidden
+    >
+      <div class="modal-card">
+        <h2 id="install-title">Installer sur votre téléphone</h2>
+        <div id="install-explication"></div>
+        <div class="modal-actions">
+          <button class="btn btn--ghost" id="install-close" type="button">Fermer</button>
+        </div>
+      </div>
+    </div>
+
     <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
     <!-- content.js = contenu de secours. contenu.js lit contenu.txt,
          puis charge app.js une fois le contenu prêt. -->
+    <script>
+      // Fonctionnement hors connexion de l'application installée.
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', function () {
+          navigator.serviceWorker.register('sw.js').catch(function () {
+            /* sans importance : le site fonctionne normalement */
+          });
+        });
+      }
+    </script>
+
     <script src="assets/js/content.js"></script>
     <script src="assets/js/contenu-format.js"></script>
     <script src="assets/js/contenu.js"></script>
