@@ -19,6 +19,12 @@
     return match ? match[1] : '🧶';
   }
 
+  /** Applique le cadrage choisi dans la page de modification. */
+  function cadrerPhoto(img, source) {
+    if (source.focus) img.style.objectPosition = source.focus;
+    if (source.zoom && source.zoom !== 1) img.style.setProperty('--zoom', source.zoom);
+  }
+
   function el(tag, className, text) {
     var node = document.createElement(tag);
     if (className) node.className = className;
@@ -73,7 +79,7 @@
       img.loading = 'lazy';
       img.width = 1200;
       img.height = 675;
-      if (universe.focus) img.style.objectPosition = universe.focus;
+      cadrerPhoto(img, universe);
       media.append(img);
 
       var body = el('div', 'body');
@@ -103,6 +109,7 @@
       img.loading = 'lazy';
       img.width = 900;
       img.height = 900;
+      cadrerPhoto(img, product);
       media.append(img);
     } else {
       var holder = el('div', 'placeholder');
@@ -197,6 +204,7 @@
     var image = $('#about-image');
     image.src = C.about.image;
     image.alt = C.about.imageAlt;
+    cadrerPhoto(image, C.about);
     $('#about-title').textContent = C.about.title;
 
     var text = $('#about-text');

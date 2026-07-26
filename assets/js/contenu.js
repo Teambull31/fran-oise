@@ -82,12 +82,26 @@
     return DOSSIER_PHOTOS + nom.replace(/^\/+/, '');
   }
 
-  /** « bas », « haut », « centre » → valeur CSS object-position. */
+  /**
+   * Cadrage de la photo dans son cadre.
+   * Accepte les anciens mots (« bas », « haut », « centre ») et le
+   * réglage précis écrit par la page de modification (« 50% 35% »).
+   */
   function cadrage(valeur) {
-    var mot = Format.normalise(valeur);
-    if (mot.indexOf('bas') === 0) return 'center bottom';
-    if (mot.indexOf('haut') === 0) return 'center top';
-    return 'center';
+    var brut = String(valeur || '').trim();
+    if (/^-?\d+(\.\d+)?%\s+-?\d+(\.\d+)?%$/.test(brut)) return brut;
+
+    var mot = Format.normalise(brut);
+    if (mot.indexOf('bas') === 0) return '50% 100%';
+    if (mot.indexOf('haut') === 0) return '50% 0%';
+    return '50% 50%';
+  }
+
+  /** Agrandissement de la photo dans son cadre. 1 = taille normale. */
+  function zoom(valeur) {
+    var nombre = parseFloat(String(valeur || '').replace(',', '.'));
+    if (isNaN(nombre)) return 1;
+    return Math.min(4, Math.max(1, nombre));
   }
 
   function vraiFaux(valeur) {
@@ -121,6 +135,8 @@
           badge: String(p['Étiquette'] || '').trim(),
           variants: vraiFaux(p['Autres couleurs']),
           shopUrl: String(p['Lien boutique'] || '').trim(),
+          focus: cadrage(p['Cadrage']),
+          zoom: zoom(p['Zoom']),
           description: String(p['Description'] || '').trim()
         };
       });
@@ -181,6 +197,7 @@
           title: f['Titre'] || '',
           image: photo(f['Photo']),
           focus: cadrage(f['Cadrage']),
+          zoom: zoom(f['Zoom']),
           text: f['Texte'] || ''
         };
       }),
@@ -199,6 +216,8 @@
       about: {
         title: atelier['Titre'] || '',
         image: photo(atelier['Photo']),
+        focus: cadrage(atelier['Cadrage']),
+        zoom: zoom(atelier['Zoom']),
         imageAlt: atelier['Texte de la photo'] || '',
         paragraphs: atelier['Paragraphe'] || [],
         skills: atelier['Savoir-faire'] || []

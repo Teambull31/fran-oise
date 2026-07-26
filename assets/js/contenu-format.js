@@ -70,7 +70,13 @@
         { cle: 'Titre', type: 'texte' },
         { cle: 'Rayon', type: 'texte', aide: 'À écrire comme le rayon des produits.' },
         { cle: 'Photo', type: 'photo' },
-        { cle: 'Cadrage', type: 'choix', valeurs: ['centre', 'haut', 'bas'] },
+        {
+          cle: 'Cadrage',
+          type: 'cadrage',
+          ratio: 16 / 9,
+          aide: 'Déplacez la photo pour choisir ce qui doit être visible.'
+        },
+        { cle: 'Zoom', type: 'masque' },
         { cle: 'Texte', type: 'long' }
       ]
     },
@@ -85,6 +91,13 @@
         { cle: 'Prix', type: 'prix' },
         { cle: 'Rayon', type: 'rayon', aide: 'Crée tout seul le bouton de tri de la boutique.' },
         { cle: 'Photo', type: 'photo' },
+        {
+          cle: 'Cadrage',
+          type: 'cadrage',
+          ratio: 1,
+          aide: 'Déplacez la photo pour choisir ce qui doit être visible.'
+        },
+        { cle: 'Zoom', type: 'masque' },
         { cle: 'Étiquette', type: 'texte', aide: 'Petite pastille sur la photo. Laissez vide si inutile.' },
         { cle: 'Autres couleurs', type: 'oui-non' },
         {
@@ -117,6 +130,13 @@
       champs: [
         { cle: 'Titre', type: 'texte' },
         { cle: 'Photo', type: 'photo' },
+        {
+          cle: 'Cadrage',
+          type: 'cadrage',
+          ratio: 4 / 3,
+          aide: 'Déplacez la photo pour choisir ce qui doit être visible.'
+        },
+        { cle: 'Zoom', type: 'masque' },
         { cle: 'Texte de la photo', type: 'texte', aide: 'Décrit la photo pour les personnes malvoyantes.' },
         { cle: 'Paragraphe', type: 'liste', aide: 'Une ligne vide entre deux paragraphes n’est pas nécessaire.' },
         { cle: 'Savoir-faire', type: 'liste' }
