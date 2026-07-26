@@ -534,8 +534,65 @@
     zone.append(liste, total);
   }
 
+  /**
+   * Deux façons de commander, selon ce qui est renseigné :
+   *   - une boutique en ligne : on y renvoie ;
+   *   - une adresse e-mail : la demande part par courrier, et
+   *     Françoise répond avec un lien de paiement.
+   * Sans l'un ni l'autre, on le dit plutôt que de proposer un
+   * bouton qui ne mène nulle part.
+   */
+  function preparerCommande() {
+    var explication = $('#checkout-explication');
+    var demande = $('#modal-commander');
+    var boutique = $('#modal-sumup');
+
+    var lignes = cart
+      .map(function (line) {
+        var product = findProduct(line.id);
+        if (!product) return '';
+        return '- ' + (line.qty > 1 ? line.qty + ' × ' : '') + product.name +
+          ' : ' + euro.format(product.price * line.qty);
+      })
+      .filter(Boolean);
+
+    if (C.shop.email) {
+      demande.hidden = false;
+      demande.href =
+        'mailto:' +
+        encodeURIComponent(C.shop.email) +
+        '?subject=' +
+        encodeURIComponent('Demande de commande — ' + C.shop.name) +
+        '&body=' +
+        encodeURIComponent(
+          ['Bonjour,', '', 'Je souhaiterais commander :', '']
+            .concat(lignes)
+            .concat(['', 'Total : ' + euro.format(cartTotal()), '', 'Merci !'])
+            .join('\n')
+        );
+    } else {
+      demande.hidden = true;
+    }
+
+    boutique.hidden = !C.shop.sumupUrl;
+
+    if (C.shop.email) {
+      explication.textContent =
+        'Envoyez-moi votre sélection : je vous confirme la disponibilité et vous réponds avec ' +
+        'un lien de paiement sécurisé.';
+    } else if (C.shop.sumupUrl) {
+      explication.textContent =
+        'La commande se règle sur la boutique en ligne, en paiement sécurisé.';
+    } else {
+      explication.textContent =
+        'Contactez-moi pour finaliser cette commande : je vous confirme la disponibilité et le ' +
+        'mode de règlement.';
+    }
+  }
+
   function openModal() {
     remplirRecapitulatif();
+    preparerCommande();
     modalReturnFocus = document.activeElement;
     var modal = $('#checkout-modal');
     modal.hidden = false;

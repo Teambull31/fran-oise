@@ -105,6 +105,23 @@ tout seuls des produits ; il n'y a aucune liste de catégories à tenir à jour.
 `assets/js/content.js` ne sert plus que de filet de sécurité si `contenu.txt` devenait
 introuvable.
 
+## Encaisser sans la boutique SumUp
+
+Le compte SumUp et le terminal de paiement sont gratuits et indépendants de la boutique en ligne :
+celle-ci peut être résiliée sans rien changer aux encaissements sur les marchés.
+
+Le site s'adapte alors tout seul, selon ce qui est renseigné dans `[BOUTIQUE]` :
+
+| Renseigné | Bouton du panier | Parcours |
+| --- | --- | --- |
+| `Boutique en ligne` | « Aller à la boutique » | paiement sur la boutique SumUp |
+| `E-mail` seul | « Envoyer ma demande » | le client envoie sa sélection, Françoise répond avec un lien de paiement SumUp |
+| Ni l'un ni l'autre | aucun | le récapitulatif invite à prendre contact |
+
+Le message de demande est pré-rempli avec les pièces choisies, les quantités et le total : il ne
+reste qu'à créer le lien de paiement depuis l'application SumUp, sur le même compte que le
+terminal.
+
 ## À renseigner avant la mise en service
 
 Le site fonctionne sans, mais ces informations manquent pour qu'il soit complet. Tant qu'un champ
