@@ -87,6 +87,11 @@
         { cle: 'Photo', type: 'photo' },
         { cle: 'Étiquette', type: 'texte', aide: 'Petite pastille sur la photo. Laissez vide si inutile.' },
         { cle: 'Autres couleurs', type: 'oui-non' },
+        {
+          cle: 'Lien boutique',
+          type: 'texte',
+          aide: 'Adresse de la fiche sur la boutique en ligne. Si elle est remplie, le bouton « Commander » y mène directement.'
+        },
         { cle: 'Description', type: 'long' }
       ]
     },

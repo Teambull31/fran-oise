@@ -246,9 +246,10 @@
         </div>
         <nav aria-label="Liens de pied de page" id="footer-links"></nav>
         <p class="footer-legal">
-          © <span id="year"></span> Couture &amp; Fil — Site de démonstration.
+          © <span id="year"></span> <span id="footer-nom">Couture &amp; Fil</span> — créations
+          faites main.
           <a id="footer-sumup" href="https://couturefil.sumupstore.com/" rel="noopener">
-            Voir la boutique officielle
+            Commander en ligne
           </a>
           · <a href="modifier.html">Modifier le site</a>
         </p>
@@ -282,9 +283,9 @@
           <strong id="cart-total">0,00 €</strong>
         </div>
         <button class="btn btn--primary btn--block" id="cart-checkout" type="button">
-          Finaliser la commande
+          Passer la commande
         </button>
-        <p class="cart-note">Panier de démonstration : aucun paiement n’est déclenché.</p>
+        <p class="cart-note">Paiement sécurisé sur la boutique en ligne.</p>
       </footer>
     </aside>
 
@@ -297,16 +298,17 @@
       hidden
     >
       <div class="modal-card">
-        <h2 id="checkout-title">C’est une démonstration 💛</h2>
+        <h2 id="checkout-title">Votre sélection</h2>
+        <div id="checkout-recap"></div>
         <p>
-          Ce site est une maquette : le panier fonctionne, mais aucun paiement n’est possible ici.
-          Les vraies commandes passent par la boutique en ligne.
+          La commande se règle sur la boutique en ligne, en paiement sécurisé. Retrouvez-y les
+          pièces choisies, ou écrivez-moi pour une création sur mesure.
         </p>
         <div class="modal-actions">
           <a class="btn btn--primary" id="modal-sumup" href="#" rel="noopener">
             Aller à la boutique
           </a>
-          <button class="btn btn--ghost" id="checkout-close" type="button">Revenir au site</button>
+          <button class="btn btn--ghost" id="checkout-close" type="button">Continuer mes achats</button>
         </div>
       </div>
     </div>

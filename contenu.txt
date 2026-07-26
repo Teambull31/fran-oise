@@ -34,7 +34,7 @@ Phrase d'accueil: Bienvenue dans mon univers doux et coloré ! Je suis François
 Description: Créations de peluches & amigurumi au crochet et en tissu, bijoux et accessoires faits main en pièces uniques
 
 Ville: Monflanquin
-Département: Lot-et-Garonne
+Departement: Lot-et-Garonne
 
 # Laissez vide ce que vous ne voulez pas afficher.
 Adresse:
@@ -45,7 +45,9 @@ Instagram:
 
 Boutique en ligne: https://couturefil.sumupstore.com/
 
-Bandeau en haut: Démonstration — le panier ne déclenche aucun paiement. La vraie boutique reste sur SumUp.
+# Message d'annonce en haut du site. Laissez vide pour ne rien afficher.
+# Exemple : Atelier fermé du 1er au 15 août.
+Bandeau en haut:
 
 
 # --- Les trois petits arguments sous la photo d'accueil ---
@@ -99,7 +101,7 @@ Nom: 🐰 Jean – Peluche lapin au crochet, fait main
 Prix: 54
 Rayon: Peluches & doudous
 Photo: jean.avif
-Étiquette: Grand format
+Etiquette: Grand format
 Description: Grand lapin crocheté dans un fil chiné, col volanté écru. Une pièce unique, entièrement montée à la main.
 
 [PRODUIT]
@@ -107,7 +109,7 @@ Nom: 🐰 Justin – Peluche lapin amigurumi au crochet
 Prix: 28
 Rayon: Peluches & doudous
 Photo: justin.avif
-Étiquette:
+Etiquette:
 Description: Lapin amigurumi bleu ciel au museau brodé, finition douce et col en dentelle crochetée.
 
 [PRODUIT]
@@ -115,7 +117,7 @@ Nom: 🐰 Lucien – Peluche lapin amigurumi au crochet
 Prix: 28
 Rayon: Peluches & doudous
 Photo: lucien.avif
-Étiquette:
+Etiquette:
 Description: Lapin amigurumi écru et son grand nœud blanc, tout en rondeur. Idéal pour une naissance.
 
 [PRODUIT]
@@ -123,7 +125,7 @@ Nom: Polo, le lapin au crochet
 Prix: 21
 Rayon: Peluches & doudous
 Photo: polo.avif
-Étiquette:
+Etiquette:
 Description: Petit lapin blanc au pull vert et à la besace, format nomade qui tient dans la main.
 
 [PRODUIT]
@@ -131,7 +133,7 @@ Nom: 🧸 Rubis – L’Ourson Rouge au Grand Cœur 🧸
 Prix: 28
 Rayon: Peluches & doudous
 Photo: rubis.avif
-Étiquette: Coup de cœur
+Etiquette: Coup de cœur
 Description: Ourson rouge vif au nœud papillon blanc, crocheté serré pour un câlin qui dure.
 
 [PRODUIT]

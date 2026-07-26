@@ -1,19 +1,21 @@
-# Couture & Fil — site de démonstration
+# Couture & Fil — site vitrine
 
-Maquette d'un site vitrine pour **Couture & Fil**, l'atelier de Françoise à Monflanquin
-(Lot-et-Garonne) : peluches et amigurumis au crochet, doudous en tissu, bijoux et accessoires
-faits main.
+Site vitrine de **Couture & Fil**, l'atelier de Françoise à Monflanquin (Lot-et-Garonne) :
+peluches et amigurumis au crochet, doudous en tissu, bijoux et accessoires faits main.
 
-Le site est une **démonstration** : le panier fonctionne mais ne déclenche aucun paiement, et le
-formulaire de contact n'envoie rien. Les commandes réelles passent toujours par la boutique
-existante : <https://couturefil.sumupstore.com/>
+Le paiement se fait sur la boutique en ligne existante
+(<https://couturefil.sumupstore.com/>) : le site présente les créations, prépare la commande et
+renvoie vers la boutique pour le règlement sécurisé.
 
 ## Ce qu'il contient
 
-- une page unique avec cinq sections : accueil, univers, boutique, sur-mesure, atelier, contact ;
-- un catalogue filtrable par catégorie (peluches & doudous, bijoux, zéro déchet) ;
-- un panier de démonstration (ajout, quantités, total, persistance dans le navigateur) ;
-- un formulaire de contact avec validation, sans envoi ;
+- une page unique : accueil, univers, boutique, sur-mesure, atelier, contact ;
+- un catalogue filtrable, dont les rayons se déduisent des produits ;
+- un panier (ajout, quantités, total, mémorisé dans le navigateur) qui prépare la commande et
+  renvoie vers la boutique en ligne pour le paiement ;
+- un bouton « Commander » qui mène directement à la fiche produit si son adresse est renseignée ;
+- un formulaire de contact qui ouvre le logiciel de courrier avec le message prêt ;
+- un bandeau d'annonce facultatif en haut de page (« Atelier fermé du 1er au 15 août ») ;
 - aucune dépendance, aucun build, aucune requête vers un service externe.
 
 ## Modifier le contenu
@@ -73,14 +75,30 @@ vides — rien de tout cela n'empêche le site de s'afficher. Les rayons de la b
 tout seuls des produits ; il n'y a aucune liste de catégories à tenir à jour.
 
 `assets/js/content.js` ne sert plus que de filet de sécurité si `contenu.txt` devenait
-introuvable. Les points restant à confirmer :
+introuvable.
 
-- le paragraphe de présentation (le PDF source coupait le début de chaque ligne) ;
-- l'e-mail, le téléphone, l'adresse et les horaires (absents de la source) ;
-- les liens Facebook / Instagram ;
-- la photo des boucles d'oreilles « Bleu Nuit » (illisible dans le PDF) — une vignette de repli
-  s'affiche à la place ;
-- les prestations et tarifs de la section « Sur mesure », qui ne figuraient pas sur la boutique.
+## À renseigner avant la mise en service
+
+Le site fonctionne sans, mais ces informations manquent pour qu'il soit complet. Tant qu'un champ
+est vide, la ligne correspondante disparaît simplement du site — rien ne s'affiche à moitié.
+
+| À remplir | Où | Sans cela |
+| --- | --- | --- |
+| E-mail | `[BOUTIQUE]` → `E-mail` | le formulaire de contact est remplacé par un renvoi vers la boutique |
+| Téléphone, adresse | `[BOUTIQUE]` | les lignes n'apparaissent pas dans « Contact » |
+| Facebook, Instagram | `[BOUTIQUE]` | pas de liens en pied de page |
+| Adresse de chaque fiche produit | `[PRODUIT]` → `Lien boutique` | le bouton ajoute au panier au lieu de mener à la fiche |
+| Mentions légales et CGV | pied de page | les liens renvoient à la boutique SumUp |
+
+Deux textes restent à vérifier avec Françoise :
+
+- le paragraphe de présentation, reconstitué à partir d'une source dont le début de chaque ligne
+  était coupé ;
+- les trois prestations de la section « Sur mesure », qui ne figuraient pas sur la boutique.
+
+Enfin, la photo des boucles d'oreilles « Bleu Nuit » était illisible dans la source : une vignette
+« Photo à venir » s'affiche à la place, jusqu'à ce qu'une photo soit envoyée depuis la page
+« Modifier ».
 
 Pour ajouter une photo : déposer le fichier dans `assets/img/`, puis écrire son nom seul sur la
 ligne `Photo:` (par exemple `Photo: lapin.jpg`).
@@ -98,8 +116,12 @@ Aucune installation n'est nécessaire : le site est un ensemble de fichiers stat
 
 ```
 index.html               structure de la page
-assets/css/styles.css    design (couleurs, composants, responsive, thème sombre)
-assets/js/content.js     CONTENU — le seul fichier à éditer au quotidien
+contenu.txt              CONTENU — le seul fichier à éditer au quotidien
+modifier.html            formulaire de modification et publication
+assets/css/styles.css    design (couleurs, composants, responsive)
+assets/js/contenu-format.js  format du fichier contenu.txt (lecture / écriture)
+assets/js/contenu.js     chargement du contenu et mode aperçu
+assets/js/content.js     contenu de secours
 assets/js/app.js         rendu, filtres, panier, formulaire
 assets/img/              photos et logo
 vercel.json              configuration du déploiement statique
@@ -109,8 +131,8 @@ vercel.json              configuration du déploiement statique
 
 Le site est statique : il n'y a aucune étape de build.
 
-**GitHub Pages** — le dépôt est déjà configuré en « Deploy from a branch » sur `main`. Fusionner
-la branche de démo dans `main` suffit à publier le site sur
+**GitHub Pages** — le dépôt est configuré en « Deploy from a branch » sur `main`. Tout ce qui est
+fusionné dans `main` est publié sur
 <https://teambull31.github.io/fran-oise/> (le fichier `.nojekyll` évite tout traitement Jekyll).
 
 **Vercel** — importer le dépôt depuis <https://vercel.com/new> : framework « Other », aucune
