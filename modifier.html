@@ -1243,6 +1243,11 @@
               liste.push('« ' + nom + ' » n’a pas de description.');
             if (!String(bloc.champs['Rayon'] || '').trim())
               liste.push('« ' + nom + ' » n’a pas de rayon : il n’apparaîtra dans aucun tri.');
+            if (!String(bloc.champs['Lien boutique'] || '').trim())
+              liste.push(
+                '« ' + nom + ' » n’a pas de lien boutique : le bouton ajoutera au panier au lieu ' +
+                  'de mener directement au paiement.'
+              );
           });
 
           blocs.forEach(function (bloc) {
