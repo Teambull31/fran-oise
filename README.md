@@ -30,6 +30,10 @@ supprime un produit avec un bouton.
   encore envoyées. Un bandeau vert rappelle que rien n'est publié. Le vrai site n'est pas touché.
 - **📷 Choisir une photo…** prend une photo de l'ordinateur ou du téléphone et la réduit
   automatiquement (900 px, quelques dizaines de Ko) : aucun logiciel de retouche n'est nécessaire.
+- **Cadrage** : sous chaque photo, un cadre montre exactement ce que verront les visiteurs. On y
+  fait glisser la photo au doigt ou à la souris (les flèches du clavier fonctionnent aussi), et le
+  curseur « Agrandir » zoome jusqu'à trois fois. « Recentrer » remet tout à zéro. Le cadre a la
+  forme réelle de l'emplacement : carré pour un produit, panoramique pour une famille.
 - **✓ Enregistrer** puis **🚀 Publier maintenant** envoie tout — textes et photos — directement.
   La page vérifie ensuite toute seule que la mise à jour est bien en ligne et affiche
   « ✓ C'est en ligne » quand c'est le cas.

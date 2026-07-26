@@ -164,6 +164,69 @@
         align-items: center;
       }
 
+      .cadreur {
+        display: grid;
+        gap: 0.6rem;
+        margin-top: 0.4rem;
+      }
+
+      .cadreur-vue {
+        position: relative;
+        width: min(100%, 320px);
+        overflow: hidden;
+        border-radius: 12px;
+        border: 2px solid var(--trait);
+        background: #f7eef4;
+        cursor: grab;
+        touch-action: none;
+      }
+
+      .cadreur-vue:active {
+        cursor: grabbing;
+      }
+
+      .cadreur-vue img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+        pointer-events: none;
+      }
+
+      .cadreur-vue:focus-visible {
+        outline: 3px solid var(--rose-vif);
+        outline-offset: 2px;
+      }
+
+      /* Repères discrets : aident à juger le centrage. */
+      .cadreur-vue::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        background:
+          linear-gradient(to right, transparent 33%, rgba(255, 255, 255, 0.5) 33%, rgba(255, 255, 255, 0.5) 33.4%, transparent 33.4%, transparent 66.6%, rgba(255, 255, 255, 0.5) 66.6%, rgba(255, 255, 255, 0.5) 67%, transparent 67%),
+          linear-gradient(to bottom, transparent 33%, rgba(255, 255, 255, 0.5) 33%, rgba(255, 255, 255, 0.5) 33.4%, transparent 33.4%, transparent 66.6%, rgba(255, 255, 255, 0.5) 66.6%, rgba(255, 255, 255, 0.5) 67%, transparent 67%);
+        opacity: 0;
+        transition: opacity 0.2s ease;
+      }
+
+      .cadreur-vue.est-actif::after {
+        opacity: 1;
+      }
+
+      .cadreur-zoom {
+        display: flex;
+        align-items: center;
+        gap: 0.7rem;
+      }
+
+      .cadreur-zoom input[type="range"] {
+        flex: 1;
+        min-height: 46px;
+        accent-color: var(--rose);
+      }
+
       .photo-ligne img {
         width: 74px;
         height: 74px;
@@ -596,6 +659,12 @@
             texte.textContent = 'Oui, afficher « Autres variantes disponibles »';
             ligne.appendChild(texte);
             enveloppe.appendChild(ligne);
+          } else if (description.type === 'masque') {
+            // Valeur gérée par un autre champ : rien à afficher.
+            return document.createDocumentFragment();
+          } else if (description.type === 'cadrage') {
+            enveloppe.appendChild(cadreur(bloc, description));
+            return enveloppe;
           } else if (description.type === 'photo') {
             var ligne2 = document.createElement('div');
             ligne2.className = 'photo-ligne';
@@ -606,6 +675,7 @@
               var nom = saisie.value.trim();
               apercu.src = nom ? adressePhoto(nom) : '';
               apercu.style.visibility = nom ? 'visible' : 'hidden';
+              if (bloc._rafraichirCadreur) bloc._rafraichirCadreur();
             };
             rafraichir();
             saisie.addEventListener('input', rafraichir);
@@ -644,6 +714,7 @@
                   saisie.value = resultat.nom;
                   rafraichir();
                   enregistrerChamp(bloc, description, saisie);
+                  if (bloc._rafraichirCadreur) bloc._rafraichirCadreur();
                   info.textContent =
                     'Photo prête (' + resultat.poids + '). Elle part avec vos modifications.';
                 })
@@ -667,6 +738,149 @@
           }
 
           return enveloppe;
+        }
+
+        /**
+         * Outil de cadrage : on fait glisser la photo dans le cadre pour
+         * choisir ce qui reste visible, et on l'agrandit avec le curseur.
+         * Manipulable à la souris, au doigt et au clavier.
+         */
+        function cadreur(bloc, description) {
+          var boite = document.createElement('div');
+          boite.className = 'cadreur';
+
+          var vue = document.createElement('div');
+          vue.className = 'cadreur-vue';
+          vue.tabIndex = 0;
+          vue.setAttribute('role', 'application');
+          vue.setAttribute(
+            'aria-label',
+            'Cadrage de la photo : faites glisser, ou utilisez les flèches du clavier'
+          );
+          vue.style.aspectRatio = String(description.ratio || 1);
+
+          var image = document.createElement('img');
+          image.alt = '';
+          vue.appendChild(image);
+
+          // Position en pourcentage, comme dans le fichier : « 50% 35% ».
+          var position = { x: 50, y: 50 };
+          var depart = String(bloc.champs['Cadrage'] || '').trim();
+          var chiffres = depart.match(/(-?\d+(?:\.\d+)?)%\s+(-?\d+(?:\.\d+)?)%/);
+          if (chiffres) {
+            position.x = parseFloat(chiffres[1]);
+            position.y = parseFloat(chiffres[2]);
+          } else if (/bas/i.test(depart)) {
+            position.y = 100;
+          } else if (/haut/i.test(depart)) {
+            position.y = 0;
+          }
+
+          var agrandissement = parseFloat(String(bloc.champs['Zoom'] || '1').replace(',', '.'));
+          if (isNaN(agrandissement)) agrandissement = 1;
+
+          function appliquer() {
+            image.style.objectPosition = position.x + '% ' + position.y + '%';
+            image.style.transform = 'scale(' + agrandissement + ')';
+            bloc.champs['Cadrage'] =
+              Math.round(position.x) + '% ' + Math.round(position.y) + '%';
+            bloc.champs['Zoom'] = agrandissement === 1 ? '' : String(agrandissement);
+            brouillonner();
+          }
+
+          function borner(valeur) {
+            return Math.min(100, Math.max(0, valeur));
+          }
+
+          /* --- glisser à la souris ou au doigt --- */
+          var saisieEnCours = null;
+
+          vue.addEventListener('pointerdown', function (evenement) {
+            saisieEnCours = { x: evenement.clientX, y: evenement.clientY };
+            vue.setPointerCapture(evenement.pointerId);
+            vue.classList.add('est-actif');
+          });
+
+          vue.addEventListener('pointermove', function (evenement) {
+            if (!saisieEnCours) return;
+            var cadre = vue.getBoundingClientRect();
+            // Un déplacement de la largeur du cadre parcourt toute la photo.
+            position.x = borner(position.x - ((evenement.clientX - saisieEnCours.x) / cadre.width) * 100);
+            position.y = borner(position.y - ((evenement.clientY - saisieEnCours.y) / cadre.height) * 100);
+            saisieEnCours = { x: evenement.clientX, y: evenement.clientY };
+            appliquer();
+          });
+
+          function relacher() {
+            saisieEnCours = null;
+            vue.classList.remove('est-actif');
+          }
+          vue.addEventListener('pointerup', relacher);
+          vue.addEventListener('pointercancel', relacher);
+
+          /* --- flèches du clavier --- */
+          vue.addEventListener('keydown', function (evenement) {
+            var pas = evenement.shiftKey ? 10 : 2;
+            var touches = {
+              ArrowLeft: function () { position.x = borner(position.x - pas); },
+              ArrowRight: function () { position.x = borner(position.x + pas); },
+              ArrowUp: function () { position.y = borner(position.y - pas); },
+              ArrowDown: function () { position.y = borner(position.y + pas); }
+            };
+            if (!touches[evenement.key]) return;
+            evenement.preventDefault();
+            touches[evenement.key]();
+            appliquer();
+          });
+
+          boite.appendChild(vue);
+
+          /* --- agrandissement --- */
+          var ligneZoom = document.createElement('div');
+          ligneZoom.className = 'cadreur-zoom';
+
+          var etiquetteZoom = document.createElement('label');
+          etiquetteZoom.textContent = 'Agrandir';
+          etiquetteZoom.style.margin = '0';
+          var idZoom = 'z' + Math.random().toString(36).slice(2, 9);
+          etiquetteZoom.setAttribute('for', idZoom);
+
+          var curseur = document.createElement('input');
+          curseur.type = 'range';
+          curseur.id = idZoom;
+          curseur.min = '1';
+          curseur.max = '3';
+          curseur.step = '0.1';
+          curseur.value = String(agrandissement);
+          curseur.addEventListener('input', function () {
+            agrandissement = parseFloat(curseur.value);
+            appliquer();
+          });
+
+          ligneZoom.appendChild(etiquetteZoom);
+          ligneZoom.appendChild(curseur);
+          boite.appendChild(ligneZoom);
+
+          var recentrer = bouton('Recentrer', 'b-clair', function () {
+            position = { x: 50, y: 50 };
+            agrandissement = 1;
+            curseur.value = '1';
+            appliquer();
+          });
+          recentrer.style.justifySelf = 'start';
+          boite.appendChild(recentrer);
+
+          /* --- la photo affichée suit le champ « Photo » --- */
+          function rafraichirSource() {
+            var nom = String(bloc.champs['Photo'] || '').trim();
+            boite.hidden = !nom;
+            if (nom) image.src = adressePhoto(nom);
+          }
+          rafraichirSource();
+          bloc._rafraichirCadreur = rafraichirSource;
+
+          appliquer();
+          return boite;
         }
 
         function enregistrerChamp(bloc, description, saisie) {
