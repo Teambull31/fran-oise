@@ -178,8 +178,16 @@
 
           <div class="filters" id="filters" role="group" aria-label="Filtrer par catégorie"></div>
 
+          <p class="grid-count" id="grid-count" role="status"></p>
           <div class="product-grid" id="product-grid"></div>
-          <p class="grid-empty" id="grid-empty" hidden>Aucune création dans cette catégorie.</p>
+
+          <div class="grid-empty" id="grid-empty" hidden>
+            <p class="grid-empty-title">Rien dans ce rayon pour le moment.</p>
+            <p>
+              Ces pièces se font sur commande : dites-moi ce que vous cherchez et je vous réponds.
+            </p>
+            <a class="btn btn--primary" href="#contact">Demander cette création</a>
+          </div>
         </div>
       </section>
 
@@ -218,7 +226,7 @@
           <div class="contact-copy reveal">
             <p class="eyebrow">Contact</p>
             <h2>Parlons de votre projet</h2>
-            <p class="section-lead">
+            <p class="section-lead" id="contact-lead">
               Une commande personnalisée, une question sur une pièce, un cadeau à préparer :
               écrivez-moi et je vous réponds.
             </p>
@@ -323,6 +331,39 @@
       </div>
     </div>
 
+    <!-- FICHE PRODUIT : la photo en grand, la description en entier. -->
+    <div
+      class="modal modal--wide"
+      id="product-modal"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="product-title"
+      hidden
+    >
+      <div class="modal-card modal-card--product">
+        <button class="modal-close" id="product-close" type="button">
+          <span class="visually-hidden">Fermer la fiche</span>
+          <span aria-hidden="true">×</span>
+        </button>
+
+        <div class="product-detail">
+          <div class="product-detail-media" id="product-detail-media"></div>
+
+          <div class="product-detail-body">
+            <p class="eyebrow" id="product-rayon"></p>
+            <h2 id="product-title"></h2>
+            <p class="variants-note" id="product-variants" hidden>Autres coloris sur demande</p>
+            <p class="product-detail-text" id="product-text"></p>
+            <p class="product-detail-price" id="product-price"></p>
+            <div class="product-detail-actions" id="product-actions"></div>
+            <p class="product-detail-note">
+              Pièce unique, crochetée ou cousue à la main dans l’atelier.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <div
       class="modal"
       id="install-modal"
@@ -340,7 +381,10 @@
       </div>
     </div>
 
-    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+    <div class="toast" id="toast" role="status" aria-live="polite">
+      <span id="toast-text"></span>
+      <button class="toast-action" id="toast-action" type="button" hidden>Voir le panier</button>
+    </div>
 
     <!-- content.js = contenu de secours. contenu.js lit contenu.txt,
          puis charge app.js une fois le contenu prêt. -->

@@ -66,9 +66,18 @@
     });
   }
 
+  /** Nombre de pièces disponibles dans un rayon. */
+  function compterProduits(categoryId) {
+    if (categoryId === 'all') return C.products.length;
+    return C.products.filter(function (product) {
+      return product.category === categoryId;
+    }).length;
+  }
+
   function renderUniverses() {
     var grid = $('#universe-grid');
     C.universes.forEach(function (universe) {
+      var nombre = compterProduits(universe.id);
       var card = el('button', 'universe-card reveal');
       card.type = 'button';
 
@@ -83,76 +92,125 @@
       media.append(img);
 
       var body = el('div', 'body');
-      body.append(
-        el('h3', null, universe.title),
-        el('p', null, universe.text),
-        el('span', 'more', 'Voir les pièces →')
-      );
+      body.append(el('h3', null, universe.title), el('p', null, universe.text));
+
+      // Annoncer ce que fait le bouton : un rayon vide renvoie vers le
+      // sur-mesure plutôt que vers une grille sans rien dedans.
+      if (nombre) {
+        body.append(
+          el('span', 'more', nombre > 1 ? 'Voir les ' + nombre + ' pièces →' : 'Voir la pièce →')
+        );
+        card.setAttribute(
+          'aria-label',
+          universe.title + ' — voir ' + nombre + (nombre > 1 ? ' pièces' : ' pièce')
+        );
+        card.addEventListener('click', function () {
+          applyFilter(universe.id);
+          $('#boutique').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+      } else {
+        body.append(el('span', 'more', 'Sur commande →'));
+        card.setAttribute('aria-label', universe.title + ' — pièces réalisées sur commande');
+        card.addEventListener('click', function () {
+          $('#services').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+      }
 
       card.append(media, body);
-      card.addEventListener('click', function () {
-        applyFilter(universe.id);
-        $('#boutique').scrollIntoView({ behavior: 'smooth', block: 'start' });
-      });
       grid.append(card);
     });
+  }
+
+  /** Visuel du produit : la photo, ou un repli lisible quand il n'y en a pas. */
+  function visuelProduit(product, taille) {
+    if (!product.image) {
+      var holder = el('div', 'placeholder');
+      holder.append(el('span', null, leadEmoji(product.name)), el('span', null, 'Photo à venir'));
+      return holder;
+    }
+    var img = el('img');
+    img.src = product.image;
+    img.alt = product.name;
+    img.loading = 'lazy';
+    img.width = taille;
+    img.height = taille;
+    cadrerPhoto(img, product);
+    return img;
   }
 
   function productCard(product) {
     var card = el('article', 'product-card reveal');
 
     var media = el('div', 'product-media');
-    if (product.image) {
-      var img = el('img');
-      img.src = product.image;
-      img.alt = product.name;
-      img.loading = 'lazy';
-      img.width = 900;
-      img.height = 900;
-      cadrerPhoto(img, product);
-      media.append(img);
-    } else {
-      var holder = el('div', 'placeholder');
-      holder.append(el('span', null, leadEmoji(product.name)), el('span', null, 'Photo à venir'));
-      media.append(holder);
-    }
+    media.append(visuelProduit(product, 900));
     if (product.badge) media.append(el('span', 'badge', product.badge));
 
     var body = el('div', 'product-body');
-    body.append(el('h3', null, product.name));
-    if (product.variants) body.append(el('p', 'variants-note', 'Autres variantes disponibles'));
-    body.append(el('p', null, product.description));
+
+    // Le titre est le bouton qui ouvre la fiche : sa zone cliquable est
+    // étendue à toute la carte par la feuille de style (une seule
+    // tabulation, mais la photo entière reste cliquable à la souris).
+    var titre = el('h3');
+    var ouvrir = el('button', 'product-open', product.name);
+    ouvrir.type = 'button';
+    ouvrir.addEventListener('click', function () {
+      openProduct(product.id);
+    });
+    titre.append(ouvrir);
+    body.append(titre);
+
+    if (product.variants) body.append(el('p', 'variants-note', 'Autres coloris'));
+    body.append(el('p', 'product-teaser', product.description));
 
     var foot = el('div', 'product-foot');
     foot.append(el('span', 'price', euro.format(product.price)));
-
-    if (product.shopUrl) {
-      var lien = el('a', 'add-button', 'Commander');
-      lien.href = product.shopUrl;
-      lien.rel = 'noopener';
-      lien.setAttribute('aria-label', 'Commander ' + product.name + ' sur la boutique');
-      foot.append(lien);
-    } else {
-      var add = el('button', 'add-button', 'Ajouter');
-      add.type = 'button';
-      add.addEventListener('click', function () {
-        addToCart(product.id);
-      });
-      foot.append(add);
-    }
+    foot.append(boutonCommande(product, 'add-button'));
 
     body.append(foot);
     card.append(media, body);
     return card;
   }
 
+  /**
+   * Un produit se commande de deux façons : par sa fiche sur la boutique
+   * en ligne quand elle est renseignée, sinon par le panier du site.
+   */
+  function boutonCommande(product, classe, libelle) {
+    if (product.shopUrl) {
+      var lien = el('a', classe, libelle || 'Commander');
+      lien.href = product.shopUrl;
+      lien.rel = 'noopener';
+      lien.setAttribute('aria-label', 'Commander ' + product.name + ' sur la boutique');
+      return lien;
+    }
+
+    var add = el('button', classe, libelle || 'Ajouter');
+    add.type = 'button';
+    add.setAttribute('aria-label', 'Ajouter ' + product.name + ' au panier');
+    add.addEventListener('click', function () {
+      addToCart(product.id);
+    });
+    return add;
+  }
+
   function renderFilters() {
     var bar = $('#filters');
+    // Un seul rayon : le filtre n'apporte rien, on le laisse de côté.
+    if (C.categories.length < 3) {
+      bar.hidden = true;
+      return;
+    }
+
     C.categories.forEach(function (category) {
-      var button = el('button', 'filter', category.label);
+      var button = el('button', 'filter');
       button.type = 'button';
       button.dataset.category = category.id;
       button.setAttribute('aria-pressed', String(category.id === 'all'));
+      // Le nombre de pièces évite d'ouvrir un rayon pour rien.
+      button.append(
+        el('span', null, category.label),
+        el('span', 'filter-count', String(compterProduits(category.id)))
+      );
       button.addEventListener('click', function () {
         applyFilter(category.id);
       });
@@ -178,7 +236,14 @@
     matches.forEach(function (product) {
       grid.append(productCard(product));
     });
+
     $('#grid-empty').hidden = matches.length > 0;
+    // Dit à voix haute ce que le filtre vient de changer.
+    $('#grid-count').textContent = matches.length
+      ? matches.length > 1
+        ? matches.length + ' créations disponibles'
+        : '1 création disponible'
+      : '';
     observeReveals();
   }
 
@@ -222,13 +287,40 @@
     var list = $('#contact-infos');
     var infos = [];
 
-    infos.push({
-      icon: '📍',
-      label: 'L’atelier',
-      value: [C.shop.address, C.shop.city + ' (' + C.shop.region + ')'].filter(Boolean).join(' — ')
-    });
-    if (C.shop.email) infos.push({ icon: '✉️', label: 'E-mail', value: C.shop.email });
-    if (C.shop.phone) infos.push({ icon: '📞', label: 'Téléphone', value: C.shop.phone });
+    var ville = [C.shop.city, C.shop.region ? '(' + C.shop.region + ')' : ''].filter(Boolean).join(' ');
+    var lieu = [C.shop.address, ville].filter(Boolean).join(' — ');
+    var recherche = [C.shop.address, C.shop.city, C.shop.region].filter(Boolean).join(', ');
+    if (lieu) {
+      infos.push({
+        icon: '📍',
+        label: 'L’atelier',
+        value: lieu,
+        href: 'https://www.openstreetmap.org/search?query=' + encodeURIComponent(recherche),
+        externe: true,
+        aide: 'Voir sur une carte'
+      });
+    }
+
+    if (C.shop.email) {
+      infos.push({
+        icon: '✉️',
+        label: 'E-mail',
+        value: C.shop.email,
+        href: 'mailto:' + C.shop.email,
+        aide: 'Écrire un message'
+      });
+    }
+
+    if (C.shop.phone) {
+      infos.push({
+        icon: '📞',
+        label: 'Téléphone',
+        value: C.shop.phone,
+        href: 'tel:' + C.shop.phone.replace(/[^+0-9]/g, ''),
+        aide: 'Appeler'
+      });
+    }
+
     if (C.shop.hours && C.shop.hours.length) {
       infos.push({
         icon: '🕒',
@@ -240,13 +332,47 @@
           .join(' · ')
       });
     }
-    infos.push({ icon: '🛍️', label: 'Boutique en ligne', value: C.shop.sumupUrl.replace(/^https?:\/\//, '') });
+
+    if (C.shop.sumupUrl) {
+      infos.push({
+        icon: '🛍️',
+        label: 'Boutique en ligne',
+        value: C.shop.sumupUrl.replace(/^https?:\/\//, '').replace(/\/$/, ''),
+        href: C.shop.sumupUrl,
+        externe: true,
+        aide: 'Commander en ligne'
+      });
+    }
+
+    C.shop.socials.forEach(function (reseau) {
+      infos.push({
+        icon: reseau.label === 'Instagram' ? '📷' : '👍',
+        label: reseau.label,
+        value: reseau.url.replace(/^https?:\/\/(www\.)?/, '').replace(/\/$/, ''),
+        href: reseau.url,
+        externe: true,
+        aide: 'Voir la page'
+      });
+    });
 
     infos.forEach(function (info) {
       var li = el('li');
       li.append(el('span', 'ico', info.icon));
-      var body = el('div');
+
+      // Une adresse, un numéro ou un lien se touchent directement :
+      // du texte simple obligerait à le recopier à la main.
+      var body = info.href ? el('a', 'contact-lien') : el('div');
+      if (info.href) {
+        body.href = info.href;
+        if (info.externe) {
+          body.rel = 'noopener';
+          body.target = '_blank';
+        }
+        body.setAttribute('aria-label', info.label + ' : ' + info.value + '. ' + info.aide);
+      }
+
       body.append(el('strong', null, info.label), el('span', null, info.value));
+      if (info.aide) body.append(el('span', 'contact-aide', info.aide));
       li.append(body);
       list.append(li);
     });
@@ -328,7 +454,8 @@
     saveCart();
     renderCart();
     bumpCart();
-    showToast(findProduct(id).name + ' ajouté au panier');
+    if (productIsOpen()) closeProduct();
+    showToast(findProduct(id).name + ' ajouté au panier', 'Voir le panier');
   }
 
   function setQty(id, qty) {
@@ -437,14 +564,27 @@
   }
 
   var toastTimer;
-  function showToast(message) {
+  /**
+   * Le message de confirmation propose la suite : après un ajout, le
+   * panier est à un geste, sans avoir à chercher l'icône en haut.
+   */
+  function showToast(message, action) {
     var toast = $('#toast');
-    toast.textContent = message;
+    var bouton = $('#toast-action');
+    $('#toast-text').textContent = message;
+    bouton.hidden = !action;
+    if (action) bouton.textContent = action;
+    toast.classList.toggle('has-action', Boolean(action));
     toast.classList.add('is-visible');
     clearTimeout(toastTimer);
     toastTimer = setTimeout(function () {
       toast.classList.remove('is-visible');
-    }, 2600);
+    }, action ? 5000 : 2600);
+  }
+
+  function hideToast() {
+    clearTimeout(toastTimer);
+    $('#toast').classList.remove('is-visible');
   }
 
   /* ---------------------------------------------------------
@@ -618,6 +758,66 @@
   }
 
   /* ---------------------------------------------------------
+     Fiche produit
+
+     Sur un téléphone, la carte ne montre ni la description ni la
+     photo en entier. La fiche donne les deux, et le bouton de
+     commande reste à portée de pouce.
+     --------------------------------------------------------- */
+
+  var productReturnFocus = null;
+
+  function openProduct(id) {
+    var product = findProduct(id);
+    if (!product) return;
+
+    var media = $('#product-detail-media');
+    media.textContent = '';
+    media.append(visuelProduit(product, 1200));
+    if (product.badge) media.append(el('span', 'badge', product.badge));
+
+    $('#product-rayon').textContent = product.rayon || '';
+    $('#product-rayon').hidden = !product.rayon;
+    $('#product-title').textContent = product.name;
+    $('#product-variants').hidden = !product.variants;
+    $('#product-text').textContent = product.description;
+    $('#product-text').hidden = !product.description;
+    $('#product-price').textContent = euro.format(product.price);
+
+    var actions = $('#product-actions');
+    actions.textContent = '';
+    actions.append(boutonCommande(product, 'btn btn--primary', product.shopUrl ? 'Commander' : 'Ajouter au panier'));
+
+    var sur = el('a', 'btn btn--ghost', 'Une question ?');
+    sur.href = '#contact';
+    sur.addEventListener('click', closeProduct);
+    actions.append(sur);
+
+    productReturnFocus = document.activeElement;
+    var fenetre = $('#product-modal');
+    fenetre.hidden = false;
+    document.body.classList.add('is-locked');
+    requestAnimationFrame(function () {
+      fenetre.classList.add('is-open');
+    });
+    $('#product-close').focus();
+  }
+
+  function closeProduct() {
+    var fenetre = $('#product-modal');
+    fenetre.classList.remove('is-open');
+    setTimeout(function () {
+      fenetre.hidden = true;
+    }, 250);
+    if (!cartIsOpen() && !modalIsOpen()) document.body.classList.remove('is-locked');
+    if (productReturnFocus) productReturnFocus.focus();
+  }
+
+  function productIsOpen() {
+    return $('#product-modal').classList.contains('is-open');
+  }
+
+  /* ---------------------------------------------------------
      Formulaire de contact
      --------------------------------------------------------- */
 
@@ -694,6 +894,17 @@
     if (C.shop.email) {
       setupForm();
       return;
+    }
+
+    // Sans adresse, la promesse « écrivez-moi » n'aurait pas de suite :
+    // le texte d'introduction dit alors la vraie marche à suivre.
+    var chapeau = $('#contact-lead');
+    if (chapeau) {
+      chapeau.textContent = C.shop.sumupUrl
+        ? 'Une commande personnalisée, une question sur une pièce, un cadeau à préparer : ' +
+          'passez par la boutique en ligne, les messages y arrivent directement.'
+        : 'Une commande personnalisée, une question sur une pièce, un cadeau à préparer : ' +
+          'retrouvez-moi à l’atelier.';
     }
 
     var remplacement = el('div', 'contact-form');
@@ -882,17 +1093,29 @@
   $('#overlay').addEventListener('click', closeCart);
   $('#cart-checkout').addEventListener('click', openModal);
   $('#checkout-close').addEventListener('click', closeModal);
+  $('#product-close').addEventListener('click', closeProduct);
+
+  $('#toast-action').addEventListener('click', function () {
+    hideToast();
+    openCart();
+  });
 
   $('#checkout-modal').addEventListener('click', function (event) {
     if (event.target === this) closeModal();
   });
 
+  $('#product-modal').addEventListener('click', function (event) {
+    if (event.target === this) closeProduct();
+  });
+
   document.addEventListener('keydown', function (event) {
     if (event.key === 'Escape') {
       if (modalIsOpen()) return closeModal();
+      if (productIsOpen()) return closeProduct();
       if (cartIsOpen()) return closeCart();
     }
     if (modalIsOpen()) return trapFocus(event, $('#checkout-modal'));
+    if (productIsOpen()) return trapFocus(event, $('#product-modal'));
     if (cartIsOpen()) trapFocus(event, $('#cart-drawer'));
   });
 })();
