@@ -66,6 +66,9 @@
     });
   }
 
+  /** Les pièces actuellement affichées dans la grille, dans l'ordre. */
+  var affiches = [];
+
   /** Nombre de pièces disponibles dans un rayon. */
   function compterProduits(categoryId) {
     if (categoryId === 'all') return C.products.length;
@@ -233,6 +236,9 @@
     var matches = C.products.filter(function (product) {
       return active === 'all' || product.category === active;
     });
+    // Mémorisé pour que la fiche puisse passer à la pièce suivante
+    // sans sortir du rayon que le visiteur regarde.
+    affiches = matches;
     matches.forEach(function (product) {
       grid.append(productCard(product));
     });
@@ -766,10 +772,21 @@
      --------------------------------------------------------- */
 
   var productReturnFocus = null;
+  var ficheEnCours = null;
+  /** Vrai si c'est nous qui avons ajouté l'étape dans l'historique. */
+  var fichePoussee = false;
 
-  function openProduct(id) {
+  /**
+   * Chaque fiche a son adresse : elle se partage, se met en favori,
+   * et le bouton « retour » du téléphone la referme au lieu de
+   * quitter le site.
+   */
+  var PREFIXE_FICHE = '#creation-';
+
+  function remplirFiche(id) {
     var product = findProduct(id);
-    if (!product) return;
+    if (!product) return null;
+    ficheEnCours = id;
 
     var media = $('#product-detail-media');
     media.textContent = '';
@@ -790,9 +807,71 @@
 
     var sur = el('a', 'btn btn--ghost', 'Une question ?');
     sur.href = '#contact';
-    sur.addEventListener('click', closeProduct);
+    sur.addEventListener('click', function () {
+      closeProduct();
+    });
     actions.append(sur);
 
+    majNavigationFiche();
+    return product;
+  }
+
+  function positionFiche() {
+    for (var i = 0; i < affiches.length; i++) {
+      if (affiches[i].id === ficheEnCours) return i;
+    }
+    return -1;
+  }
+
+  /** Feuilleter le rayon sans repasser par la grille. */
+  function majNavigationFiche() {
+    var index = positionFiche();
+    var precedent = $('#product-prev');
+    var suivant = $('#product-next');
+    var compteur = $('#product-position');
+
+    var navigable = index !== -1 && affiches.length > 1;
+    $('#product-nav').hidden = !navigable;
+    if (!navigable) return;
+
+    precedent.disabled = index === 0;
+    suivant.disabled = index === affiches.length - 1;
+    compteur.textContent = index + 1 + ' / ' + affiches.length;
+  }
+
+  function ficheVoisine(pas) {
+    var index = positionFiche();
+    var voisin = affiches[index + pas];
+    if (!voisin) return;
+    remplirFiche(voisin.id);
+    // On remplace l'adresse plutôt que d'en empiler une par pièce
+    // feuilletée : un seul « retour » referme la fiche.
+    remplacerAdresse(PREFIXE_FICHE + voisin.id);
+    $('#product-detail-body').scrollTop = 0;
+  }
+
+  function remplacerAdresse(hash) {
+    try {
+      history.replaceState({ fiche: ficheEnCours }, '', hash);
+    } catch (erreur) {
+      /* navigateur ancien : l'adresse ne suit pas, la fiche fonctionne */
+    }
+  }
+
+  function openProduct(id) {
+    if (!remplirFiche(id)) return;
+
+    try {
+      history.pushState({ fiche: id }, '', PREFIXE_FICHE + id);
+      fichePoussee = true;
+    } catch (erreur) {
+      fichePoussee = false;
+    }
+
+    afficherFiche();
+  }
+
+  function afficherFiche() {
     productReturnFocus = document.activeElement;
     var fenetre = $('#product-modal');
     fenetre.hidden = false;
@@ -800,21 +879,59 @@
     requestAnimationFrame(function () {
       fenetre.classList.add('is-open');
     });
+    $('#product-detail-body').scrollTop = 0;
     $('#product-close').focus();
   }
 
-  function closeProduct() {
+  /**
+   * `garderAdresse` sert quand c'est le navigateur qui a déjà reculé :
+   * remonter l'historique une seconde fois sortirait du site.
+   */
+  function closeProduct(garderAdresse) {
+    if (!productIsOpen()) return;
     var fenetre = $('#product-modal');
     fenetre.classList.remove('is-open');
     setTimeout(function () {
       fenetre.hidden = true;
     }, 250);
+    ficheEnCours = null;
     if (!cartIsOpen() && !modalIsOpen()) document.body.classList.remove('is-locked');
     if (productReturnFocus) productReturnFocus.focus();
+    if (garderAdresse) return;
+
+    // Arrivé par un lien partagé, il n'y a pas d'étape à défaire :
+    // reculer quitterait le site. On efface seulement l'adresse.
+    if (fichePoussee) {
+      fichePoussee = false;
+      try {
+        history.back();
+        return;
+      } catch (erreur) {
+        /* on retombe sur l'effacement ci-dessous */
+      }
+    }
+    remplacerAdresse(window.location.pathname + window.location.search);
   }
 
   function productIsOpen() {
     return $('#product-modal').classList.contains('is-open');
+  }
+
+  /** Adresse ouverte directement sur une création, ou bouton « retour ». */
+  function suivreAdresse() {
+    var hash = window.location.hash;
+    var id = hash.indexOf(PREFIXE_FICHE) === 0 ? hash.slice(PREFIXE_FICHE.length) : '';
+
+    if (id && findProduct(id)) {
+      if (ficheEnCours === id) return;
+      remplirFiche(id);
+      // L'étape existait déjà dans l'historique : rien n'a été ajouté ici.
+      fichePoussee = false;
+      if (!productIsOpen()) afficherFiche();
+      return;
+    }
+
+    if (productIsOpen()) closeProduct(true);
   }
 
   /* ---------------------------------------------------------
@@ -949,11 +1066,105 @@
     });
 
     var header = $('#site-header');
+    var haut = $('#to-top');
     var onScroll = function () {
       header.classList.toggle('is-stuck', window.scrollY > 8);
+      // Après le premier écran, la page est longue : on offre le retour.
+      haut.hidden = window.scrollY < window.innerHeight;
     };
     window.addEventListener('scroll', onScroll, { passive: true });
     onScroll();
+
+    haut.addEventListener('click', function () {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      $('.brand').focus();
+    });
+
+    suivreSection(nav);
+  }
+
+  /**
+   * Le menu montre où l'on se trouve : sur une page qui déroule six
+   * sections, c'est le seul repère de position.
+   */
+  function suivreSection(nav) {
+    var liens = Array.prototype.slice.call(nav.querySelectorAll('a[href^="#"]'));
+    var sections = liens
+      .map(function (lien) {
+        return document.querySelector(lien.getAttribute('href'));
+      })
+      .filter(Boolean);
+
+    if (!sections.length || !('IntersectionObserver' in window)) return;
+
+    var visibles = {};
+    var observateur = new IntersectionObserver(
+      function (entrees) {
+        entrees.forEach(function (entree) {
+          visibles[entree.target.id] = entree.isIntersecting ? entree.intersectionRatio : 0;
+        });
+
+        var meilleur = '';
+        sections.forEach(function (section) {
+          if ((visibles[section.id] || 0) > (visibles[meilleur] || 0)) meilleur = section.id;
+        });
+
+        liens.forEach(function (lien) {
+          var actif = meilleur && lien.getAttribute('href') === '#' + meilleur;
+          if (actif) lien.setAttribute('aria-current', 'true');
+          else lien.removeAttribute('aria-current');
+        });
+      },
+      { rootMargin: '-30% 0px -45% 0px', threshold: [0, 0.25, 0.5, 1] }
+    );
+
+    sections.forEach(function (section) {
+      observateur.observe(section);
+    });
+  }
+
+  /**
+   * Les créations décrites pour les moteurs de recherche : nom, photo,
+   * prix et disponibilité, pour que Google puisse les afficher.
+   */
+  function donneesProduits() {
+    if (!C.products.length) return;
+
+    var absolu = function (chemin) {
+      try {
+        return new URL(chemin, window.location.href).href;
+      } catch (erreur) {
+        return chemin;
+      }
+    };
+
+    var script = document.createElement('script');
+    script.type = 'application/ld+json';
+    script.textContent = JSON.stringify({
+      '@context': 'https://schema.org',
+      '@type': 'ItemList',
+      name: 'Créations disponibles — ' + C.shop.name,
+      itemListElement: C.products.map(function (product, index) {
+        var fiche = {
+          '@type': 'Product',
+          name: product.name,
+          description: product.description,
+          category: product.rayon || undefined,
+          url: absolu(PREFIXE_FICHE + product.id),
+          brand: { '@type': 'Brand', name: C.shop.name },
+          offers: {
+            '@type': 'Offer',
+            price: product.price.toFixed(2),
+            priceCurrency: 'EUR',
+            availability: 'https://schema.org/InStock',
+            url: product.shopUrl || absolu(PREFIXE_FICHE + product.id)
+          }
+        };
+        if (product.image) fiche.image = absolu(product.image);
+        return { '@type': 'ListItem', position: index + 1, item: fiche };
+      })
+    });
+    document.head.appendChild(script);
   }
 
   var revealObserver;
@@ -1087,13 +1298,27 @@
   setupNav();
   installable();
   observeReveals();
+  donneesProduits();
+  suivreAdresse();
 
   $('#cart-button').addEventListener('click', openCart);
   $('#cart-close').addEventListener('click', closeCart);
   $('#overlay').addEventListener('click', closeCart);
   $('#cart-checkout').addEventListener('click', openModal);
   $('#checkout-close').addEventListener('click', closeModal);
-  $('#product-close').addEventListener('click', closeProduct);
+  $('#product-close').addEventListener('click', function () {
+    closeProduct();
+  });
+
+  $('#product-prev').addEventListener('click', function () {
+    ficheVoisine(-1);
+  });
+
+  $('#product-next').addEventListener('click', function () {
+    ficheVoisine(1);
+  });
+
+  window.addEventListener('popstate', suivreAdresse);
 
   $('#toast-action').addEventListener('click', function () {
     hideToast();
@@ -1113,6 +1338,11 @@
       if (modalIsOpen()) return closeModal();
       if (productIsOpen()) return closeProduct();
       if (cartIsOpen()) return closeCart();
+    }
+    // Feuilleter le rayon aux flèches, comme dans une galerie photo.
+    if (productIsOpen() && !event.altKey && !event.metaKey && !event.ctrlKey) {
+      if (event.key === 'ArrowLeft') return ficheVoisine(-1);
+      if (event.key === 'ArrowRight') return ficheVoisine(1);
     }
     if (modalIsOpen()) return trapFocus(event, $('#checkout-modal'));
     if (productIsOpen()) return trapFocus(event, $('#product-modal'));

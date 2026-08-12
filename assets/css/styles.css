@@ -330,6 +330,12 @@ textarea {
   color: var(--ink);
 }
 
+/* La section que l'on est en train de lire est marquée dans le menu. */
+.site-nav a[aria-current="true"] {
+  color: var(--berry);
+  background: var(--surface-alt);
+}
+
 .header-actions {
   display: flex;
   align-items: center;
@@ -1636,6 +1642,11 @@ textarea {
   background: var(--surface-alt);
 }
 
+.product-detail-visuel {
+  position: absolute;
+  inset: 0;
+}
+
 .product-detail-media img {
   position: absolute;
   inset: 0;
@@ -1643,6 +1654,54 @@ textarea {
   height: 100%;
   object-fit: cover;
   transform: scale(var(--zoom, 1));
+}
+
+/* Feuilleter le rayon depuis la fiche, sans revenir à la grille. */
+.product-nav {
+  position: absolute;
+  left: 50%;
+  bottom: 0.9rem;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.25rem;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--ink) 78%, transparent);
+  backdrop-filter: blur(8px);
+  color: var(--cream);
+}
+
+.product-nav-btn {
+  width: 40px;
+  height: 40px;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: inherit;
+  font-size: 1.6rem;
+  line-height: 1;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  transition: background 0.18s ease;
+}
+
+.product-nav-btn:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.product-nav-btn:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+.product-position {
+  min-width: 3.2rem;
+  text-align: center;
+  font-size: 0.82rem;
+  font-weight: 650;
+  font-variant-numeric: tabular-nums;
 }
 
 .product-detail-media .placeholder {
@@ -1734,6 +1793,41 @@ textarea {
 
   .product-detail-actions .btn {
     flex: 1 1 100%;
+  }
+}
+
+/* ---------- retour en haut ---------- */
+
+.to-top {
+  position: fixed;
+  right: clamp(1rem, 3vw, 2rem);
+  bottom: calc(1.25rem + env(safe-area-inset-bottom));
+  z-index: 45;
+  width: 48px;
+  height: 48px;
+  border: 0;
+  border-radius: 50%;
+  background: var(--surface);
+  color: var(--berry);
+  font-size: 1.3rem;
+  line-height: 1;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  box-shadow: var(--shadow);
+  animation: apparait 0.25s ease;
+  transition: transform 0.18s ease, background 0.18s ease;
+}
+
+.to-top:hover {
+  transform: translateY(-3px);
+  background: var(--surface-alt);
+}
+
+@keyframes apparait {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
   }
 }
 
@@ -1911,6 +2005,16 @@ textarea {
     left: 0.5rem;
     font-size: 0.66rem;
     padding: 0.2rem 0.5rem;
+  }
+
+  /* Le message de confirmation occupe toute la largeur : le bouton de
+     retour en haut se pousse au-dessus au lieu de passer dessous. */
+  .toast.is-visible ~ .to-top {
+    transform: translateY(-4.2rem);
+  }
+
+  .toast.is-visible ~ .to-top:hover {
+    transform: translateY(-4.5rem);
   }
 }
 

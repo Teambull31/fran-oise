@@ -347,9 +347,23 @@
         </button>
 
         <div class="product-detail">
-          <div class="product-detail-media" id="product-detail-media"></div>
+          <div class="product-detail-media">
+            <div class="product-detail-visuel" id="product-detail-media"></div>
 
-          <div class="product-detail-body">
+            <div class="product-nav" id="product-nav" hidden>
+              <button class="product-nav-btn" id="product-prev" type="button">
+                <span class="visually-hidden">Création précédente</span>
+                <span aria-hidden="true">‹</span>
+              </button>
+              <span class="product-position" id="product-position"></span>
+              <button class="product-nav-btn" id="product-next" type="button">
+                <span class="visually-hidden">Création suivante</span>
+                <span aria-hidden="true">›</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="product-detail-body" id="product-detail-body">
             <p class="eyebrow" id="product-rayon"></p>
             <h2 id="product-title"></h2>
             <p class="variants-note" id="product-variants" hidden>Autres coloris sur demande</p>
@@ -385,6 +399,11 @@
       <span id="toast-text"></span>
       <button class="toast-action" id="toast-action" type="button" hidden>Voir le panier</button>
     </div>
+
+    <button class="to-top" id="to-top" type="button" hidden>
+      <span class="visually-hidden">Revenir en haut de la page</span>
+      <span aria-hidden="true">↑</span>
+    </button>
 
     <!-- content.js = contenu de secours. contenu.js lit contenu.txt,
          puis charge app.js une fois le contenu prêt. -->
