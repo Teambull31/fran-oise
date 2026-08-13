@@ -87,15 +87,77 @@
         align-items: center;
         gap: 0.75rem;
         flex-wrap: wrap;
+      }
+
+      /* Fiche pliée : la tête est toute la carte, sans trait de séparation.
+         Ouverte, le trait annonce les champs qui suivent. */
+      .carte.est-ouverte .carte-tete {
         margin-bottom: 1rem;
         padding-bottom: 0.75rem;
         border-bottom: 2px solid var(--trait);
       }
 
+      /* Toute la ligne ouvre la fiche : c'est une cible large, atteignable
+         au doigt comme au clavier. */
+      .carte-bascule {
+        flex: 1 1 14rem;
+        display: flex;
+        align-items: center;
+        gap: 0.7rem;
+        min-height: 48px;
+        padding: 0.25rem;
+        border: 0;
+        background: none;
+        font: inherit;
+        color: inherit;
+        text-align: left;
+        cursor: pointer;
+        border-radius: 10px;
+      }
+
+      .carte-bascule:hover {
+        background: var(--fond);
+      }
+
+      .chevron {
+        flex: none;
+        width: 1.2rem;
+        color: var(--encre-douce);
+        font-size: 0.9rem;
+      }
+
+      .vignette {
+        flex: none;
+        width: 44px;
+        height: 44px;
+        border-radius: 8px;
+        object-fit: cover;
+        background: var(--fond);
+      }
+
+      .carte-pile {
+        display: grid;
+        min-width: 0;
+      }
+
+      /* Une ligne par fiche : toutes les lignes ont la même hauteur, et la
+         liste se parcourt d'un coup d'œil. Le nom entier reste lisible
+         dans le champ « Nom », une fois la fiche ouverte. */
+      .carte-titre,
+      .carte-resume {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
       .carte-titre {
         font-weight: 700;
         font-size: 1.15rem;
-        margin-right: auto;
+      }
+
+      .carte-resume {
+        color: var(--encre-douce);
+        font-size: 0.92rem;
       }
 
       label {
@@ -389,6 +451,61 @@
         .b-grand {
           width: 100%;
         }
+
+        /* Trois boutons pleine largeur mangeaient un tiers de l'écran.
+           « Enregistrer » garde sa pleine largeur, les deux autres se
+           partagent la ligne du dessous. */
+        .barre .shell {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 0.5rem;
+        }
+
+        .barre .b-grand {
+          font-size: 1rem;
+          padding: 0.75rem 0.6rem;
+        }
+
+        #enregistrer {
+          grid-column: 1 / -1;
+          order: -1;
+        }
+
+        .barre .etat {
+          grid-column: 1 / -1;
+          margin-left: 0;
+          text-align: center;
+          font-size: 0.85rem;
+        }
+
+        .barre .b-clair,
+        .barre .b-rose {
+          font-size: 0.9rem;
+          padding: 0.7rem 0.4rem;
+        }
+
+        /* Le sommaire tenait sur cinq lignes : des pastilles plus sobres
+           le ramènent à deux ou trois. */
+        #sommaire a {
+          font-size: 0.9rem !important;
+          padding: 0.5rem 0.85rem;
+        }
+
+        /* Faute de largeur, « Monter », « Descendre » et « Supprimer »
+           doublaient la hauteur de chaque ligne repliée. Ils apparaissent
+           avec la fiche ouverte : c'est là qu'on s'en sert. */
+        .carte:not(.est-ouverte) .carte-tete button:not(.carte-bascule) {
+          display: none;
+        }
+
+        /* Faute de largeur, une seule ligne coupait le nom trop tôt :
+           deux lignes suffisent à le reconnaître. */
+        .carte-titre {
+          white-space: normal;
+          display: -webkit-box;
+          -webkit-line-clamp: 2;
+          -webkit-box-orient: vertical;
+        }
       }
     </style>
   </head>
@@ -407,7 +524,9 @@
       <div id="formulaire"></div>
     </main>
 
-    <div class="barre">
+    <!-- Repère de page à part entière : sinon l'état du brouillon reste
+         hors de tout point de repère pour un lecteur d'écran. -->
+    <footer class="barre">
       <div class="shell">
         <button type="button" id="annuler" class="b-clair b-grand" disabled>↶ Annuler</button>
         <button type="button" id="apercu" class="b-rose b-grand">👁 Voir le résultat</button>
@@ -416,7 +535,7 @@
         </button>
         <span class="etat" id="etat"></span>
       </div>
-    </div>
+    </footer>
 
     <dialog id="fenetre-enregistrer">
       <div class="fenetre">
@@ -969,6 +1088,39 @@
           brouillonner();
         }
 
+        /* ----- fiches pliées -----
+           Tout déplié, le formulaire fait plus de vingt écrans : changer
+           un prix demandait de faire défiler des dizaines de champs.
+           Chaque fiche est donc pliée, et ne s'ouvre qu'au besoin. La
+           ligne repliée montre l'essentiel : photo, nom, prix, rayon. */
+
+        var ouvertes = {};
+        var numeroFiche = 0;
+
+        /* Repérée par sa place et non par son nom : une fiche qu'on vient
+           d'ajouter n'a pas encore de nom. */
+        function cleFiche(modele, index) {
+          return modele.type + ':' + index;
+        }
+
+        /** Ce qu'on lit sans ouvrir la fiche. */
+        function resume(modele, bloc) {
+          var morceaux = [];
+          if (modele.type === 'produit') {
+            var prix = String(bloc.champs['Prix'] || '').trim();
+            if (prix) morceaux.push(prix.replace(/\s*€?$/, '') + ' €');
+            if (bloc.champs['Rayon']) morceaux.push(String(bloc.champs['Rayon']).trim());
+            if (bloc.champs['Étiquette']) morceaux.push(String(bloc.champs['Étiquette']).trim());
+          } else if (modele.type === 'service') {
+            if (bloc.champs['Prix']) morceaux.push(String(bloc.champs['Prix']).trim());
+          } else if (modele.type === 'chiffre') {
+            if (bloc.champs['Petit texte']) morceaux.push(String(bloc.champs['Petit texte']).trim());
+          } else if (modele.type === 'famille') {
+            if (bloc.champs['Rayon']) morceaux.push(String(bloc.champs['Rayon']).trim());
+          }
+          return morceaux.join(' · ');
+        }
+
         function carte(modele, bloc, index, total) {
           var element = document.createElement('section');
           element.className = 'carte';
@@ -976,11 +1128,41 @@
           var tete = document.createElement('div');
           tete.className = 'carte-tete';
 
+          numeroFiche += 1;
+          var idCorps = 'fiche-' + numeroFiche;
+          var cle = cleFiche(modele, index);
+
+          var bascule = document.createElement('button');
+          bascule.type = 'button';
+          bascule.className = 'carte-bascule';
+          bascule.setAttribute('aria-controls', idCorps);
+
+          var chevron = document.createElement('span');
+          chevron.className = 'chevron';
+          chevron.setAttribute('aria-hidden', 'true');
+          chevron.textContent = '▸';
+
+          var vignette = document.createElement('img');
+          vignette.className = 'vignette';
+          vignette.alt = '';
+          vignette.hidden = true;
+
           var titre = document.createElement('span');
           titre.className = 'carte-titre';
           titre.textContent =
             bloc.champs['Nom'] || bloc.champs['Titre'] || bloc.champs['Gros texte'] || modele.titre;
-          tete.appendChild(titre);
+
+          var apercu = document.createElement('span');
+          apercu.className = 'carte-resume';
+
+          bascule.appendChild(chevron);
+          bascule.appendChild(vignette);
+          var pile = document.createElement('span');
+          pile.className = 'carte-pile';
+          pile.appendChild(titre);
+          pile.appendChild(apercu);
+          bascule.appendChild(pile);
+          tete.appendChild(bascule);
 
           if (!modele.unique) {
             if (index > 0) tete.appendChild(bouton('↑ Monter', 'b-clair', function () {
@@ -1004,16 +1186,49 @@
 
           element.appendChild(tete);
 
+          var corps = document.createElement('div');
+          corps.id = idCorps;
           modele.champs.forEach(function (description) {
-            element.appendChild(champ(modele, bloc, description));
+            corps.appendChild(champ(modele, bloc, description));
           });
+          element.appendChild(corps);
+
+          function plier(ouvert) {
+            corps.hidden = !ouvert;
+            bascule.setAttribute('aria-expanded', String(ouvert));
+            chevron.textContent = ouvert ? '▾' : '▸';
+            element.classList.toggle('est-ouverte', ouvert);
+            ouvertes[cle] = ouvert;
+          }
+
+          bascule.addEventListener('click', function () {
+            plier(corps.hidden);
+          });
+
+          /** La ligne repliée doit rester juste après une modification. */
+          function rafraichirTete() {
+            titre.textContent =
+              bloc.champs['Nom'] || bloc.champs['Titre'] || bloc.champs['Gros texte'] || modele.titre;
+            var texte = resume(modele, bloc);
+            apercu.textContent = texte;
+            apercu.hidden = !texte;
+
+            var photo = String(bloc.champs['Photo'] || '').trim();
+            vignette.hidden = !photo;
+            if (photo) vignette.src = adressePhoto(photo);
+
+            bascule.setAttribute(
+              'aria-label',
+              titre.textContent + (texte ? ' — ' + texte : '') + ' : ouvrir ou fermer la fiche'
+            );
+          }
+          rafraichirTete();
 
           // Le titre de la carte suit ce qui est tapé, pour ne pas
           // laisser croire que la modification n'a pas été prise.
-          element.addEventListener('input', function () {
-            titre.textContent =
-              bloc.champs['Nom'] || bloc.champs['Titre'] || bloc.champs['Gros texte'] || modele.titre;
-          });
+          element.addEventListener('input', rafraichirTete);
+
+          plier(Boolean(ouvertes[cle]));
 
           return element;
         }
@@ -1078,10 +1293,20 @@
               var ajouter = bouton('+ Ajouter un(e) ' + modele.singulier, 'b-rose b-grand', function () {
                 memoriser('ajout d’un(e) ' + modele.singulier);
                 blocs.push({ type: modele.type, champs: {} });
+                // Une fiche qu'on vient de créer s'ouvre : c'est pour la
+                // remplir qu'on a cliqué.
+                ouvertes[cleFiche(modele, concernes.length)] = true;
                 dessiner();
                 brouillonner();
-                var cartes = formulaire.querySelectorAll('.carte');
-                if (cartes.length) cartes[cartes.length - 1].scrollIntoView({ block: 'center' });
+                var neuve = formulaire.querySelector('#section-' + modele.type)
+                  ? formulaire.querySelectorAll('.carte.est-ouverte')
+                  : [];
+                var derniere = neuve[neuve.length - 1];
+                if (derniere) {
+                  derniere.scrollIntoView({ block: 'center' });
+                  var premier = derniere.querySelector('input, textarea, select');
+                  if (premier) premier.focus();
+                }
               });
               var rangee = document.createElement('p');
               rangee.appendChild(ajouter);
