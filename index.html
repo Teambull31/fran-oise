@@ -28,6 +28,10 @@
     <meta name="apple-mobile-web-app-title" content="Couture &amp; Fil" />
     <link rel="stylesheet" href="assets/css/styles.css" />
 
+    <!-- La grande photo d'accueil est ce que le visiteur attend en premier :
+         le navigateur la demande sans attendre d'avoir lu la feuille de style. -->
+    <link rel="preload" as="image" href="assets/img/rubis.avif" fetchpriority="high" />
+
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
@@ -129,6 +133,7 @@
                 width="900"
                 height="900"
                 loading="eager"
+                fetchpriority="high"
               />
             </figure>
             <figure class="hero-photo hero-photo--small">

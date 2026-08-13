@@ -25,6 +25,43 @@
     if (source.zoom && source.zoom !== 1) img.style.setProperty('--zoom', source.zoom);
   }
 
+  /* ---------------------------------------------------------
+     Typographie française
+
+     En français, une espace précède « : ; ! ? » et suit les
+     guillemets. Une espace ordinaire laisse le signe passer seul
+     à la ligne suivante : « en tête » d'un côté, « ? » de l'autre.
+     Les espaces insécables l'en empêchent.
+     --------------------------------------------------------- */
+
+  var SANS_TEXTE = { SCRIPT: 1, STYLE: 1, TEXTAREA: 1, INPUT: 1, CODE: 1, PRE: 1 };
+
+  function typographie(racine) {
+    if (!racine || !document.createTreeWalker) return;
+
+    var parcours = document.createTreeWalker(racine, NodeFilter.SHOW_TEXT, {
+      acceptNode: function (noeud) {
+        if (SANS_TEXTE[noeud.parentNode && noeud.parentNode.nodeName]) {
+          return NodeFilter.FILTER_REJECT;
+        }
+        return / [:;!?»]|« /.test(noeud.nodeValue)
+          ? NodeFilter.FILTER_ACCEPT
+          : NodeFilter.FILTER_REJECT;
+      }
+    });
+
+    var noeuds = [];
+    while (parcours.nextNode()) noeuds.push(parcours.currentNode);
+
+    noeuds.forEach(function (noeud) {
+      noeud.nodeValue = noeud.nodeValue
+        // Insécable entière avant les deux-points, fine avant les autres.
+        .replace(/ :/g, ' :')
+        .replace(/ ([;!?»])/g, ' $1')
+        .replace(/« /g, '« ');
+    });
+  }
+
   function el(tag, className, text) {
     var node = document.createElement(tag);
     if (className) node.className = className;
@@ -135,6 +172,8 @@
     img.src = product.image;
     img.alt = product.name;
     img.loading = 'lazy';
+    // Le décodage hors du fil principal évite les à-coups au défilement.
+    img.decoding = 'async';
     img.width = taille;
     img.height = taille;
     cadrerPhoto(img, product);
@@ -266,6 +305,7 @@
       ? (dispo > 1 ? dispo + ' créations disponibles' : dispo + ' création disponible') +
         (parties ? ' · ' + parties + (parties > 1 ? ' déjà parties' : ' déjà partie') : '')
       : '';
+    typographie(grid);
     observeReveals();
   }
 
@@ -853,6 +893,7 @@
       : 'Pièce unique, crochetée ou cousue à la main dans l’atelier.';
 
     majNavigationFiche();
+    typographie($('#product-modal'));
     return product;
   }
 
@@ -1359,6 +1400,7 @@
   installable();
   observeReveals();
   donneesProduits();
+  typographie(document.body);
   suivreAdresse();
 
   $('#cart-button').addEventListener('click', openCart);
