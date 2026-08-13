@@ -104,6 +104,12 @@
     return Math.min(4, Math.max(1, nombre));
   }
 
+  /** Une pièce unique déjà partie : « vendu », « vendue », « réservé »… */
+  function estPartie(etiquette) {
+    var mot = Format.normalise(etiquette);
+    return /\b(vendu|vendue|reserve|reservee|parti|partie|epuise|epuisee)\b/.test(mot);
+  }
+
   function vraiFaux(valeur) {
     var mot = Format.normalise(valeur);
     return mot === 'oui' || mot === 'o' || mot === 'yes' || mot === 'x' || mot === 'vrai';
@@ -125,6 +131,7 @@
       })
       .map(function (p, index) {
         var rayon = String(p['Rayon'] || '').trim();
+        var etiquette = String(p['Étiquette'] || '').trim();
         return {
           id: identifiant(p['Nom'], 'produit-' + index),
           name: String(p['Nom']).trim(),
@@ -132,7 +139,10 @@
           rayon: rayon,
           category: identifiant(rayon, 'autres'),
           image: photo(p['Photo']),
-          badge: String(p['Étiquette'] || '').trim(),
+          badge: etiquette,
+          // Écrire « vendu » ou « réservé » dans l'étiquette suffit à
+          // retirer la pièce de la vente : pas de champ de plus à remplir.
+          vendu: estPartie(etiquette),
           variants: vraiFaux(p['Autres couleurs']),
           shopUrl: String(p['Lien boutique'] || '').trim(),
           focus: cadrage(p['Cadrage']),

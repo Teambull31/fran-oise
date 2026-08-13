@@ -142,11 +142,13 @@
   }
 
   function productCard(product) {
-    var card = el('article', 'product-card reveal');
+    var card = el('article', 'product-card reveal' + (product.vendu ? ' est-partie' : ''));
 
     var media = el('div', 'product-media');
     media.append(visuelProduit(product, 900));
-    if (product.badge) media.append(el('span', 'badge', product.badge));
+    if (product.badge) {
+      media.append(el('span', 'badge' + (product.vendu ? ' badge--vendu' : ''), product.badge));
+    }
 
     var body = el('div', 'product-body');
 
@@ -179,6 +181,16 @@
    * en ligne quand elle est renseignée, sinon par le panier du site.
    */
   function boutonCommande(product, classe, libelle) {
+    // Une pièce unique déjà partie ne se commande plus : le bouton le dit
+    // au lieu de mener à un panier qui ne pourra pas être honoré.
+    if (product.vendu) {
+      var partie = el('button', classe + ' est-vendu', 'Vendu');
+      partie.type = 'button';
+      partie.disabled = true;
+      partie.setAttribute('aria-label', product.name + ' — pièce déjà vendue');
+      return partie;
+    }
+
     if (product.shopUrl) {
       var lien = el('a', classe, libelle || 'Commander');
       lien.href = product.shopUrl;
@@ -244,11 +256,15 @@
     });
 
     $('#grid-empty').hidden = matches.length > 0;
-    // Dit à voix haute ce que le filtre vient de changer.
+    // Dit à voix haute ce que le filtre vient de changer, en distinguant
+    // ce qui est encore à vendre de ce qui est déjà parti.
+    var dispo = matches.filter(function (product) {
+      return !product.vendu;
+    }).length;
+    var parties = matches.length - dispo;
     $('#grid-count').textContent = matches.length
-      ? matches.length > 1
-        ? matches.length + ' créations disponibles'
-        : '1 création disponible'
+      ? (dispo > 1 ? dispo + ' créations disponibles' : dispo + ' création disponible') +
+        (parties ? ' · ' + parties + (parties > 1 ? ' déjà parties' : ' déjà partie') : '')
       : '';
     observeReveals();
   }
@@ -413,8 +429,11 @@
     try {
       var raw = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
       if (!Array.isArray(raw)) return [];
+      // Une pièce vendue depuis la dernière visite ne doit pas rester
+      // dans un panier qui ne pourra pas être honoré.
       return raw.filter(function (line) {
-        return findProduct(line.id) && line.qty > 0;
+        var product = findProduct(line.id);
+        return product && !product.vendu && line.qty > 0;
       });
     } catch (error) {
       return [];
@@ -449,6 +468,9 @@
   }
 
   function addToCart(id) {
+    var product = findProduct(id);
+    if (!product || product.vendu) return;
+
     var line = cart.find(function (item) {
       return item.id === id;
     });
@@ -799,7 +821,10 @@
     var media = $('#product-detail-media');
     media.textContent = '';
     media.append(visuelProduit(product, 1200));
-    if (product.badge) media.append(el('span', 'badge', product.badge));
+    if (product.badge) {
+      media.append(el('span', 'badge' + (product.vendu ? ' badge--vendu' : ''), product.badge));
+    }
+    media.parentNode.classList.toggle('est-partie', product.vendu);
 
     $('#product-rayon').textContent = product.rayon || '';
     $('#product-rayon').hidden = !product.rayon;
@@ -813,12 +838,19 @@
     actions.textContent = '';
     actions.append(boutonCommande(product, 'btn btn--primary', product.shopUrl ? 'Commander' : 'Ajouter au panier'));
 
-    var sur = el('a', 'btn btn--ghost', 'Une question ?');
+    // Une pièce partie n'est pas une déception sèche : elle peut être
+    // refaite, et c'est le moment de le proposer.
+    var sur = el('a', 'btn btn--ghost', product.vendu ? 'M’en faire une semblable' : 'Une question ?');
     sur.href = '#contact';
     sur.addEventListener('click', function () {
       closeProduct();
     });
     actions.append(sur);
+
+    var mot = $('#product-note');
+    mot.textContent = product.vendu
+      ? 'Cette pièce est partie — elles sont toutes uniques. Une semblable peut être crochetée pour vous.'
+      : 'Pièce unique, crochetée ou cousue à la main dans l’atelier.';
 
     majNavigationFiche();
     return product;
@@ -1182,7 +1214,9 @@
             '@type': 'Offer',
             price: product.price.toFixed(2),
             priceCurrency: 'EUR',
-            availability: 'https://schema.org/InStock',
+            availability: product.vendu
+              ? 'https://schema.org/SoldOut'
+              : 'https://schema.org/InStock',
             url: product.shopUrl || absolu(PREFIXE_FICHE + product.id)
           }
         };

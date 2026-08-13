@@ -818,6 +818,29 @@ textarea {
   font-size: 2.2rem;
 }
 
+/* ---------- pièces déjà parties ---------- */
+
+/* La photo reste visible — c'est ce qui donne envie d'une semblable —
+   mais elle est visiblement mise en retrait. */
+.est-partie .product-media img,
+.product-detail-media.est-partie img {
+  filter: saturate(0.35) brightness(1.06);
+}
+
+.est-partie .price {
+  color: var(--ink-soft);
+  text-decoration: line-through;
+  text-decoration-thickness: 1px;
+}
+
+.add-button.est-vendu,
+.btn.est-vendu {
+  background: var(--line);
+  color: var(--ink-soft);
+  box-shadow: none;
+  cursor: default;
+}
+
 .badge {
   position: absolute;
   top: 0.85rem;
@@ -830,6 +853,13 @@ textarea {
   font-weight: 700;
   letter-spacing: 0.02em;
   box-shadow: var(--shadow-sm);
+}
+
+/* Déclaré après `.badge` : sans cela, la couleur de fond neutre
+   reprendrait le dessus à égalité de spécificité. */
+.badge--vendu {
+  background: var(--ink);
+  color: var(--cream);
 }
 
 .product-body {
