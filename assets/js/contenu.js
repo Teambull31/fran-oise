@@ -176,12 +176,11 @@
         address: b['Adresse'] || '',
         hours: [],
         socials: reseaux,
+        // Trois libellés différents menant à la même page d'accueil
+        // faisaient croire à trois documents distincts. Un seul lien,
+        // qui dit où il mène.
         legalLinks: boutique
-          ? [
-              { label: 'Conditions', url: boutique },
-              { label: 'Politique de confidentialité', url: boutique },
-              { label: 'Politique de cookies', url: boutique }
-            ]
+          ? [{ label: 'Conditions de vente (boutique en ligne)', url: boutique }]
           : []
       },
 

@@ -494,10 +494,18 @@
 
     if (!cart.length) {
       var empty = el('div', 'cart-empty');
+      // Un panier vide propose la suite au lieu de laisser refermer.
+      var retour = el('button', 'btn btn--primary', 'Voir les créations');
+      retour.type = 'button';
+      retour.addEventListener('click', function () {
+        closeCart();
+        $('#boutique').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
       empty.append(
         el('span', null, '🧺'),
         el('p', null, 'Votre panier est vide.'),
-        el('p', null, 'Ajoutez une création pour préparer votre commande.')
+        el('p', null, 'Ajoutez une création pour préparer votre commande.'),
+        retour
       );
       body.append(empty);
     }
@@ -1053,17 +1061,35 @@
     var toggle = $('#menu-toggle');
     var nav = $('#site-nav');
 
+    function fermerMenu(rendreLeFocus) {
+      if (!nav.classList.contains('is-open')) return;
+      nav.classList.remove('is-open');
+      toggle.setAttribute('aria-expanded', 'false');
+      if (rendreLeFocus) toggle.focus();
+    }
+
     toggle.addEventListener('click', function () {
       var open = nav.classList.toggle('is-open');
       toggle.setAttribute('aria-expanded', String(open));
     });
 
     nav.addEventListener('click', function (event) {
-      if (event.target.tagName === 'A') {
-        nav.classList.remove('is-open');
-        toggle.setAttribute('aria-expanded', 'false');
-      }
+      if (event.target.tagName === 'A') fermerMenu();
     });
+
+    // Un menu ouvert doit se refermer comme on s'y attend : par Échap,
+    // en touchant ailleurs, ou dès que la page défile.
+    document.addEventListener('keydown', function (event) {
+      if (event.key === 'Escape') fermerMenu(true);
+    });
+
+    document.addEventListener('click', function (event) {
+      if (!nav.contains(event.target) && !toggle.contains(event.target)) fermerMenu();
+    });
+
+    window.addEventListener('scroll', function () {
+      fermerMenu();
+    }, { passive: true });
 
     var header = $('#site-header');
     var haut = $('#to-top');

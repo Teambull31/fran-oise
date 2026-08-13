@@ -1396,6 +1396,16 @@ textarea {
   margin-bottom: 0.5rem;
 }
 
+.cart-empty .btn {
+  margin-top: 0.75rem;
+}
+
+/* Le focus posé par le lien d'évitement ne doit pas dessiner de cadre
+   autour de toute la page. */
+main:focus-visible {
+  outline: none;
+}
+
 .cart-line {
   display: grid;
   grid-template-columns: 64px 1fr;
