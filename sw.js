@@ -12,7 +12,7 @@
    ========================================================= */
 
 // À changer à chaque mise en ligne d'une nouvelle version du site.
-var VERSION = 'couture-fil-v1';
+var VERSION = 'couture-fil-v2';
 
 var ESSENTIELS = [
   './',
@@ -21,6 +21,7 @@ var ESSENTIELS = [
   './contenu.txt',
   './manifest.webmanifest',
   './assets/css/styles.css',
+  './assets/js/admin.js',
   './assets/js/app.js',
   './assets/js/content.js',
   './assets/js/contenu.js',

@@ -18,11 +18,26 @@ renvoie vers la boutique pour le règlement sécurisé.
 - un bandeau d'annonce facultatif en haut de page (« Atelier fermé du 1er au 15 août ») ;
 - aucune dépendance, aucun build, aucune requête vers un service externe.
 
+## Accès réservé à Françoise
+
+Deux choses ne sont visibles que pour Françoise, jamais pour les visiteurs du site : le lien
+« ✎ Modifier le site » en pied de page, et le bouton « 📱 Installer l'application ». Elles sont
+protégées par un code d'accès (un seul, propre à ce site), demandé à l'ouverture de
+[modifier.html](modifier.html) tant qu'il n'a pas déjà été saisi sur l'appareil. Une fois entré, il
+reste mémorisé sur cet appareil (dans le navigateur) et débloque aussi les deux éléments sur la page
+d'accueil. Le bouton « Se déconnecter », en haut de la page « Modifier », l'efface — utile sur un
+ordinateur partagé.
+
+Le site étant statique (sans serveur), ce n'est pas une vraie sécurité : c'est seulement une façon
+de garder ces deux fonctions hors de vue du grand public. Le code lui-même n'est écrit nulle part
+dans le dépôt, seulement son empreinte, dans `assets/js/admin.js` — la marche à suivre pour le
+changer s'y trouve en commentaire.
+
 ## Application pour téléphone
 
 Le site est **installable** : sur Android, le navigateur propose lui-même l'installation (le bouton
-« 📱 Installer l'application » apparaît en bas de page) ; sur iPhone et iPad, le même bouton
-explique les deux gestes à faire (Partager → « Sur l'écran d'accueil »).
+« 📱 Installer l'application » apparaît en bas de page, une fois le code d'accès saisi) ; sur iPhone
+et iPad, le même bouton explique les deux gestes à faire (Partager → « Sur l'écran d'accueil »).
 
 Une fois installée, l'application a son icône sur l'écran d'accueil, s'ouvre en plein écran sans
 barre d'adresse, et **fonctionne sans réseau** : textes et photos déjà consultés restent
@@ -40,9 +55,10 @@ Après une modification du code du site, incrémenter `VERSION` en tête de `sw.
 
 ### La façon simple : la page « Modifier »
 
-Ouvrir **[modifier.html](modifier.html)** (lien « Modifier le site » en bas de chaque page).
-C'est un formulaire : on change les textes et les prix dans de grandes cases, on ajoute ou on
-supprime un produit avec un bouton.
+Ouvrir **[modifier.html](modifier.html)** (lien « Modifier le site » en bas de chaque page, une fois
+le code d'accès saisi — voir « Accès réservé à Françoise » plus haut). C'est un formulaire : on
+change les textes et les prix dans de grandes cases, on ajoute ou on supprime un produit avec un
+bouton.
 
 - **👁 Voir le résultat** ouvre le site tel qu'il sera, avec les modifications et les photos pas
   encore envoyées. Un bandeau vert rappelle que rien n'est publié. Le vrai site n'est pas touché.
@@ -169,6 +185,7 @@ assets/css/styles.css    design (couleurs, composants, responsive)
 assets/js/contenu-format.js  format du fichier contenu.txt (lecture / écriture)
 assets/js/contenu.js     chargement du contenu et mode aperçu
 assets/js/content.js     contenu de secours
+assets/js/admin.js       code d'accès réservé à Françoise
 assets/js/app.js         rendu, filtres, panier, formulaire
 assets/img/              photos et logo
 vercel.json              configuration du déploiement statique

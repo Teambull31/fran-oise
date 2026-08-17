@@ -258,6 +258,10 @@
     $('#footer-sumup').href = C.shop.sumupUrl;
     $('#modal-sumup').href = C.shop.sumupUrl;
 
+    // Réservé à Françoise : masqué tant que l'accès admin n'est pas déverrouillé.
+    var lienModifier = $('#lien-modifier');
+    if (lienModifier) lienModifier.hidden = !(window.AdminGate && window.AdminGate.estAdmin());
+
     var nav = $('#footer-links');
     var links = [{ label: 'Contactez-nous', url: '#contact' }].concat(C.shop.legalLinks || []);
     C.shop.socials.forEach(function (social) {
@@ -784,6 +788,9 @@
     var fenetre = $('#install-modal');
     var explication = $('#install-explication');
     if (!bouton) return;
+
+    // Réservé à Françoise : les clientes ne voient jamais ce bouton.
+    if (!(window.AdminGate && window.AdminGate.estAdmin())) return;
 
     // Déjà installée : inutile de proposer quoi que ce soit.
     var installee =
