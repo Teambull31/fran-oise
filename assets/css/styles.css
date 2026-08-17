@@ -948,6 +948,55 @@ textarea {
   color: var(--coral);
 }
 
+/* ---------- marchés ---------- */
+
+.market-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr));
+  gap: clamp(1rem, 2.5vw, 1.75rem);
+}
+
+.market-card {
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  padding: 1.4rem 1.4rem;
+  box-shadow: var(--shadow-sm);
+  text-align: center;
+}
+
+.market-day {
+  display: inline-block;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--berry);
+  background: var(--surface-alt);
+  padding: 0.2rem 0.7rem;
+  border-radius: 999px;
+  margin-bottom: 0.75rem;
+}
+
+.market-place {
+  font-weight: 700;
+}
+
+.market-hours {
+  color: var(--ink-soft);
+  font-size: 0.92rem;
+  margin-bottom: 0.9rem;
+}
+
+.market-link {
+  display: inline-block;
+  font-weight: 700;
+  color: var(--coral-dark);
+  text-decoration: none;
+}
+
+.market-link:hover,
+.market-link:focus-visible {
+  text-decoration: underline;
+}
+
 /* ---------- atelier ---------- */
 
 .about {

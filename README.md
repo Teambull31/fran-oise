@@ -16,6 +16,8 @@ renvoie vers la boutique pour le règlement sécurisé.
 - un bouton « Commander » qui mène directement à la fiche produit si son adresse est renseignée ;
 - un formulaire de contact qui ouvre le logiciel de courrier avec le message prêt ;
 - un bandeau d'annonce facultatif en haut de page (« Atelier fermé du 1er au 15 août ») ;
+- une section « Les marchés » qui liste les marchés où trouver l'atelier itinérant, avec un lien
+  d'itinéraire vers chacun ;
 - aucune dépendance, aucun build, aucune requête vers un service externe.
 
 ## Accès réservé à Françoise
@@ -82,6 +84,16 @@ bouton.
 
 Les sections sont classées par fréquence de modification : les produits d'abord, le nom de la
 boutique en dernier. Un sommaire en haut permet de sauter directement à une partie.
+
+#### Les marchés
+
+Chaque marché a un jour, des horaires, un lieu et une ville : ces quatre champs suffisent à
+l'afficher sur le site, avec un lien « Voir l'itinéraire » qui ouvre Google Maps en recherchant ce
+lieu. Un cinquième champ, facultatif, **Coordonnées GPS**, permet de pointer un emplacement plus
+précis (utile sur un grand parking) : sur Google Maps, appui long sur l'endroit exact puis copier
+les deux nombres affichés en premier (par exemple `44.612345, 0.745678`) et les coller dans ce
+champ. Laissé vide, l'itinéraire se base simplement sur le lieu et la ville. Un marché sans jour ni
+lieu, ou la suppression de tous les marchés, fait disparaître la section entière du site.
 
 #### Régler la publication en un clic (une seule fois)
 

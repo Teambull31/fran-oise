@@ -1063,7 +1063,7 @@
           var titre = document.createElement('span');
           titre.className = 'carte-titre';
           titre.textContent =
-            bloc.champs['Nom'] || bloc.champs['Titre'] || bloc.champs['Gros texte'] || modele.titre;
+            bloc.champs['Nom'] || bloc.champs['Titre'] || bloc.champs['Gros texte'] || bloc.champs['Jour'] || modele.titre;
           tete.appendChild(titre);
 
           if (!modele.unique) {
@@ -1075,7 +1075,7 @@
             }));
             tete.appendChild(
               bouton('Supprimer', 'b-rouge', function () {
-                var nom = bloc.champs['Nom'] || bloc.champs['Titre'] || 'cet élément';
+                var nom = bloc.champs['Nom'] || bloc.champs['Titre'] || bloc.champs['Jour'] || 'cet élément';
                 if (window.confirm('Supprimer « ' + nom + ' » ?\n\nLe bouton « Annuler » permet de revenir en arrière.')) {
                   memoriser('suppression de ' + nom);
                   blocs.splice(blocs.indexOf(bloc), 1);
@@ -1096,7 +1096,7 @@
           // laisser croire que la modification n'a pas été prise.
           element.addEventListener('input', function () {
             titre.textContent =
-              bloc.champs['Nom'] || bloc.champs['Titre'] || bloc.champs['Gros texte'] || modele.titre;
+              bloc.champs['Nom'] || bloc.champs['Titre'] || bloc.champs['Gros texte'] || bloc.champs['Jour'] || modele.titre;
           });
 
           return element;
