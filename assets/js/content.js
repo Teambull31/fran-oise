@@ -207,21 +207,24 @@ window.CONTENT = {
       hours: '8h30 - 13h',
       place: 'Saint-Sylvestre-sur-Lot',
       city: 'Saint-Sylvestre-sur-Lot',
-      mapUrl: 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent('Saint-Sylvestre-sur-Lot, Saint-Sylvestre-sur-Lot')
+      mapUrl: 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent('Saint-Sylvestre-sur-Lot, Saint-Sylvestre-sur-Lot'),
+      mapEmbedUrl: 'https://www.google.com/maps?q=' + encodeURIComponent('Saint-Sylvestre-sur-Lot, Saint-Sylvestre-sur-Lot') + '&output=embed'
     },
     {
       day: 'Jeudi',
       hours: '8h30 - 13h',
       place: 'Parking Eysses',
       city: 'Villeneuve-sur-Lot',
-      mapUrl: 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent('Parking Eysses, Villeneuve-sur-Lot')
+      mapUrl: 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent('Parking Eysses, Villeneuve-sur-Lot'),
+      mapEmbedUrl: 'https://www.google.com/maps?q=' + encodeURIComponent('Parking Eysses, Villeneuve-sur-Lot') + '&output=embed'
     },
     {
       day: 'Vendredi',
       hours: '8h30 - 13h',
       place: 'Gamm Vert',
       city: 'Monflanquin',
-      mapUrl: 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent('Gamm Vert, Monflanquin')
+      mapUrl: 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent('Gamm Vert, Monflanquin'),
+      mapEmbedUrl: 'https://www.google.com/maps?q=' + encodeURIComponent('Gamm Vert, Monflanquin') + '&output=embed'
     }
   ],
 
