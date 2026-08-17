@@ -113,6 +113,7 @@
       }
 
       input[type="text"],
+      input[type="password"],
       textarea,
       select {
         width: 100%;
@@ -398,6 +399,7 @@
       <div class="shell">
         <h1>Modifier mon site</h1>
         <p>Changez les textes et les prix, puis cliquez sur « Enregistrer » en bas.</p>
+        <p id="zone-deconnexion" style="margin-top: 0.75rem"></p>
       </div>
     </header>
 
@@ -511,11 +513,93 @@
     </dialog>
 
     <script src="assets/js/contenu-format.js"></script>
+    <script src="assets/js/admin.js"></script>
     <script>
       (function () {
         'use strict';
 
         var Format = window.ContenuFormat;
+
+        /* ---------------------------------------------------------
+           Accès réservé
+
+           Cette page permet de tout changer sur le site : elle ne
+           s'ouvre qu'avec le code d'accès de Françoise. Sans lui,
+           rien d'autre ne se charge.
+           --------------------------------------------------------- */
+
+        if (!window.AdminGate || !window.AdminGate.estAdmin()) {
+          document.getElementById('chargement').remove();
+
+          var verrou = document.createElement('section');
+          verrou.className = 'carte';
+          verrou.style.marginTop = '1rem';
+
+          var titreVerrou = document.createElement('p');
+          titreVerrou.style.cssText = 'font-weight:700;font-size:1.15rem;margin-top:0';
+          titreVerrou.textContent = 'Cette page est réservée à Françoise.';
+          verrou.appendChild(titreVerrou);
+
+          var etiquetteVerrou = document.createElement('label');
+          etiquetteVerrou.setAttribute('for', 'champ-acces');
+          etiquetteVerrou.textContent = 'Code d’accès';
+          verrou.appendChild(etiquetteVerrou);
+
+          var champAcces = document.createElement('input');
+          champAcces.type = 'password';
+          champAcces.id = 'champ-acces';
+          champAcces.autocomplete = 'off';
+          verrou.appendChild(champAcces);
+
+          var messageVerrou = document.createElement('p');
+          messageVerrou.style.cssText = 'color:var(--rouge);font-weight:700;min-height:1.4em';
+          verrou.appendChild(messageVerrou);
+
+          var rangeeVerrou = document.createElement('p');
+          rangeeVerrou.className = 'rangee';
+          var boutonVerrou = document.createElement('button');
+          boutonVerrou.type = 'button';
+          boutonVerrou.className = 'b-vert b-grand';
+          boutonVerrou.textContent = 'Déverrouiller';
+          rangeeVerrou.appendChild(boutonVerrou);
+          verrou.appendChild(rangeeVerrou);
+
+          var essayer = function () {
+            messageVerrou.textContent = 'Vérification…';
+            window.AdminGate.verifierCode(champAcces.value).then(function (correct) {
+              if (correct) {
+                window.location.reload();
+                return;
+              }
+              messageVerrou.textContent = 'Ce code n’est pas reconnu.';
+              champAcces.select();
+            });
+          };
+
+          boutonVerrou.addEventListener('click', essayer);
+          champAcces.addEventListener('keydown', function (evenement) {
+            if (evenement.key === 'Enter') essayer();
+          });
+
+          document.querySelector('main').appendChild(verrou);
+          champAcces.focus();
+          return;
+        }
+
+        (function () {
+          var zone = document.getElementById('zone-deconnexion');
+          var lien = document.createElement('a');
+          lien.href = '#';
+          lien.style.cssText = 'color:#fff;text-decoration:underline';
+          lien.textContent = 'Se déconnecter';
+          lien.addEventListener('click', function (evenement) {
+            evenement.preventDefault();
+            window.AdminGate.seDeconnecter();
+            window.location.reload();
+          });
+          zone.appendChild(lien);
+        })();
+
         var FICHIER = 'contenu.txt';
         var BROUILLON = 'couture-fil:brouillon';
         // Adresse de modification du fichier sur GitHub.
