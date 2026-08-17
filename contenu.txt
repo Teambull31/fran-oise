@@ -33,6 +33,7 @@ Téléphone:
 Facebook:
 Instagram:
 Boutique en ligne: https://couturefil.sumupstore.com/
+Taille du texte: Normal
 Bandeau en haut:
 
 # --- Les arguments d’accueil ---

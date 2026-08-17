@@ -109,6 +109,14 @@
     return mot === 'oui' || mot === 'o' || mot === 'yes' || mot === 'x' || mot === 'vrai';
   }
 
+  /** « Grand », « Très grand » → identifiant utilisé par le CSS. Sinon la taille normale. */
+  function tailleTexte(valeur) {
+    var mot = Format.normalise(valeur);
+    if (mot.indexOf('tres grand') === 0) return 'tres-grand';
+    if (mot.indexOf('grand') === 0) return 'grand';
+    return 'normal';
+  }
+
   /**
    * Ce qui identifie un marché pour Google Maps : les coordonnées GPS si
    * elles sont renseignées (plus précises, utile sur un parking sans
@@ -266,11 +274,16 @@
         skills: atelier['Savoir-faire'] || []
       },
 
-      demoNotice: b['Bandeau en haut'] || ''
+      demoNotice: b['Bandeau en haut'] || '',
+
+      textSize: tailleTexte(b['Taille du texte'])
     };
   }
 
   function demarrer() {
+    if (window.CONTENT && window.CONTENT.textSize && window.CONTENT.textSize !== 'normal') {
+      document.documentElement.dataset.taille = window.CONTENT.textSize;
+    }
     if (APERCU) bandeauApercu();
     var script = document.createElement('script');
     script.src = 'assets/js/app.js';
