@@ -55,21 +55,24 @@ Petit texte: atelier en Lot-et-Garonne
 Titre: Peluches & doudous
 Rayon: Peluches & doudous
 Photo: cat-peluches.avif
-Cadrage: bas
+Cadrage: 51% 100%
+Zoom:
 Texte: Lapins, oursons et compagnons au crochet, montés et rembourrés à la main.
 
 [FAMILLE]
 Titre: Bijoux
 Rayon: Bijoux
 Photo: cat-bijoux.avif
-Cadrage: centre
+Cadrage: 50% 50%
+Zoom:
 Texte: Boucles d’oreilles fleuries au crochet fin, montées sur crochets argentés.
 
 [FAMILLE]
 Titre: Zéro déchet
 Rayon: Zéro déchet
 Photo: cat-zero-dechet.avif
-Cadrage: bas
+Cadrage: 43% 100%
+Zoom:
 Texte: Lingettes et petits accessoires lavables cousus dans des cotons imprimés.
 
 # --- Mes produits ---
@@ -79,6 +82,8 @@ Nom: 🐰 Jean – Peluche lapin au crochet, fait main
 Prix: 54
 Rayon: Peluches & doudous
 Photo: jean.avif
+Cadrage: 50% 50%
+Zoom:
 Étiquette: Grand format
 Autres couleurs:
 Lien boutique:
@@ -89,6 +94,8 @@ Nom: 🐰 Justin – Peluche lapin amigurumi au crochet
 Prix: 28
 Rayon: Peluches & doudous
 Photo: justin.avif
+Cadrage: 50% 50%
+Zoom:
 Étiquette:
 Autres couleurs:
 Lien boutique:
@@ -99,6 +106,8 @@ Nom: 🐰 Lucien – Peluche lapin amigurumi au crochet
 Prix: 28
 Rayon: Peluches & doudous
 Photo: lucien.avif
+Cadrage: 50% 50%
+Zoom:
 Étiquette:
 Autres couleurs:
 Lien boutique:
@@ -109,6 +118,8 @@ Nom: Polo, le lapin au crochet
 Prix: 21
 Rayon: Peluches & doudous
 Photo: polo.avif
+Cadrage: 50% 50%
+Zoom:
 Étiquette:
 Autres couleurs:
 Lien boutique:
@@ -119,6 +130,8 @@ Nom: 🧸 Rubis – L’Ourson Rouge au Grand Cœur 🧸
 Prix: 28
 Rayon: Peluches & doudous
 Photo: rubis.avif
+Cadrage: 50% 50%
+Zoom:
 Étiquette: Coup de cœur
 Autres couleurs:
 Lien boutique:
@@ -129,6 +142,8 @@ Nom: 🌼 Boucles d’oreilles “Bleuet” 🌼
 Prix: 19
 Rayon: Bijoux
 Photo: bleuet.avif
+Cadrage: 50% 50%
+Zoom:
 Étiquette:
 Autres couleurs: oui
 Lien boutique:
@@ -139,6 +154,8 @@ Nom: 💙 Boucles d’oreilles “Bleu Nuit” 💙
 Prix: 19
 Rayon: Bijoux
 Photo:
+Cadrage: 50% 50%
+Zoom:
 Étiquette:
 Autres couleurs: oui
 Lien boutique:
@@ -149,6 +166,8 @@ Nom: 🩷 Boucles d’oreilles “Fleur Rose” 🩷
 Prix: 19
 Rayon: Bijoux
 Photo: fleur-rose.avif
+Cadrage: 50% 50%
+Zoom:
 Étiquette:
 Autres couleurs: oui
 Lien boutique:
@@ -180,34 +199,13 @@ Point: Crochet fin et perles
 Point: Crochets argentés
 Point: Autres coloris sur demande
 
-# --- Mes marchés ---
-
-[MARCHE]
-Jour: Mercredi
-Horaires: 8h30 - 13h
-Lieu: Saint-Sylvestre-sur-Lot
-Ville: Saint-Sylvestre-sur-Lot
-Coordonnées GPS:
-
-[MARCHE]
-Jour: Jeudi
-Horaires: 8h30 - 13h
-Lieu: Parking Eysses
-Ville: Villeneuve-sur-Lot
-Coordonnées GPS:
-
-[MARCHE]
-Jour: Vendredi
-Horaires: 8h30 - 13h
-Lieu: Gamm Vert
-Ville: Monflanquin
-Coordonnées GPS:
-
 # --- L’atelier ---
 
 [ATELIER]
 Titre: L’atelier de Françoise
 Photo: atelier.avif
+Cadrage: 50% 50%
+Zoom:
 Texte de la photo: Créations de l’atelier : ours en tissu fleuri et poupées au crochet
 Paragraphe: Couture & Fil, c’est un atelier à taille humaine à Monflanquin, en Lot-et-Garonne. Françoise y crochète et y coud chaque pièce à la main, une par une.
 Paragraphe: Peluches et amigurumis au crochet, doudous en tissu, bijoux fleuris, accessoires zéro déchet : les créations se font sans série, avec des matières choisies pour durer entre les mains d’un enfant comme dans une chambre d’adulte.
