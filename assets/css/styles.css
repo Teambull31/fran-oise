@@ -1176,6 +1176,24 @@ textarea {
   font-size: 0.85rem !important;
 }
 
+/* Porte d'entrée discrète vers la page « Modifier », toujours visible
+   (sinon Françoise n'aurait aucun moyen d'y accéder une fois le bouton
+   ci-dessus masqué), mais volontairement peu voyante pour les clientes. */
+.footer-access {
+  margin: -0.5rem 0 0 !important;
+  font-size: 0.78rem !important;
+}
+
+.footer-access a {
+  color: var(--ink-soft);
+  text-decoration: none;
+}
+
+.footer-access a:hover,
+.footer-access a:focus-visible {
+  text-decoration: underline;
+}
+
 /* ---------- panier ---------- */
 
 .overlay {
