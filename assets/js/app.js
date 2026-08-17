@@ -212,6 +212,19 @@
     C.markets.forEach(function (marche) {
       var card = el('article', 'market-card reveal');
       if (marche.day) card.append(el('span', 'market-day', marche.day));
+
+      if (marche.mapEmbedUrl) {
+        var carte = el('div', 'market-map');
+        var iframe = document.createElement('iframe');
+        iframe.src = marche.mapEmbedUrl;
+        iframe.title = 'Carte : ' + (marche.place || marche.city || marche.day);
+        iframe.loading = 'lazy';
+        iframe.referrerPolicy = 'no-referrer-when-downgrade';
+        iframe.setAttribute('allowfullscreen', '');
+        carte.append(iframe);
+        card.append(carte);
+      }
+
       var lieu = [marche.place, marche.city].filter(Boolean).join(', ');
       if (lieu) card.append(el('p', 'market-place', lieu));
       if (marche.hours) card.append(el('p', 'market-hours', marche.hours));

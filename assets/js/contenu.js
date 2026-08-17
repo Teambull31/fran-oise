@@ -110,19 +110,31 @@
   }
 
   /**
-   * Lien Google Maps vers un marché : les coordonnées GPS si elles sont
-   * renseignées (plus précises, utile sur un parking sans adresse),
-   * sinon une recherche à partir du lieu et de la ville.
+   * Ce qui identifie un marché pour Google Maps : les coordonnées GPS si
+   * elles sont renseignées (plus précises, utile sur un parking sans
+   * adresse), sinon le lieu et la ville.
    */
-  function itineraire(gps, lieu, ville) {
+  function reperMarche(gps, lieu, ville) {
     var coordonnees = String(gps || '').match(
       /(-?\d+(?:[.,]\d+)?)\s*[,;]\s*(-?\d+(?:[.,]\d+)?)/
     );
-    var recherche = coordonnees
+    return coordonnees
       ? coordonnees[1].replace(',', '.') + ',' + coordonnees[2].replace(',', '.')
       : [String(lieu || '').trim(), String(ville || '').trim()].filter(Boolean).join(', ');
-    if (!recherche) return '';
-    return 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(recherche);
+  }
+
+  /** Lien qui ouvre Google Maps (application ou site) pour l'itinéraire. */
+  function itineraire(gps, lieu, ville) {
+    var repere = reperMarche(gps, lieu, ville);
+    if (!repere) return '';
+    return 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(repere);
+  }
+
+  /** Adresse d'une carte Google Maps intégrable directement dans la page. */
+  function carteIntegree(gps, lieu, ville) {
+    var repere = reperMarche(gps, lieu, ville);
+    if (!repere) return '';
+    return 'https://www.google.com/maps?q=' + encodeURIComponent(repere) + '&output=embed';
   }
 
   /** Identifiant technique stable, déduit du nom. */
@@ -236,7 +248,8 @@
             hours: String(m['Horaires'] || '').trim(),
             place: String(m['Lieu'] || '').trim(),
             city: String(m['Ville'] || '').trim(),
-            mapUrl: itineraire(m['Coordonnées GPS'], m['Lieu'], m['Ville'])
+            mapUrl: itineraire(m['Coordonnées GPS'], m['Lieu'], m['Ville']),
+            mapEmbedUrl: carteIntegree(m['Coordonnées GPS'], m['Lieu'], m['Ville'])
           };
         })
         .filter(function (m) {
