@@ -200,6 +200,34 @@
     });
   }
 
+  function renderMarkets() {
+    var section = $('#marches');
+    if (!section) return;
+    if (!C.markets || !C.markets.length) {
+      section.hidden = true;
+      return;
+    }
+
+    var grid = $('#marche-grid');
+    C.markets.forEach(function (marche) {
+      var card = el('article', 'market-card reveal');
+      if (marche.day) card.append(el('span', 'market-day', marche.day));
+      var lieu = [marche.place, marche.city].filter(Boolean).join(', ');
+      if (lieu) card.append(el('p', 'market-place', lieu));
+      if (marche.hours) card.append(el('p', 'market-hours', marche.hours));
+      if (marche.mapUrl) {
+        var lien = document.createElement('a');
+        lien.href = marche.mapUrl;
+        lien.target = '_blank';
+        lien.rel = 'noopener';
+        lien.className = 'market-link';
+        lien.textContent = '📍 Voir l’itinéraire';
+        card.append(lien);
+      }
+      grid.append(card);
+    });
+  }
+
   function renderAbout() {
     var image = $('#about-image');
     image.src = C.about.image;
@@ -875,6 +903,7 @@
   renderFilters();
   applyFilter('all');
   renderServices();
+  renderMarkets();
   renderAbout();
   renderContact();
   renderFooter();

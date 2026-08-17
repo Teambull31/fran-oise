@@ -122,6 +122,27 @@
       ]
     },
     {
+      type: 'marche',
+      rangEditeur: 2.5,
+      etiquette: 'MARCHE',
+      titre: 'Mes marchés',
+      singulier: 'marché',
+      champs: [
+        { cle: 'Jour', type: 'texte', aide: 'Par exemple : Mercredi.' },
+        { cle: 'Horaires', type: 'texte', aide: 'Par exemple : 8h30 - 13h.' },
+        { cle: 'Lieu', type: 'texte', aide: 'Le nom de l’endroit, par exemple : Parking Eysses.' },
+        { cle: 'Ville', type: 'texte' },
+        {
+          cle: 'Coordonnées GPS',
+          type: 'texte',
+          aide:
+            'Facultatif, pour un itinéraire plus précis. Sur Google Maps : appui long sur l’endroit exact, ' +
+            'puis copier les deux nombres affichés en premier (par exemple 44.612345, 0.745678). ' +
+            'Laissé vide, l’itinéraire se fait à partir du lieu et de la ville.'
+        }
+      ]
+    },
+    {
       type: 'atelier',
       rangEditeur: 4,
       etiquette: 'ATELIER',
@@ -145,7 +166,7 @@
   ];
 
   /** Toutes les façons acceptées d'écrire un nom de bloc. */
-  var ALIAS_BLOCS = { univers: 'famille', creation: 'produit' };
+  var ALIAS_BLOCS = { univers: 'famille', creation: 'produit', marches: 'marche', marche: 'marche' };
   BLOCS.forEach(function (bloc) {
     ALIAS_BLOCS[normalise(bloc.etiquette)] = bloc.type;
   });

@@ -109,6 +109,22 @@
     return mot === 'oui' || mot === 'o' || mot === 'yes' || mot === 'x' || mot === 'vrai';
   }
 
+  /**
+   * Lien Google Maps vers un marché : les coordonnées GPS si elles sont
+   * renseignées (plus précises, utile sur un parking sans adresse),
+   * sinon une recherche à partir du lieu et de la ville.
+   */
+  function itineraire(gps, lieu, ville) {
+    var coordonnees = String(gps || '').match(
+      /(-?\d+(?:[.,]\d+)?)\s*[,;]\s*(-?\d+(?:[.,]\d+)?)/
+    );
+    var recherche = coordonnees
+      ? coordonnees[1].replace(',', '.') + ',' + coordonnees[2].replace(',', '.')
+      : [String(lieu || '').trim(), String(ville || '').trim()].filter(Boolean).join(', ');
+    if (!recherche) return '';
+    return 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(recherche);
+  }
+
   /** Identifiant technique stable, déduit du nom. */
   function identifiant(nom, secours) {
     return Format.normalise(nom).replace(/\s+/g, '-') || secours;
@@ -212,6 +228,20 @@
           points: s['Point'] || []
         };
       }),
+
+      markets: tous(blocs, 'marche')
+        .map(function (m) {
+          return {
+            day: String(m['Jour'] || '').trim(),
+            hours: String(m['Horaires'] || '').trim(),
+            place: String(m['Lieu'] || '').trim(),
+            city: String(m['Ville'] || '').trim(),
+            mapUrl: itineraire(m['Coordonnées GPS'], m['Lieu'], m['Ville'])
+          };
+        })
+        .filter(function (m) {
+          return m.day || m.place;
+        }),
 
       about: {
         title: atelier['Titre'] || '',

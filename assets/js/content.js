@@ -201,6 +201,30 @@ window.CONTENT = {
     }
   ],
 
+  markets: [
+    {
+      day: 'Mercredi',
+      hours: '8h30 - 13h',
+      place: 'Saint-Sylvestre-sur-Lot',
+      city: 'Saint-Sylvestre-sur-Lot',
+      mapUrl: 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent('Saint-Sylvestre-sur-Lot, Saint-Sylvestre-sur-Lot')
+    },
+    {
+      day: 'Jeudi',
+      hours: '8h30 - 13h',
+      place: 'Parking Eysses',
+      city: 'Villeneuve-sur-Lot',
+      mapUrl: 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent('Parking Eysses, Villeneuve-sur-Lot')
+    },
+    {
+      day: 'Vendredi',
+      hours: '8h30 - 13h',
+      place: 'Gamm Vert',
+      city: 'Monflanquin',
+      mapUrl: 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent('Gamm Vert, Monflanquin')
+    }
+  ],
+
   about: {
     title: 'L’atelier de Françoise',
     image: 'assets/img/atelier.avif',
