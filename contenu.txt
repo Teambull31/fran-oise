@@ -199,6 +199,29 @@ Point: Crochet fin et perles
 Point: Crochets argentés
 Point: Autres coloris sur demande
 
+# --- Mes marchés ---
+
+[MARCHE]
+Jour: Mercredi
+Horaires: 8h30 - 13h
+Lieu: Saint-Sylvestre-sur-Lot
+Ville: Saint-Sylvestre-sur-Lot
+Coordonnées GPS:
+
+[MARCHE]
+Jour: Jeudi
+Horaires: 8h30 - 13h
+Lieu: Parking Eysses
+Ville: Villeneuve-sur-Lot
+Coordonnées GPS:
+
+[MARCHE]
+Jour: Vendredi
+Horaires: 8h30 - 13h
+Lieu: Gamm Vert
+Ville: Monflanquin
+Coordonnées GPS:
+
 # --- L’atelier ---
 
 [ATELIER]
