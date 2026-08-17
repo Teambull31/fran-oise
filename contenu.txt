@@ -205,7 +205,7 @@ Point: Autres coloris sur demande
 [MARCHE]
 Jour: Mercredi
 Horaires: 8h30 - 13h
-Lieu: Saint-Sylvestre-sur-Lot
+Lieu: Place du village
 Ville: Saint-Sylvestre-sur-Lot
 Coordonnées GPS:
 
