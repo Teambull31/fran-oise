@@ -245,5 +245,8 @@ window.CONTENT = {
   },
 
   // Bandeau d'annonce en haut du site. Vide = masqué.
-  demoNotice: ''
+  demoNotice: '',
+
+  // Taille du texte choisie depuis « Modifier » : normal, grand ou tres-grand.
+  textSize: 'normal'
 };

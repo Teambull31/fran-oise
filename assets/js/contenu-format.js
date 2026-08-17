@@ -46,6 +46,12 @@
         { cle: 'Facebook', type: 'texte', aide: 'L’adresse complète de la page.' },
         { cle: 'Instagram', type: 'texte' },
         { cle: 'Boutique en ligne', type: 'texte' },
+        {
+          cle: 'Taille du texte',
+          type: 'choix',
+          valeurs: ['Normal', 'Grand', 'Très grand'],
+          aide: 'La taille de tous les textes du site, pour les visiteurs qui lisent difficilement les petits caractères.'
+        },
         { cle: 'Bandeau en haut', type: 'long', aide: 'Le message sur fond coloré tout en haut.' }
       ]
     },

@@ -67,6 +67,17 @@ html {
   scroll-padding-top: calc(var(--header-h) + 18px);
 }
 
+/* Taille du texte choisie depuis la page « Modifier » (réglage
+   « Taille du texte ») : tout le site étant dimensionné en rem, changer
+   la taille de la racine agrandit uniformément textes et espacements. */
+html[data-taille="grand"] {
+  font-size: 112.5%;
+}
+
+html[data-taille="tres-grand"] {
+  font-size: 125%;
+}
+
 body {
   margin: 0;
   background: var(--cream);

@@ -86,6 +86,14 @@ bouton.
 Les sections sont classées par fréquence de modification : les produits d'abord, le nom de la
 boutique en dernier. Un sommaire en haut permet de sauter directement à une partie.
 
+#### Taille du texte
+
+Dans « Ma boutique », le réglage **Taille du texte** (Normal / Grand / Très grand) agrandit d'un
+coup tous les textes du site — utile pour les visiteurs qui lisent difficilement les petits
+caractères. Le site étant entièrement dimensionné en unités relatives, ce seul réglage suffit :
+titres, boutons, descriptions et espacements s'agrandissent ensemble, sans rien casser dans la
+mise en page.
+
 #### Les marchés
 
 Chaque marché a un jour, des horaires, un lieu et une ville : ces quatre champs suffisent à
