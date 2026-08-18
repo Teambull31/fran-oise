@@ -579,20 +579,9 @@
     zone.append(liste, total);
   }
 
-  /**
-   * Deux façons de commander, selon ce qui est renseigné :
-   *   - une boutique en ligne : on y renvoie ;
-   *   - une adresse e-mail : la demande part par courrier, et
-   *     Françoise répond avec un lien de paiement.
-   * Sans l'un ni l'autre, on le dit plutôt que de proposer un
-   * bouton qui ne mène nulle part.
-   */
-  function preparerCommande() {
-    var explication = $('#checkout-explication');
-    var demande = $('#modal-commander');
-    var boutique = $('#modal-sumup');
-
-    var lignes = cart
+  /** Une ligne par article du panier, pour le récapitulatif comme pour la demande par e-mail. */
+  function resumeLignes() {
+    return cart
       .map(function (line) {
         var product = findProduct(line.id);
         if (!product) return '';
@@ -600,6 +589,26 @@
           ' : ' + euro.format(product.price * line.qty);
       })
       .filter(Boolean);
+  }
+
+  /**
+   * Trois façons de commander, selon ce qui est disponible :
+   *   - payer directement par carte (bouton toujours proposé, la
+   *     fonction serveur répond elle-même si ce n'est pas réglé) ;
+   *   - une boutique en ligne : on y renvoie ;
+   *   - une adresse e-mail : la demande part par courrier, et
+   *     Françoise répond avec un lien de paiement.
+   * Sans aucune des deux dernières, on le dit plutôt que de proposer
+   * un bouton qui ne mène nulle part.
+   */
+  function preparerCommande() {
+    var explication = $('#checkout-explication');
+    var demande = $('#modal-commander');
+    var boutique = $('#modal-sumup');
+
+    $('#modal-payer-erreur').hidden = true;
+
+    var lignes = resumeLignes();
 
     if (C.shop.email) {
       demande.hidden = false;
@@ -621,18 +630,57 @@
 
     boutique.hidden = !C.shop.sumupUrl;
 
-    if (C.shop.email) {
-      explication.textContent =
-        'Envoyez-moi votre sélection : je vous confirme la disponibilité et vous réponds avec ' +
-        'un lien de paiement sécurisé.';
-    } else if (C.shop.sumupUrl) {
-      explication.textContent =
-        'La commande se règle sur la boutique en ligne, en paiement sécurisé.';
-    } else {
-      explication.textContent =
-        'Contactez-moi pour finaliser cette commande : je vous confirme la disponibilité et le ' +
-        'mode de règlement.';
-    }
+    explication.textContent =
+      'Le plus rapide : payez directement par carte, en toute sécurité. ' +
+      (C.shop.email
+        ? 'Vous préférez ? Envoyez votre sélection, je réponds avec un lien de paiement.'
+        : C.shop.sumupUrl
+          ? 'Vous préférez ? La commande se règle aussi sur la boutique en ligne.'
+          : '');
+  }
+
+  /**
+   * Paiement par carte, sans quitter le site : la fonction Vercel
+   * /api/checkout crée le paiement chez SumUp avec la clé secrète
+   * (jamais présente ici) et renvoie l'adresse de leur page de
+   * paiement, vers laquelle on redirige.
+   */
+  function payerParCarte() {
+    var bouton = $('#modal-payer');
+    var erreur = $('#modal-payer-erreur');
+    erreur.hidden = true;
+
+    var montant = cartTotal();
+    if (!(montant > 0)) return;
+
+    bouton.disabled = true;
+    bouton.textContent = 'Préparation du paiement…';
+
+    fetch('/api/checkout', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        montant: montant,
+        description: resumeLignes().join(' ; ') || 'Commande Couture & Fil'
+      })
+    })
+      .then(function (reponse) {
+        return reponse.json().then(function (donnees) {
+          if (!reponse.ok || !donnees.url) throw new Error(donnees.erreur || 'Échec du paiement.');
+          return donnees.url;
+        });
+      })
+      .then(function (url) {
+        window.location.href = url;
+      })
+      .catch(function () {
+        bouton.disabled = false;
+        bouton.textContent = '💳 Payer par carte';
+        erreur.hidden = false;
+        erreur.textContent =
+          'Le paiement par carte n’est pas disponible pour le moment. Utilisez plutôt l’une des ' +
+          'autres façons de commander ci-dessous.';
+      });
   }
 
   function openModal() {
@@ -931,6 +979,7 @@
   $('#overlay').addEventListener('click', closeCart);
   $('#cart-checkout').addEventListener('click', openModal);
   $('#checkout-close').addEventListener('click', closeModal);
+  $('#modal-payer').addEventListener('click', payerParCarte);
 
   $('#checkout-modal').addEventListener('click', function (event) {
     if (event.target === this) closeModal();
