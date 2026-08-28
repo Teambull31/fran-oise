@@ -713,14 +713,22 @@
 
           var essayer = function () {
             messageVerrou.textContent = 'Vérification…';
-            window.AdminGate.verifierCode(champAcces.value).then(function (correct) {
-              if (correct) {
-                window.location.reload();
-                return;
-              }
-              messageVerrou.textContent = 'Ce code n’est pas reconnu.';
-              champAcces.select();
-            });
+            window.AdminGate.verifierCode(champAcces.value)
+              .then(function (correct) {
+                if (correct) {
+                  window.location.reload();
+                  return;
+                }
+                messageVerrou.textContent = 'Ce code n’est pas reconnu.';
+                champAcces.select();
+              })
+              .catch(function () {
+                // Ne devrait pas arriver, mais sans ce filet, un souci
+                // technique laisserait la page bloquée sur « Vérification… »
+                // sans aucune explication.
+                messageVerrou.textContent =
+                  'La vérification a échoué. Rechargez la page et réessayez.';
+              });
           };
 
           boutonVerrou.addEventListener('click', essayer);

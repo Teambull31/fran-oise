@@ -35,6 +35,9 @@ Une fois le code entré, il reste mémorisé sur cet appareil (dans le navigateu
 `modifier.html` reste ouvert. Le bouton « Se déconnecter », en haut de cette page, l'efface — utile
 sur un ordinateur partagé.
 
+La saisie ignore les majuscules et les espaces avant/après : une majuscule oubliée ou un espace
+collé par erreur (au clavier du téléphone, notamment) ne bloque pas la connexion.
+
 Le site étant statique (sans serveur), ce n'est pas une vraie sécurité : c'est seulement une façon
 de garder ces fonctions hors de vue du grand public. Le code lui-même n'est écrit nulle part dans
 le dépôt, seulement son empreinte, dans `assets/js/admin.js` — la marche à suivre pour le changer
