@@ -386,12 +386,134 @@
         white-space: nowrap;
       }
 
+      /* En dessous de 620px (la quasi-totalité des téléphones), les
+         gros textes et gros boutons pensés pour la lisibilité finissent
+         par prendre toute la place : ce bloc resserre tailles, marges
+         et coussins, sans descendre sous des cibles tactiles confortables. */
       @media (max-width: 620px) {
         body {
-          font-size: 18px;
+          font-size: 16px;
         }
+
+        .shell {
+          width: min(100% - 1.5rem, 940px);
+        }
+
+        header.top {
+          padding: 1rem 0;
+        }
+
+        header.top h1 {
+          font-size: 1.35rem;
+        }
+
+        header.top p {
+          font-size: 0.92rem;
+        }
+
+        main {
+          padding: 1rem 0 6.5rem;
+        }
+
+        h2 {
+          font-size: 1.2rem;
+          margin: 1.75rem 0 0.35rem;
+        }
+
+        .carte {
+          border-width: 1.5px;
+          border-radius: 12px;
+          padding: 0.9rem;
+          margin-bottom: 0.8rem;
+        }
+
+        .carte-tete {
+          margin-bottom: 0.75rem;
+          padding-bottom: 0.6rem;
+        }
+
+        .carte-titre {
+          font-size: 1rem;
+        }
+
+        label {
+          margin: 0.8rem 0 0.25rem;
+          font-size: 0.95rem;
+        }
+
+        .aide {
+          font-size: 0.85rem;
+        }
+
+        input[type="text"],
+        input[type="password"],
+        textarea,
+        select {
+          padding: 0.55rem 0.7rem;
+          border-width: 1.5px;
+          border-radius: 8px;
+        }
+
+        .oui-non {
+          min-height: 40px;
+        }
+
+        .oui-non input {
+          width: 26px;
+          height: 26px;
+        }
+
+        .photo-ligne img {
+          width: 56px;
+          height: 56px;
+        }
+
+        .cadreur-zoom input[type="range"] {
+          min-height: 40px;
+        }
+
+        button,
+        a.b-clair,
+        a.b-rose,
+        a.b-vert {
+          min-height: 42px;
+          padding: 0.5rem 0.9rem;
+          font-size: 0.92rem;
+        }
+
         .b-grand {
           width: 100%;
+          font-size: 0.95rem;
+          padding: 0.7rem 1.1rem;
+        }
+
+        .rangee {
+          gap: 0.5rem;
+        }
+
+        /* La barre reste toujours visible : plus elle est compacte,
+           plus il reste de place pour le formulaire au-dessus. */
+        .barre {
+          padding: 0.6rem 0;
+        }
+
+        .barre .shell {
+          gap: 0.5rem;
+        }
+
+        .barre .etat {
+          margin-left: 0;
+          width: 100%;
+          text-align: center;
+          font-size: 0.85rem;
+        }
+
+        .fenetre {
+          padding: 1.1rem;
+        }
+
+        ol.etapes {
+          padding-left: 1.1rem;
         }
       }
     </style>
