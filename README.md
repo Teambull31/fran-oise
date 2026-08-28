@@ -12,14 +12,15 @@ renvoie vers la boutique pour le règlement sécurisé.
 - une page unique : accueil, univers, boutique, sur-mesure, atelier, contact ;
 - un catalogue filtrable, dont les rayons se déduisent des produits ;
 - un panier (ajout, quantités, total, mémorisé dans le navigateur) qui prépare la commande et
-  renvoie vers la boutique en ligne pour le paiement ;
+  propose de payer directement par carte, sans passer par un autre site ;
 - un bouton « Commander » qui mène directement à la fiche produit si son adresse est renseignée ;
 - un formulaire de contact qui ouvre le logiciel de courrier avec le message prêt ;
 - un bandeau d'annonce facultatif en haut de page (« Atelier fermé du 1er au 15 août ») ;
 - une section « Les marchés » qui liste les marchés où trouver l'atelier itinérant, avec un aperçu
   de carte et un lien d'itinéraire vers chacun ;
-- aucune dépendance, aucun build ; seule exception, ces aperçus de carte, qui chargent une carte
-  Google Maps intégrée pour chaque marché.
+- pas de dépendance, pas de build ; deux exceptions : ces aperçus de carte (Google Maps intégré),
+  et le paiement par carte, qui a besoin d'une petite fonction serveur (voir « Payer directement
+  sur le site »).
 
 ## Accès réservé à Françoise
 
@@ -143,18 +144,52 @@ tout seuls des produits ; il n'y a aucune liste de catégories à tenir à jour.
 `assets/js/content.js` ne sert plus que de filet de sécurité si `contenu.txt` devenait
 introuvable.
 
+## Payer directement sur le site
+
+Le bouton **💳 Payer par carte**, dans le récapitulatif du panier, ouvre la page de paiement
+sécurisée de SumUp (créée à la volée pour le montant exact du panier) sans jamais quitter le
+site ni passer par l'ancienne boutique SumUp.
+
+C'est la seule partie du site qui n'est pas statique : créer un paiement a besoin d'une clé
+secrète SumUp, qui ne doit jamais apparaître dans le navigateur ni dans le dépôt. Cette clé vit
+dans une petite fonction (`api/checkout.js`), déployée par Vercel, jamais par GitHub Pages — voir
+« Réglage du paiement par carte » ci-dessous. Sans cette clé réglée (ou sur GitHub Pages), le
+bouton l'indique simplement et propose les autres façons de commander.
+
+### Réglage du paiement par carte (une seule fois)
+
+1. Sur <https://me.sumup.com>, aller dans **Profil → Pour les développeurs → Clés API**, puis
+   créer une clé. SumUp ne la montre qu'une fois : la copier tout de suite.
+2. Récupérer l'identifiant marchand (`merchant_code`), affiché sur la même page, ou en visitant
+   `https://api.sumup.com/v0.1/me` avec la clé (`Authorization: Bearer …`) dans un outil comme
+   Postman.
+3. Dans le projet Vercel du site : **Settings → Environment Variables**, ajouter :
+   - `SUMUP_API_KEY` — la clé créée à l'étape 1 ;
+   - `SUMUP_MERCHANT_CODE` — l'identifiant de l'étape 2.
+4. Redéployer (un simple push suffit, ou le bouton « Redeploy » de Vercel).
+
+Ces deux valeurs restent uniquement dans les réglages de Vercel : elles ne sont ni dans le dépôt,
+ni dans `contenu.txt`, ni visibles par personne d'autre que le compte Vercel.
+
+Limite volontaire de cette première version : le montant envoyé à SumUp vient du panier tel
+qu'affiché dans le navigateur (comme le message envoyé par e-mail aujourd'hui) — il n'y a pas de
+confirmation automatique de commande après paiement, seulement la notification que SumUp envoie
+déjà de son côté. À améliorer plus tard si le volume de commandes le justifie.
+
 ## Encaisser sans la boutique SumUp
 
-Le compte SumUp et le terminal de paiement sont gratuits et indépendants de la boutique en ligne :
-celle-ci peut être résiliée sans rien changer aux encaissements sur les marchés.
+Le compte SumUp et le terminal de paiement sont gratuits et indépendants de la boutique en ligne
+existante (`couturefil.sumupstore.com`) : celle-ci peut être résiliée sans rien changer aux
+encaissements sur les marchés ni au paiement par carte ci-dessus.
 
-Le site s'adapte alors tout seul, selon ce qui est renseigné dans `[BOUTIQUE]` :
+Le récapitulatif du panier propose alors, selon ce qui est réglé :
 
-| Renseigné | Bouton du panier | Parcours |
+| Disponible | Bouton du panier | Parcours |
 | --- | --- | --- |
-| `Boutique en ligne` | « Aller à la boutique » | paiement sur la boutique SumUp |
-| `E-mail` seul | « Envoyer ma demande » | le client envoie sa sélection, Françoise répond avec un lien de paiement SumUp |
-| Ni l'un ni l'autre | aucun | le récapitulatif invite à prendre contact |
+| Paiement par carte réglé (voir ci-dessus) | « 💳 Payer par carte » | paiement sécurisé directement sur le site |
+| `Boutique en ligne` renseignée dans `[BOUTIQUE]` | « Aller à la boutique » | paiement sur l'ancienne boutique SumUp |
+| `E-mail` seul renseigné dans `[BOUTIQUE]` | « Envoyer ma demande » | le client envoie sa sélection, Françoise répond avec un lien de paiement SumUp |
+| Rien de ce qui précède | aucun | le récapitulatif invite à prendre contact |
 
 Le message de demande est pré-rempli avec les pièces choisies, les quantités et le total : il ne
 reste qu'à créer le lien de paiement depuis l'application SumUp, sur le même compte que le
@@ -203,6 +238,8 @@ manifest.webmanifest     déclaration de l'application installable
 sw.js                    fonctionnement hors connexion
 contenu.txt              CONTENU — le seul fichier à éditer au quotidien
 modifier.html            formulaire de modification et publication
+merci.html               page affichée après un paiement par carte
+api/checkout.js          fonction Vercel : crée le paiement chez SumUp (clé secrète)
 assets/css/styles.css    design (couleurs, composants, responsive)
 assets/js/contenu-format.js  format du fichier contenu.txt (lecture / écriture)
 assets/js/contenu.js     chargement du contenu et mode aperçu
@@ -210,20 +247,26 @@ assets/js/content.js     contenu de secours
 assets/js/admin.js       code d'accès réservé à Françoise
 assets/js/app.js         rendu, filtres, panier, formulaire
 assets/img/              photos et logo
-vercel.json              configuration du déploiement statique
+vercel.json              configuration du déploiement
 ```
 
 ## Déploiement
 
-Le site est statique : il n'y a aucune étape de build.
+Le site reste presque entièrement statique (aucune étape de build) : seul le paiement par carte a
+besoin d'un vrai serveur, sous la forme d'une fonction Vercel.
 
 **GitHub Pages** — le dépôt est configuré en « Deploy from a branch » sur `main`. Tout ce qui est
 fusionné dans `main` est publié sur
 <https://teambull31.github.io/fran-oise/> (le fichier `.nojekyll` évite tout traitement Jekyll).
+Le site y fonctionne normalement, à l'exception du bouton « Payer par carte » (GitHub Pages ne
+sait exécuter que des fichiers statiques) : le récapitulatif du panier retombe alors sur les
+autres façons de commander.
 
 **Vercel** — importer le dépôt depuis <https://vercel.com/new> : framework « Other », aucune
 commande de build, répertoire racine `./`. Le fichier `vercel.json` fournit déjà les en-têtes de
-cache et de sécurité. Chaque push redéploie ensuite automatiquement.
+cache et de sécurité, et `api/checkout.js` est détecté automatiquement comme fonction serveur.
+Chaque push redéploie ensuite automatiquement. C'est le déploiement à utiliser pour que le
+paiement par carte fonctionne (voir « Réglage du paiement par carte » plus haut).
 
 ## Contrastes
 

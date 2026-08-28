@@ -315,7 +315,7 @@
         <button class="btn btn--primary btn--block" id="cart-checkout" type="button">
           Passer la commande
         </button>
-        <p class="cart-note">Paiement sécurisé sur la boutique en ligne.</p>
+        <p class="cart-note">Paiement sécurisé par carte, directement depuis ce site.</p>
       </footer>
     </aside>
 
@@ -331,8 +331,10 @@
         <h2 id="checkout-title">Votre sélection</h2>
         <div id="checkout-recap"></div>
         <p id="checkout-explication"></p>
+        <p class="form-status" id="modal-payer-erreur" hidden></p>
         <div class="modal-actions">
-          <a class="btn btn--primary" id="modal-commander" href="#">Envoyer ma demande</a>
+          <button class="btn btn--primary" id="modal-payer" type="button">💳 Payer par carte</button>
+          <a class="btn btn--ghost" id="modal-commander" href="#">Envoyer ma demande</a>
           <a class="btn btn--ghost" id="modal-sumup" href="#" rel="noopener" hidden>
             Aller à la boutique
           </a>
