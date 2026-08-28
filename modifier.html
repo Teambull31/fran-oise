@@ -6,6 +6,9 @@
     <title>Modifier mon site — Couture &amp; Fil</title>
     <meta name="robots" content="noindex" />
     <link rel="icon" href="assets/img/logo.png" />
+    <!-- Pour proposer l'installation de l'application depuis cette page. -->
+    <link rel="manifest" href="manifest.webmanifest" />
+    <meta name="theme-color" content="#c2410c" />
     <style>
       /* Page volontairement séparée du site : gros texte, gros boutons,
          contrastes appuyés, aucune subtilité visuelle à déchiffrer. */
@@ -400,6 +403,7 @@
         <h1>Modifier mon site</h1>
         <p>Changez les textes et les prix, puis cliquez sur « Enregistrer » en bas.</p>
         <p id="zone-deconnexion" style="margin-top: 0.75rem"></p>
+        <p id="zone-options" style="margin-top: 0.5rem"></p>
       </div>
     </header>
 
@@ -512,6 +516,27 @@
       </div>
     </dialog>
 
+    <dialog id="fenetre-installer">
+      <div class="fenetre">
+        <h2>Installer sur votre téléphone</h2>
+        <div id="explication-installer"></div>
+        <p class="rangee" style="margin-top: 1.2rem">
+          <button type="button" id="fermer-installer" class="b-clair">Fermer</button>
+        </p>
+      </div>
+    </dialog>
+
+    <script>
+      // Fonctionnement hors connexion de l'application installée.
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', function () {
+          navigator.serviceWorker.register('sw.js').catch(function () {
+            /* sans importance : la page fonctionne normalement */
+          });
+        });
+      }
+    </script>
+
     <script src="assets/js/contenu-format.js"></script>
     <script src="assets/js/admin.js"></script>
     <script>
@@ -598,6 +623,117 @@
             window.location.reload();
           });
           zone.appendChild(lien);
+        })();
+
+        /* ----- installer l'application -----
+           Réservé à Françoise, comme le reste de cette page : les
+           clientes n'ont jamais accès à cette option. */
+        (function () {
+          var zoneOptions = document.getElementById('zone-options');
+          var fenetreInstaller = document.getElementById('fenetre-installer');
+          var explicationInstaller = document.getElementById('explication-installer');
+
+          // Déjà installée : inutile de proposer quoi que ce soit.
+          var installee =
+            window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+          if (installee) return;
+
+          var bouton = document.createElement('button');
+          bouton.type = 'button';
+          bouton.className = 'b-clair';
+          bouton.textContent = '📱 Installer l’application';
+          bouton.hidden = true;
+          zoneOptions.appendChild(bouton);
+
+          var proposition = null;
+          var appareilApple = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+
+          function montrer() {
+            bouton.hidden = false;
+          }
+
+          function noeud(balise, texte) {
+            var element = document.createElement(balise);
+            if (texte != null) element.textContent = texte;
+            return element;
+          }
+
+          /** Explique le geste d'installation, sans dépendre d'un gabarit HTML. */
+          function expliquerInstallation() {
+            explicationInstaller.textContent = '';
+
+            if (appareilApple) {
+              explicationInstaller.appendChild(
+                noeud('p', 'Sur iPhone et iPad, l’installation se fait en deux gestes :')
+              );
+
+              var liste = noeud('ol');
+              liste.className = 'etapes';
+
+              var etape1 = noeud('li');
+              etape1.appendChild(document.createTextNode('Touchez le bouton '));
+              etape1.appendChild(noeud('strong', 'Partager'));
+              etape1.appendChild(
+                document.createTextNode(' en bas de l’écran (le carré avec une flèche vers le haut).')
+              );
+              liste.appendChild(etape1);
+
+              var etape2 = noeud('li');
+              etape2.appendChild(document.createTextNode('Choisissez '));
+              etape2.appendChild(noeud('strong', '« Sur l’écran d’accueil »'));
+              etape2.appendChild(document.createTextNode(', puis '));
+              etape2.appendChild(noeud('strong', 'Ajouter'));
+              etape2.appendChild(document.createTextNode('.'));
+              liste.appendChild(etape2);
+
+              explicationInstaller.appendChild(liste);
+              explicationInstaller.appendChild(
+                noeud('p', 'L’icône apparaît alors avec vos autres applications.')
+              );
+              return;
+            }
+
+            var paragraphe = noeud('p');
+            paragraphe.appendChild(
+              document.createTextNode('Dans le menu de votre navigateur (les trois points), choisissez ')
+            );
+            paragraphe.appendChild(noeud('strong', '« Installer l’application »'));
+            paragraphe.appendChild(document.createTextNode(' ou '));
+            paragraphe.appendChild(noeud('strong', '« Ajouter à l’écran d’accueil »'));
+            paragraphe.appendChild(document.createTextNode('.'));
+            explicationInstaller.appendChild(paragraphe);
+          }
+
+          // Android et ordinateur : le navigateur propose lui-même l'installation.
+          window.addEventListener('beforeinstallprompt', function (evenement) {
+            evenement.preventDefault();
+            proposition = evenement;
+            montrer();
+          });
+
+          // iPhone et iPad : aucune installation automatique, on explique le geste.
+          if (appareilApple) montrer();
+
+          bouton.addEventListener('click', function () {
+            if (proposition) {
+              proposition.prompt();
+              proposition.userChoice.then(function () {
+                proposition = null;
+                bouton.hidden = true;
+              });
+              return;
+            }
+            expliquerInstallation();
+            ouvrirFenetre(fenetreInstaller);
+          });
+
+          document.getElementById('fermer-installer').addEventListener('click', function () {
+            fermerFenetre(fenetreInstaller);
+          });
+
+          window.addEventListener('appinstalled', function () {
+            bouton.hidden = true;
+          });
         })();
 
         var FICHIER = 'contenu.txt';

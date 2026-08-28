@@ -1216,34 +1216,6 @@ textarea {
   font-size: 0.9rem;
 }
 
-/* Accès à la page de modification : cible large, repérable sans
-   être mise en avant pour les visiteurs. */
-.footer-admin {
-  margin: 0.75rem 0 0 !important;
-  width: 100%;
-}
-
-.btn-admin {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 46px;
-  padding: 0.5rem 1.3rem;
-  border-radius: 999px;
-  border: 2px solid var(--line);
-  background: var(--surface);
-  color: var(--berry);
-  font-weight: 650;
-  font-size: 0.95rem;
-  text-decoration: none;
-  transition: transform 0.18s ease, border-color 0.18s ease;
-}
-
-.btn-admin:hover {
-  transform: translateY(-2px);
-  border-color: var(--berry);
-}
-
 .footer-legal {
   border-top: 1px solid var(--line);
   padding-top: 1.25rem;
@@ -1251,11 +1223,13 @@ textarea {
   font-size: 0.85rem !important;
 }
 
-/* Porte d'entrée discrète vers la page « Modifier », toujours visible
-   (sinon Françoise n'aurait aucun moyen d'y accéder une fois le bouton
-   ci-dessus masqué), mais volontairement peu voyante pour les clientes. */
+/* Seule porte d'entrée vers la page « Modifier » sur la page commune :
+   discrète, pour ne pas ressembler à une invitation à modifier le site,
+   mais toujours visible (sinon Françoise n'aurait aucun moyen d'y
+   accéder). Le bouton d'installation et le reste des options de
+   Françoise vivent désormais sur cette page-là, pas ici. */
 .footer-access {
-  margin: -0.5rem 0 0 !important;
+  margin: 0.5rem 0 0 !important;
   font-size: 0.78rem !important;
 }
 

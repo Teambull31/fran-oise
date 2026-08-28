@@ -23,24 +23,28 @@ renvoie vers la boutique pour le règlement sécurisé.
 
 ## Accès réservé à Françoise
 
-Deux choses ne sont visibles que pour Françoise, jamais pour les visiteurs du site : le lien
-« ✎ Modifier le site » en pied de page, et le bouton « 📱 Installer l'application ». Elles sont
-protégées par un code d'accès (un seul, propre à ce site), demandé à l'ouverture de
-[modifier.html](modifier.html) tant qu'il n'a pas déjà été saisi sur l'appareil. Une fois entré, il
-reste mémorisé sur cet appareil (dans le navigateur) et débloque aussi les deux éléments sur la page
-d'accueil. Le bouton « Se déconnecter », en haut de la page « Modifier », l'efface — utile sur un
-ordinateur partagé.
+Sur la page d'accueil, la seule chose qui distingue Françoise d'une visiteuse est un lien discret
+en bas de page, « 🔒 Espace de Françoise » : il mène à [modifier.html](modifier.html), protégé par
+un code d'accès (un seul, propre à ce site), demandé tant qu'il n'a pas déjà été saisi sur
+l'appareil. C'est la seule porte d'entrée sur la page commune — le reste (modifier le site,
+installer l'application) vit entièrement sur cette page-là, jamais sur celle que voient les
+clientes.
+
+Une fois le code entré, il reste mémorisé sur cet appareil (dans le navigateur) et l'accès à
+`modifier.html` reste ouvert. Le bouton « Se déconnecter », en haut de cette page, l'efface — utile
+sur un ordinateur partagé.
 
 Le site étant statique (sans serveur), ce n'est pas une vraie sécurité : c'est seulement une façon
-de garder ces deux fonctions hors de vue du grand public. Le code lui-même n'est écrit nulle part
-dans le dépôt, seulement son empreinte, dans `assets/js/admin.js` — la marche à suivre pour le
-changer s'y trouve en commentaire.
+de garder ces fonctions hors de vue du grand public. Le code lui-même n'est écrit nulle part dans
+le dépôt, seulement son empreinte, dans `assets/js/admin.js` — la marche à suivre pour le changer
+s'y trouve en commentaire.
 
 ## Application pour téléphone
 
-Le site est **installable** : sur Android, le navigateur propose lui-même l'installation (le bouton
-« 📱 Installer l'application » apparaît en bas de page, une fois le code d'accès saisi) ; sur iPhone
-et iPad, le même bouton explique les deux gestes à faire (Partager → « Sur l'écran d'accueil »).
+Le site est **installable**, mais uniquement depuis la page « Modifier » (une fois le code d'accès
+saisi) : sur Android, le navigateur propose lui-même l'installation (le bouton
+« 📱 Installer l'application » apparaît en haut de la page) ; sur iPhone et iPad, le même bouton
+explique les deux gestes à faire (Partager → « Sur l'écran d'accueil »).
 
 Une fois installée, l'application a son icône sur l'écran d'accueil, s'ouvre en plein écran sans
 barre d'adresse, et **fonctionne sans réseau** : textes et photos déjà consultés restent
@@ -58,8 +62,9 @@ Après une modification du code du site, incrémenter `VERSION` en tête de `sw.
 
 ### La façon simple : la page « Modifier »
 
-Ouvrir **[modifier.html](modifier.html)** (lien « Modifier le site » en bas de chaque page, une fois
-le code d'accès saisi — voir « Accès réservé à Françoise » plus haut). C'est un formulaire : on
+Ouvrir **[modifier.html](modifier.html)** (lien « 🔒 Espace de Françoise » en bas de la page
+d'accueil, puis le code d'accès — voir « Accès réservé à Françoise » plus haut). C'est un
+formulaire : on
 change les textes et les prix dans de grandes cases, on ajoute ou on supprime un produit avec un
 bouton.
 
