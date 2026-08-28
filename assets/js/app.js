@@ -299,10 +299,6 @@
     $('#footer-sumup').href = C.shop.sumupUrl;
     $('#modal-sumup').href = C.shop.sumupUrl;
 
-    // Réservé à Françoise : masqué tant que l'accès admin n'est pas déverrouillé.
-    var lienModifier = $('#lien-modifier');
-    if (lienModifier) lienModifier.hidden = !(window.AdminGate && window.AdminGate.estAdmin());
-
     var nav = $('#footer-links');
     var links = [{ label: 'Contactez-nous', url: '#contact' }].concat(C.shop.legalLinks || []);
     C.shop.socials.forEach(function (social) {
@@ -866,97 +862,12 @@
   }
 
   /* ---------------------------------------------------------
-     Application installable
-
-     Le site peut s'ajouter à l'écran d'accueil d'un téléphone :
-     icône, plein écran, et consultation possible sans réseau.
-     --------------------------------------------------------- */
-
-  function installable() {
-    var bouton = $('#installer');
-    var fenetre = $('#install-modal');
-    var explication = $('#install-explication');
-    if (!bouton) return;
-
-    // Réservé à Françoise : les clientes ne voient jamais ce bouton.
-    if (!(window.AdminGate && window.AdminGate.estAdmin())) return;
-
-    // Déjà installée : inutile de proposer quoi que ce soit.
-    var installee =
-      window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
-    if (installee) return;
-
-    var proposition = null;
-    var appareilApple = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-
-    function montrer() {
-      bouton.hidden = false;
-    }
-
-    function ouvrir(html) {
-      explication.innerHTML = html;
-      fenetre.hidden = false;
-      requestAnimationFrame(function () {
-        fenetre.classList.add('is-open');
-      });
-      $('#install-close').focus();
-    }
-
-    function fermer() {
-      fenetre.classList.remove('is-open');
-      setTimeout(function () {
-        fenetre.hidden = true;
-      }, 250);
-      bouton.focus();
-    }
-
-    $('#install-close').addEventListener('click', fermer);
-    fenetre.addEventListener('click', function (evenement) {
-      if (evenement.target === this) fermer();
-    });
-
-    // Android et ordinateur : le navigateur propose lui-même l'installation.
-    window.addEventListener('beforeinstallprompt', function (evenement) {
-      evenement.preventDefault();
-      proposition = evenement;
-      montrer();
-    });
-
-    // iPhone et iPad : aucune installation automatique, on explique le geste.
-    if (appareilApple) montrer();
-
-    bouton.addEventListener('click', function () {
-      if (proposition) {
-        proposition.prompt();
-        proposition.userChoice.then(function () {
-          proposition = null;
-          bouton.hidden = true;
-        });
-        return;
-      }
-      ouvrir(
-        appareilApple
-          ? '<p>Sur iPhone et iPad, l’installation se fait en deux gestes :</p>' +
-              '<ol style="text-align:left">' +
-              '<li>Touchez le bouton <strong>Partager</strong> en bas de l’écran ' +
-              '(le carré avec une flèche vers le haut).</li>' +
-              '<li>Choisissez <strong>« Sur l’écran d’accueil »</strong>, puis ' +
-              '<strong>Ajouter</strong>.</li></ol>' +
-              '<p>L’icône apparaît alors avec vos autres applications.</p>'
-          : '<p>Dans le menu de votre navigateur (les trois points), choisissez ' +
-              '<strong>« Installer l’application »</strong> ou ' +
-              '<strong>« Ajouter à l’écran d’accueil »</strong>.</p>'
-      );
-    });
-
-    window.addEventListener('appinstalled', function () {
-      bouton.hidden = true;
-      showToast('Application installée. Retrouvez-la sur votre écran d’accueil.');
-    });
-  }
-
-  /* ---------------------------------------------------------
      Démarrage
+
+     L'installation de l'application (« Installer l'application »)
+     n'est plus proposée ici : elle vit désormais dans les options de
+     Françoise, sur la page « Modifier », avec le reste de ce qui ne
+     doit pas apparaître sur la page commune.
      --------------------------------------------------------- */
 
   renderHero();
@@ -971,7 +882,6 @@
   renderCart();
   preparerContact();
   setupNav();
-  installable();
   observeReveals();
 
   $('#cart-button').addEventListener('click', openCart);
