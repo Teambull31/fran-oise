@@ -68,6 +68,16 @@ alors sembler cassée alors qu'il suffit de recharger la page. Un bandeau
 « Une nouvelle version du site est prête » apparaît automatiquement dans ce cas, avec un bouton
 « Actualiser ».
 
+`assets/js/*.js` et `assets/css/*.css` sont volontairement servis sans cache HTTP
+(`Cache-Control: max-age=0, must-revalidate`, dans `vercel.json`), malgré la stratégie
+« cache d'abord » du service worker ci-dessus : leur nom de fichier ne change jamais d'une mise en
+ligne à l'autre, contrairement à un site avec build qui empaquette un hash dans chaque nom de
+fichier. Sans ça, `cache.add()` (appelé par le service worker à chaque nouvelle `VERSION`) pouvait
+recevoir une réponse déjà en cache dans le navigateur au lieu d'aller vraiment chercher la
+nouvelle version sur le réseau — incrémenter `VERSION` ne suffisait alors plus à faire la
+différence. Les photos (`assets/img/`), elles, restent en cache un jour : les remplacer (même nom
+de fichier) est plus rare, et une photo momentanément périmée est sans conséquence.
+
 ## Modifier le contenu
 
 ### La façon simple : la page « Modifier »
