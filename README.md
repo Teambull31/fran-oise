@@ -62,6 +62,12 @@ Deux stratégies de cache cohabitent dans `sw.js` : le **réseau d'abord** pour 
 modifié ne doit jamais rester périmé) et le **cache d'abord** pour les images, styles et scripts.
 Après une modification du code du site, incrémenter `VERSION` en tête de `sw.js`.
 
+Un onglet resté ouvert continue d'exécuter l'ancien code même après une mise à jour (le service
+worker rafraîchit son cache, pas le JavaScript déjà chargé en mémoire) : une fonctionnalité peut
+alors sembler cassée alors qu'il suffit de recharger la page. Un bandeau
+« Une nouvelle version du site est prête » apparaît automatiquement dans ce cas, avec un bouton
+« Actualiser ».
+
 ## Modifier le contenu
 
 ### La façon simple : la page « Modifier »
