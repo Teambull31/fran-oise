@@ -170,15 +170,18 @@ introuvable.
 
 ## Payer directement sur le site
 
-Le bouton **💳 Payer par carte**, dans le récapitulatif du panier, ouvre la page de paiement
-sécurisée de SumUp (créée à la volée pour le montant exact du panier) sans jamais quitter le
-site ni passer par l'ancienne boutique SumUp.
+Le bouton **💳 Payer par carte**, dans le récapitulatif du panier, mène en deux temps à la page de
+paiement sécurisée de SumUp (créée à la volée pour le montant exact du panier), sans jamais
+quitter le site ni passer par l'ancienne boutique SumUp :
 
-SumUp encaisse, mais ne demande ni nom ni adresse : avant le paiement, un petit formulaire
-demande donc les coordonnées de livraison (nom, e-mail, adresse), envoyées par e-mail — même
-mécanisme que le bouton « Envoyer ma demande ». C'est pour ça que ce bouton n'apparaît que si un
-`E-mail` est renseigné dans `[BOUTIQUE]` : sans destinataire, ces coordonnées n'iraient nulle
-part.
+1. SumUp encaisse, mais ne demande ni nom ni adresse : un formulaire de coordonnées (nom, e-mail,
+   téléphone, adresse de livraison) s'affiche donc d'abord, à la place du récapitulatif.
+2. Une fois validées (bouton **Valider et payer**), ces coordonnées partent par e-mail — même
+   mécanisme que le bouton « Envoyer ma demande » — puis la page redirige vers SumUp.
+
+C'est pour ça que le bouton « Payer par carte » n'apparaît que si un `E-mail` est renseigné dans
+`[BOUTIQUE]` : sans destinataire, ces coordonnées n'iraient nulle part. Le bouton « Retour », dans
+le formulaire, revient au récapitulatif sans perdre la sélection.
 
 C'est la seule partie du site qui n'est pas statique : créer un paiement a besoin d'une clé
 secrète SumUp, qui ne doit jamais apparaître dans le navigateur ni dans le dépôt. Cette clé vit
