@@ -20,9 +20,32 @@
 
 var MONTANT_MAXIMUM = 5000;
 
+/**
+ * Un navigateur joint toujours l'en-tête Origin à un appel comme celui-ci ;
+ * un site tiers qui tenterait de créer des paiements en douce depuis une
+ * copie de la page est ainsi bloqué. Un appel direct (curl, serveur à
+ * serveur) n'envoie souvent pas cet en-tête : ce n'est donc pas un vrai
+ * contrôle d'accès, seulement une gêne de plus pour l'abus le plus courant.
+ */
+function origineAutorisee(origine) {
+  if (!origine) return true;
+  if (origine === 'https://teambull31.github.io') return true;
+  try {
+    var hote = new URL(origine).hostname;
+    return hote.endsWith('.vercel.app') && hote.indexOf('fran-oise') === 0;
+  } catch (erreur) {
+    return false;
+  }
+}
+
 module.exports = async function (req, res) {
   if (req.method !== 'POST') {
     res.status(405).json({ erreur: 'Méthode non autorisée.' });
+    return;
+  }
+
+  if (!origineAutorisee(req.headers.origin)) {
+    res.status(403).json({ erreur: 'Origine non autorisée.' });
     return;
   }
 
