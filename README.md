@@ -164,6 +164,12 @@ Le bouton **💳 Payer par carte**, dans le récapitulatif du panier, ouvre la p
 sécurisée de SumUp (créée à la volée pour le montant exact du panier) sans jamais quitter le
 site ni passer par l'ancienne boutique SumUp.
 
+SumUp encaisse, mais ne demande ni nom ni adresse : avant le paiement, un petit formulaire
+demande donc les coordonnées de livraison (nom, e-mail, adresse), envoyées par e-mail — même
+mécanisme que le bouton « Envoyer ma demande ». C'est pour ça que ce bouton n'apparaît que si un
+`E-mail` est renseigné dans `[BOUTIQUE]` : sans destinataire, ces coordonnées n'iraient nulle
+part.
+
 C'est la seule partie du site qui n'est pas statique : créer un paiement a besoin d'une clé
 secrète SumUp, qui ne doit jamais apparaître dans le navigateur ni dans le dépôt. Cette clé vit
 dans une petite fonction (`api/checkout.js`), déployée par Vercel, jamais par GitHub Pages — voir
@@ -200,9 +206,9 @@ Le récapitulatif du panier propose alors, selon ce qui est réglé :
 
 | Disponible | Bouton du panier | Parcours |
 | --- | --- | --- |
-| Paiement par carte réglé (voir ci-dessus) | « 💳 Payer par carte » | paiement sécurisé directement sur le site |
+| `E-mail` renseigné + paiement par carte réglé (voir ci-dessus) | « 💳 Payer par carte » | coordonnées de livraison, puis paiement sécurisé directement sur le site |
 | `Boutique en ligne` renseignée dans `[BOUTIQUE]` | « Aller à la boutique » | paiement sur l'ancienne boutique SumUp |
-| `E-mail` seul renseigné dans `[BOUTIQUE]` | « Envoyer ma demande » | le client envoie sa sélection, Françoise répond avec un lien de paiement SumUp |
+| `E-mail` renseigné dans `[BOUTIQUE]` | « Envoyer ma demande » | le client envoie sa sélection, Françoise répond avec un lien de paiement SumUp |
 | Rien de ce qui précède | aucun | le récapitulatif invite à prendre contact |
 
 Le message de demande est pré-rempli avec les pièces choisies, les quantités et le total : il ne
@@ -216,7 +222,7 @@ est vide, la ligne correspondante disparaît simplement du site — rien ne s'af
 
 | À remplir | Où | Sans cela |
 | --- | --- | --- |
-| E-mail | `[BOUTIQUE]` → `E-mail` | le formulaire de contact est remplacé par un renvoi vers la boutique |
+| E-mail | `[BOUTIQUE]` → `E-mail` | le formulaire de contact est remplacé par un renvoi vers la boutique, et le bouton « 💳 Payer par carte » n'apparaît pas (voir « Payer directement sur le site ») |
 | Téléphone, adresse | `[BOUTIQUE]` | les lignes n'apparaissent pas dans « Contact » |
 | Facebook, Instagram | `[BOUTIQUE]` | pas de liens en pied de page |
 | Adresse de chaque fiche produit | `[PRODUIT]` → `Lien boutique` | le bouton ajoute au panier au lieu de mener à la fiche |

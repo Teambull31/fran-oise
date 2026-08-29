@@ -589,24 +589,29 @@
 
   /**
    * Trois façons de commander, selon ce qui est disponible :
-   *   - payer directement par carte (bouton toujours proposé, la
-   *     fonction serveur répond elle-même si ce n'est pas réglé) ;
+   *   - payer directement par carte, coordonnées de livraison à
+   *     l'appui (a besoin d'un e-mail : c'est là que ces coordonnées
+   *     sont envoyées, la fonction de paiement ne les connaît pas) ;
    *   - une boutique en ligne : on y renvoie ;
-   *   - une adresse e-mail : la demande part par courrier, et
+   *   - une adresse e-mail seule : la demande part par courrier, et
    *     Françoise répond avec un lien de paiement.
-   * Sans aucune des deux dernières, on le dit plutôt que de proposer
-   * un bouton qui ne mène nulle part.
+   * Sans rien de tout ça, on le dit plutôt que de proposer un bouton
+   * qui ne mène nulle part.
    */
   function preparerCommande() {
     var explication = $('#checkout-explication');
     var demande = $('#modal-commander');
     var boutique = $('#modal-sumup');
+    var livraison = $('#checkout-livraison');
 
     $('#modal-payer-erreur').hidden = true;
 
     var lignes = resumeLignes();
+    var contactPossible = !!C.shop.email;
 
-    if (C.shop.email) {
+    livraison.hidden = !contactPossible;
+
+    if (contactPossible) {
       demande.hidden = false;
       demande.href =
         'mailto:' +
@@ -626,20 +631,62 @@
 
     boutique.hidden = !C.shop.sumupUrl;
 
-    explication.textContent =
-      'Le plus rapide : payez directement par carte, en toute sécurité. ' +
-      (C.shop.email
-        ? 'Vous préférez ? Envoyez votre sélection, je réponds avec un lien de paiement.'
-        : C.shop.sumupUrl
-          ? 'Vous préférez ? La commande se règle aussi sur la boutique en ligne.'
-          : '');
+    if (contactPossible) {
+      explication.textContent =
+        'Le plus rapide : indiquez vos coordonnées ci-dessous puis payez directement par carte, ' +
+        'en toute sécurité. ' +
+        (C.shop.sumupUrl ? 'Vous préférez ? La commande se règle aussi sur la boutique en ligne.' : '');
+    } else if (C.shop.sumupUrl) {
+      explication.textContent = 'La commande se règle sur la boutique en ligne, en paiement sécurisé.';
+    } else {
+      explication.textContent =
+        'Contactez-moi pour finaliser cette commande : je vous confirme la disponibilité et le ' +
+        'mode de règlement.';
+    }
+  }
+
+  /**
+   * Envoie les coordonnées de livraison par e-mail, exactement comme le
+   * bouton « Envoyer ma demande » : le site n'a pas de serveur pour les
+   * garder ailleurs, et la fonction de paiement ne les connaît pas —
+   * SumUp encaisse, mais ne demande ni nom ni adresse.
+   */
+  function envoyerCoordonneesLivraison(nom, email, adresse, urlPaiement) {
+    var reference = urlPaiement.split('/').pop();
+    var corps = [
+      'Commande réglée par carte sur le site (paiement en cours de finalisation).',
+      '',
+      'Client : ' + nom + ' (' + email + ')',
+      '',
+      'Adresse de livraison :',
+      adresse,
+      '',
+      'Commande :',
+      ''
+    ]
+      .concat(resumeLignes())
+      .concat(['', 'Total : ' + euro.format(cartTotal()), '', 'Référence SumUp : ' + reference]);
+
+    var lien = document.createElement('a');
+    lien.href =
+      'mailto:' +
+      encodeURIComponent(C.shop.email) +
+      '?subject=' +
+      encodeURIComponent('Commande à préparer — ' + nom) +
+      '&body=' +
+      encodeURIComponent(corps.join('\n'));
+    lien.style.display = 'none';
+    document.body.appendChild(lien);
+    lien.click();
+    lien.remove();
   }
 
   /**
    * Paiement par carte, sans quitter le site : la fonction Vercel
    * /api/checkout crée le paiement chez SumUp avec la clé secrète
    * (jamais présente ici) et renvoie l'adresse de leur page de
-   * paiement, vers laquelle on redirige.
+   * paiement, vers laquelle on redirige. SumUp ne demandant ni nom ni
+   * adresse, les coordonnées de livraison partent par e-mail à côté.
    */
   function payerParCarte() {
     var bouton = $('#modal-payer');
@@ -648,6 +695,14 @@
 
     var montant = cartTotal();
     if (!(montant > 0)) return;
+
+    var champNom = $('#checkout-nom');
+    var champEmail = $('#checkout-email');
+    var champAdresse = $('#checkout-adresse');
+
+    if (!champNom.checkValidity()) return champNom.reportValidity();
+    if (!champEmail.checkValidity()) return champEmail.reportValidity();
+    if (!champAdresse.checkValidity()) return champAdresse.reportValidity();
 
     bouton.disabled = true;
     bouton.textContent = 'Préparation du paiement…';
@@ -667,7 +722,17 @@
         });
       })
       .then(function (url) {
-        window.location.href = url;
+        envoyerCoordonneesLivraison(
+          champNom.value.trim(),
+          champEmail.value.trim(),
+          champAdresse.value.trim(),
+          url
+        );
+        // Un court délai laisse le temps au logiciel de courrier de
+        // s'ouvrir avant que la page ne parte vers le paiement.
+        setTimeout(function () {
+          window.location.href = url;
+        }, 200);
       })
       .catch(function () {
         bouton.disabled = false;
