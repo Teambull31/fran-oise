@@ -1498,25 +1498,18 @@ textarea {
   margin-top: 1.2rem;
 }
 
-/* Coordonnées demandées avant un paiement direct par carte : la modale
-   est centrée, mais un formulaire se lit mieux aligné à gauche. */
+/* Coordonnées demandées avant un paiement direct par carte, une fois
+   « Payer par carte » cliqué : la modale est centrée, mais un
+   formulaire se lit mieux aligné à gauche. */
 #checkout-livraison {
   text-align: left;
-  margin-top: 1rem;
-  padding-top: 1rem;
-  border-top: 1px solid var(--line);
   display: grid;
   gap: 0.7rem;
 }
 
 .checkout-livraison-titre {
-  font-weight: 650;
-  margin: 0;
-}
-
-#checkout-livraison .btn {
-  width: 100%;
-  margin-top: 0.3rem;
+  color: var(--ink-soft);
+  margin: -0.4rem 0 0;
 }
 
 /* ---------- toast ---------- */

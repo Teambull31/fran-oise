@@ -322,12 +322,27 @@
       hidden
     >
       <div class="modal-card">
-        <h2 id="checkout-title">Votre sélection</h2>
-        <div id="checkout-recap"></div>
-        <p id="checkout-explication"></p>
+        <!-- Étape 1 : le récapitulatif et le choix du mode de règlement. -->
+        <div id="checkout-etape-choix">
+          <h2 id="checkout-title">Votre sélection</h2>
+          <div id="checkout-recap"></div>
+          <p id="checkout-explication"></p>
 
+          <div class="modal-actions">
+            <button class="btn btn--primary" id="ouvrir-livraison" type="button">💳 Payer par carte</button>
+            <a class="btn btn--ghost" id="modal-commander" href="#">Envoyer ma demande</a>
+            <a class="btn btn--ghost" id="modal-sumup" href="#" rel="noopener" hidden>
+              Aller à la boutique
+            </a>
+            <button class="btn btn--ghost" id="checkout-close" type="button">Continuer mes achats</button>
+          </div>
+        </div>
+
+        <!-- Étape 2 : coordonnées de livraison, affichée après « Payer par carte ».
+             La validation redirige vers le paiement. -->
         <div id="checkout-livraison" hidden>
-          <p class="checkout-livraison-titre">Vos coordonnées, pour la livraison</p>
+          <h2>Vos coordonnées</h2>
+          <p class="checkout-livraison-titre">Pour préparer et vous envoyer votre commande</p>
           <div class="field">
             <label for="checkout-nom">Nom et prénom</label>
             <input id="checkout-nom" type="text" required autocomplete="name" />
@@ -337,19 +352,18 @@
             <input id="checkout-email" type="email" required autocomplete="email" />
           </div>
           <div class="field">
+            <label for="checkout-telephone">Votre téléphone</label>
+            <input id="checkout-telephone" type="tel" required autocomplete="tel" />
+          </div>
+          <div class="field">
             <label for="checkout-adresse">Adresse de livraison</label>
             <textarea id="checkout-adresse" rows="3" required autocomplete="street-address"></textarea>
           </div>
           <p class="form-status" id="modal-payer-erreur" hidden></p>
-          <button class="btn btn--primary" id="modal-payer" type="button">💳 Payer par carte</button>
-        </div>
-
-        <div class="modal-actions">
-          <a class="btn btn--ghost" id="modal-commander" href="#">Envoyer ma demande</a>
-          <a class="btn btn--ghost" id="modal-sumup" href="#" rel="noopener" hidden>
-            Aller à la boutique
-          </a>
-          <button class="btn btn--ghost" id="checkout-close" type="button">Continuer mes achats</button>
+          <div class="modal-actions">
+            <button class="btn btn--primary" id="modal-payer" type="button">Valider et payer</button>
+            <button class="btn btn--ghost" id="fermer-livraison" type="button">Retour</button>
+          </div>
         </div>
       </div>
     </div>

@@ -602,14 +602,18 @@
     var explication = $('#checkout-explication');
     var demande = $('#modal-commander');
     var boutique = $('#modal-sumup');
-    var livraison = $('#checkout-livraison');
+    var ouvrirLivraison = $('#ouvrir-livraison');
 
+    // Chaque ouverture repart du récapitulatif, jamais en plein milieu
+    // du formulaire de coordonnées d'une commande précédente.
+    $('#checkout-etape-choix').hidden = false;
+    $('#checkout-livraison').hidden = true;
     $('#modal-payer-erreur').hidden = true;
 
     var lignes = resumeLignes();
     var contactPossible = !!C.shop.email;
 
-    livraison.hidden = !contactPossible;
+    ouvrirLivraison.hidden = !contactPossible;
 
     if (contactPossible) {
       demande.hidden = false;
@@ -633,8 +637,7 @@
 
     if (contactPossible) {
       explication.textContent =
-        'Le plus rapide : indiquez vos coordonnées ci-dessous puis payez directement par carte, ' +
-        'en toute sécurité. ' +
+        'Le plus rapide : payez directement par carte, en toute sécurité. ' +
         (C.shop.sumupUrl ? 'Vous préférez ? La commande se règle aussi sur la boutique en ligne.' : '');
     } else if (C.shop.sumupUrl) {
       explication.textContent = 'La commande se règle sur la boutique en ligne, en paiement sécurisé.';
@@ -645,18 +648,34 @@
     }
   }
 
+  /** « Payer par carte » : passe du récapitulatif au formulaire de coordonnées. */
+  function ouvrirFormulaireLivraison() {
+    $('#checkout-etape-choix').hidden = true;
+    $('#checkout-livraison').hidden = false;
+    $('#modal-payer-erreur').hidden = true;
+    $('#checkout-nom').focus();
+  }
+
+  /** « Retour » : revient au récapitulatif sans perdre la sélection. */
+  function fermerFormulaireLivraison() {
+    $('#checkout-livraison').hidden = true;
+    $('#checkout-etape-choix').hidden = false;
+  }
+
   /**
    * Envoie les coordonnées de livraison par e-mail, exactement comme le
    * bouton « Envoyer ma demande » : le site n'a pas de serveur pour les
    * garder ailleurs, et la fonction de paiement ne les connaît pas —
-   * SumUp encaisse, mais ne demande ni nom ni adresse.
+   * SumUp encaisse, mais ne demande ni nom, ni adresse, ni téléphone.
    */
-  function envoyerCoordonneesLivraison(nom, email, adresse, urlPaiement) {
+  function envoyerCoordonneesLivraison(nom, email, telephone, adresse, urlPaiement) {
     var reference = urlPaiement.split('/').pop();
     var corps = [
       'Commande réglée par carte sur le site (paiement en cours de finalisation).',
       '',
-      'Client : ' + nom + ' (' + email + ')',
+      'Client : ' + nom,
+      'E-mail : ' + email,
+      'Téléphone : ' + telephone,
       '',
       'Adresse de livraison :',
       adresse,
@@ -682,11 +701,11 @@
   }
 
   /**
-   * Paiement par carte, sans quitter le site : la fonction Vercel
-   * /api/checkout crée le paiement chez SumUp avec la clé secrète
-   * (jamais présente ici) et renvoie l'adresse de leur page de
-   * paiement, vers laquelle on redirige. SumUp ne demandant ni nom ni
-   * adresse, les coordonnées de livraison partent par e-mail à côté.
+   * « Valider et payer », dans le formulaire de coordonnées : la fonction
+   * Vercel /api/checkout crée le paiement chez SumUp avec la clé secrète
+   * (jamais présente ici) et renvoie l'adresse de leur page de paiement,
+   * vers laquelle on redirige une fois les coordonnées envoyées par
+   * e-mail — SumUp ne demandant ni nom, ni adresse, ni téléphone.
    */
   function payerParCarte() {
     var bouton = $('#modal-payer');
@@ -698,10 +717,12 @@
 
     var champNom = $('#checkout-nom');
     var champEmail = $('#checkout-email');
+    var champTelephone = $('#checkout-telephone');
     var champAdresse = $('#checkout-adresse');
 
     if (!champNom.checkValidity()) return champNom.reportValidity();
     if (!champEmail.checkValidity()) return champEmail.reportValidity();
+    if (!champTelephone.checkValidity()) return champTelephone.reportValidity();
     if (!champAdresse.checkValidity()) return champAdresse.reportValidity();
 
     bouton.disabled = true;
@@ -725,6 +746,7 @@
         envoyerCoordonneesLivraison(
           champNom.value.trim(),
           champEmail.value.trim(),
+          champTelephone.value.trim(),
           champAdresse.value.trim(),
           url
         );
@@ -736,7 +758,7 @@
       })
       .catch(function () {
         bouton.disabled = false;
-        bouton.textContent = '💳 Payer par carte';
+        bouton.textContent = 'Valider et payer';
         erreur.hidden = false;
         erreur.textContent =
           'Le paiement par carte n’est pas disponible pour le moment. Utilisez plutôt l’une des ' +
@@ -954,6 +976,8 @@
   $('#overlay').addEventListener('click', closeCart);
   $('#cart-checkout').addEventListener('click', openModal);
   $('#checkout-close').addEventListener('click', closeModal);
+  $('#ouvrir-livraison').addEventListener('click', ouvrirFormulaireLivraison);
+  $('#fermer-livraison').addEventListener('click', fermerFormulaireLivraison);
   $('#modal-payer').addEventListener('click', payerParCarte);
 
   $('#checkout-modal').addEventListener('click', function (event) {
