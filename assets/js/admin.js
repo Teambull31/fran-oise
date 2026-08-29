@@ -12,18 +12,24 @@
    empreinte (SHA-256) : impossible de le retrouver en lisant ce
    fichier.
 
+   Le code saisi est comparé sans tenir compte des majuscules ni
+   des espaces avant/après (une majuscule oubliée ou un espace
+   collé par erreur ne doit pas empêcher de se connecter) : c'est
+   pour ça que l'empreinte ci-dessous n'est pas celle du code tel
+   quel, mais de sa version en minuscules, sans espaces superflus.
+
    Pour changer le code : ouvrir la console du navigateur sur le
    site (touche F12), coller la ligne suivante en remplaçant
    nouveauCode par le code choisi, appuyer sur Entrée, puis
    remplacer EMPREINTE ci-dessous par le résultat affiché :
 
-     crypto.subtle.digest('SHA-256', new TextEncoder().encode('nouveauCode')).then(t=>[...new Uint8Array(t)].map(o=>o.toString(16).padStart(2,'0')).join('')).then(console.log)
+     crypto.subtle.digest('SHA-256', new TextEncoder().encode('nouveauCode'.trim().toLowerCase())).then(t=>[...new Uint8Array(t)].map(o=>o.toString(16).padStart(2,'0')).join('')).then(console.log)
 
    ========================================================= */
 (function () {
   'use strict';
 
-  var EMPREINTE = '006fae17ee35671870aadee10d21a46949252ba99f425dec993a66ab48b20d6e';
+  var EMPREINTE = 'a34d22c19900d638ab625fa2b1c8e3ebfb1ffc151d318610006f3bf2fbdffd6f';
   var CLE = 'couture-fil:admin';
 
   function estAdmin() {
@@ -47,7 +53,10 @@
 
   /** Vérifie le code saisi ; si correct, mémorise l'accès sur cet appareil. */
   function verifierCode(code) {
-    return empreinteDe(String(code || '')).then(function (empreinte) {
+    // Majuscules et espaces en trop ne doivent pas faire échouer une
+    // saisie par ailleurs correcte.
+    var normalise = String(code || '').trim().toLowerCase();
+    return empreinteDe(normalise).then(function (empreinte) {
       var correct = empreinte === EMPREINTE;
       if (correct) {
         try {
