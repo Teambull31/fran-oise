@@ -508,7 +508,10 @@ textarea {
 /* Fondu en bas de l'accueil : sans lui, les taches de couleur floutées
    s'arrêtent net à la bordure de la section, comme découpées au
    couteau. Un vrai élément (plutôt qu'un ::before/::after, déjà pris)
-   pour être sûr de peindre par-dessus les taches. */
+   pour être sûr de peindre par-dessus les taches — mais la 3ᵉ tache
+   (.hero::after) est elle-même un pseudo-élément, toujours peint en
+   dernier quel que soit l'ordre dans le HTML : d'où le z-index, pour
+   que le fondu passe bien par-dessus elle aussi. */
 .hero-fade {
   position: absolute;
   left: 0;
@@ -517,6 +520,7 @@ textarea {
   height: clamp(70px, 14vh, 160px);
   background: linear-gradient(to bottom, transparent, var(--cream));
   pointer-events: none;
+  z-index: 1;
 }
 
 .hero-inner {
