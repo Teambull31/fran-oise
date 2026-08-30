@@ -623,7 +623,30 @@ textarea {
 }
 
 .section--tinted {
+  position: relative;
   background: var(--grad-soft);
+}
+
+/* Fondu en haut et en bas : évite la coupure nette entre le fond
+   teinté de la section et le fond crème des sections voisines. */
+.section--tinted::before,
+.section--tinted::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: clamp(50px, 10vh, 120px);
+  pointer-events: none;
+}
+
+.section--tinted::before {
+  top: 0;
+  background: linear-gradient(to bottom, var(--cream), transparent);
+}
+
+.section--tinted::after {
+  bottom: 0;
+  background: linear-gradient(to top, var(--cream), transparent);
 }
 
 .section-head {
