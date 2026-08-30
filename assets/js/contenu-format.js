@@ -342,7 +342,7 @@
     });
   }
 
-  window.ContenuFormat = {
+  var API = {
     BLOCS: BLOCS,
     blocsPourEditeur: blocsPourEditeur,
     normalise: normalise,
@@ -350,4 +350,9 @@
     lire: lire,
     ecrire: ecrire
   };
+
+  // Dans le navigateur (site, page « modifier ») ; en Node (fonction
+  // Vercel api/checkout.js, pour relire les prix depuis le serveur).
+  if (typeof window !== 'undefined') window.ContenuFormat = API;
+  if (typeof module !== 'undefined' && module.exports) module.exports = API;
 })();

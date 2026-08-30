@@ -732,7 +732,12 @@
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        montant: montant,
+        // Le prix payé est recalculé côté serveur à partir de ces
+        // identifiants et quantités — jamais depuis un montant envoyé
+        // tel quel, qui pourrait être trafiqué avant l'envoi.
+        lignes: cart.map(function (ligne) {
+          return { id: ligne.id, qty: ligne.qty };
+        }),
         description: resumeLignes().join(' ; ') || 'Commande Couture & Fil'
       })
     })

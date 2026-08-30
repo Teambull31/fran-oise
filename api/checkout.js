@@ -18,6 +18,8 @@
                             page, ou par l'appel GET /v0.1/me)
    ========================================================= */
 
+var catalogue = require('./_catalogue.js');
+
 var MONTANT_MAXIMUM = 5000;
 
 /**
@@ -57,15 +59,34 @@ module.exports = async function (req, res) {
   }
 
   var corps = req.body || {};
-  var montant = Math.round(Number(corps.montant) * 100) / 100;
+  var lignes = Array.isArray(corps.lignes) ? corps.lignes : [];
   var description = String(corps.description || 'Commande Couture & Fil').slice(0, 90);
+  var origine = req.headers['x-forwarded-proto'] + '://' + req.headers.host;
 
-  if (!(montant > 0) || montant > MONTANT_MAXIMUM) {
-    res.status(400).json({ erreur: 'Montant invalide.' });
+  if (!lignes.length) {
+    res.status(400).json({ erreur: 'Panier vide.' });
     return;
   }
 
-  var origine = req.headers['x-forwarded-proto'] + '://' + req.headers.host;
+  // Le montant vient toujours d'ici, jamais du navigateur : sans ça, un
+  // visiteur pourrait modifier le total avant l'envoi et payer moins
+  // cher que le vrai prix des articles.
+  var montant;
+  try {
+    var reponseContenu = await fetch(origine + '/contenu.txt', { cache: 'no-store' });
+    var texteContenu = await reponseContenu.text();
+    montant = catalogue.calculerTotal(texteContenu, lignes);
+  } catch (erreur) {
+    console.error('Impossible de relire le catalogue :', erreur.message);
+    res.status(502).json({ erreur: 'Le paiement n’est pas disponible pour le moment.' });
+    return;
+  }
+
+  if (montant === null || !(montant > 0) || montant > MONTANT_MAXIMUM) {
+    res.status(400).json({ erreur: 'Panier invalide.' });
+    return;
+  }
+
   var reference = 'cf-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 8);
 
   try {
