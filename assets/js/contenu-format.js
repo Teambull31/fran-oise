@@ -40,7 +40,13 @@
         { cle: 'Description', type: 'long', aide: 'Phrase de présentation, aussi utilisée par Google.' },
         { cle: 'Ville', type: 'texte' },
         { cle: 'Département', type: 'texte' },
-        { cle: 'Adresse', type: 'texte', aide: 'Laissez vide pour ne rien afficher.' },
+        { cle: 'Adresse', type: 'texte', aide: 'Laissez vide pour ne rien afficher. Utilisée aussi sur la page « Mentions légales ».' },
+        {
+          cle: 'Forme juridique',
+          type: 'texte',
+          aide: 'Par exemple « Entrepreneur individuel (micro-entreprise) ». Affiché sur la page « Mentions légales ».'
+        },
+        { cle: 'SIRET', type: 'texte', aide: 'Le numéro à 14 chiffres. Affiché sur la page « Mentions légales ».' },
         { cle: 'E-mail', type: 'texte' },
         { cle: 'Téléphone', type: 'texte' },
         { cle: 'Facebook', type: 'texte', aide: 'L’adresse complète de la page.' },

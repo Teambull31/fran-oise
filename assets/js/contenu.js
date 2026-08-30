@@ -210,15 +210,14 @@
         email: b['E-mail'] || '',
         phone: b['Téléphone'] || '',
         address: b['Adresse'] || '',
+        legalForm: b['Forme juridique'] || '',
+        siret: b['SIRET'] || '',
         hours: [],
         socials: reseaux,
-        legalLinks: boutique
-          ? [
-              { label: 'Conditions', url: boutique },
-              { label: 'Politique de confidentialité', url: boutique },
-              { label: 'Politique de cookies', url: boutique }
-            ]
-          : []
+        legalLinks: [
+          { label: 'Mentions légales', url: 'mentions-legales.html' },
+          { label: 'Conditions générales de vente', url: 'cgv.html' }
+        ]
       },
 
       highlights: tous(blocs, 'chiffre').map(function (c) {

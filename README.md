@@ -241,7 +241,16 @@ est vide, la ligne correspondante disparaît simplement du site — rien ne s'af
 | Téléphone, adresse | `[BOUTIQUE]` | les lignes n'apparaissent pas dans « Contact » |
 | Facebook, Instagram | `[BOUTIQUE]` | pas de liens en pied de page |
 | Adresse de chaque fiche produit | `[PRODUIT]` → `Lien boutique` | le bouton ajoute au panier au lieu de mener à la fiche |
-| Mentions légales et CGV | pied de page | les liens renvoient à la boutique SumUp |
+| Forme juridique, SIRET | `[BOUTIQUE]` | la page « Mentions légales » affiche « à compléter » à la place |
+
+Les pages **Mentions légales** (`mentions-legales.html`) et **Conditions générales de vente**
+(`cgv.html`), accessibles depuis le pied de page, sont un modèle de départ — pas un avis
+juridique. Avant de vendre le site, à faire relire (CCI, avocat) au moins :
+
+- le statut de TVA (article « Prix » de `cgv.html`) selon le régime réel de la boutique ;
+- le délai de rétractation (article « Droit de rétractation ») selon que les pièces vendues sont
+  faites à l'avance ou réalisées sur mesure à la demande du client ;
+- les délais et modalités de livraison (article « Livraison »), laissés à compléter.
 
 Deux textes restent à vérifier avec Françoise :
 
@@ -274,13 +283,17 @@ sw.js                    fonctionnement hors connexion
 contenu.txt              CONTENU — le seul fichier à éditer au quotidien
 modifier.html            formulaire de modification et publication
 merci.html               page affichée après un paiement par carte
+mentions-legales.html    mentions légales (identité, hébergeur, données personnelles)
+cgv.html                 conditions générales de vente
 api/checkout.js          fonction Vercel : crée le paiement chez SumUp (clé secrète)
+api/_catalogue.js        recalcule le prix côté serveur à partir de contenu.txt
 assets/css/styles.css    design (couleurs, composants, responsive)
 assets/js/contenu-format.js  format du fichier contenu.txt (lecture / écriture)
 assets/js/contenu.js     chargement du contenu et mode aperçu
 assets/js/content.js     contenu de secours
 assets/js/admin.js       code d'accès réservé à Françoise
 assets/js/app.js         rendu, filtres, panier, formulaire
+assets/js/legal.js       remplit mentions-legales.html et cgv.html depuis contenu.txt
 assets/img/              photos et logo
 vercel.json              configuration du déploiement
 ```

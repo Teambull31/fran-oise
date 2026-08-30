@@ -42,9 +42,8 @@ window.CONTENT = {
       // TODO : liens réels (Facebook / Instagram).
     ],
     legalLinks: [
-      { label: 'Conditions', url: 'https://couturefil.sumupstore.com/' },
-      { label: 'Politique de confidentialité', url: 'https://couturefil.sumupstore.com/' },
-      { label: 'Politique de cookies', url: 'https://couturefil.sumupstore.com/' }
+      { label: 'Mentions légales', url: 'mentions-legales.html' },
+      { label: 'Conditions générales de vente', url: 'cgv.html' }
     ]
   },
 

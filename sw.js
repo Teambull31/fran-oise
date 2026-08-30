@@ -12,13 +12,15 @@
    ========================================================= */
 
 // À changer à chaque mise en ligne d'une nouvelle version du site.
-var VERSION = 'couture-fil-v14';
+var VERSION = 'couture-fil-v15';
 
 var ESSENTIELS = [
   './',
   './index.html',
   './modifier.html',
   './merci.html',
+  './mentions-legales.html',
+  './cgv.html',
   './contenu.txt',
   './manifest.webmanifest',
   './assets/css/styles.css',
@@ -27,6 +29,7 @@ var ESSENTIELS = [
   './assets/js/content.js',
   './assets/js/contenu.js',
   './assets/js/contenu-format.js',
+  './assets/js/legal.js',
   './assets/img/logo.png',
   './assets/img/icone-192.png'
 ];
