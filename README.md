@@ -204,10 +204,12 @@ bouton l'indique simplement et propose les autres façons de commander.
 Ces deux valeurs restent uniquement dans les réglages de Vercel : elles ne sont ni dans le dépôt,
 ni dans `contenu.txt`, ni visibles par personne d'autre que le compte Vercel.
 
-Limite volontaire de cette première version : le montant envoyé à SumUp vient du panier tel
-qu'affiché dans le navigateur (comme le message envoyé par e-mail aujourd'hui) — il n'y a pas de
-confirmation automatique de commande après paiement, seulement la notification que SumUp envoie
-déjà de son côté. À améliorer plus tard si le volume de commandes le justifie.
+`api/checkout.js` ne fait jamais confiance au montant envoyé par le navigateur : il recalcule
+lui-même le prix à partir des identifiants et quantités du panier et des vrais tarifs dans
+`contenu.txt`, pour qu'un visiteur ne puisse pas modifier le total avant l'envoi. Limite
+volontaire de cette première version : il n'y a pas de confirmation automatique de commande
+après paiement, seulement la notification que SumUp envoie déjà de son côté (comme le message
+envoyé par e-mail aujourd'hui). À améliorer plus tard si le volume de commandes le justifie.
 
 ## Encaisser sans la boutique SumUp
 
