@@ -36,6 +36,7 @@ window.CONTENT = {
     email: '',
     phone: '',
     address: '',
+    analyticsId: '',
     // TODO : horaires réels si l'atelier reçoit sur rendez-vous.
     hours: [],
     socials: [
