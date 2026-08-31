@@ -78,9 +78,22 @@
           <span data-champ="E-mail">l’adresse ci-dessus</span>.
         </p>
         <p>
-          Le site utilise la mémoire de votre navigateur uniquement pour retenir le contenu de votre
-          panier d’un passage à l’autre, et un mécanisme technique (« service worker ») pour rester
-          utilisable hors connexion. Aucun cookie de mesure d’audience ni de publicité n’est déposé.
+          Le site utilise la mémoire de votre navigateur pour retenir le contenu de votre panier d’un
+          passage à l’autre, et un mécanisme technique (« service worker ») pour rester utilisable hors
+          connexion — ni l’un ni l’autre ne sert à vous suivre. Aucun cookie publicitaire n’est déposé.
+        </p>
+
+        <h2>Mesure d’audience</h2>
+        <p id="analytics-etat">
+          Si la mesure d’audience (Google Analytics) est activée sur ce site, elle ne se déclenche
+          qu’après votre accord, demandé par une bannière lors de votre première visite. Elle sert
+          uniquement à comprendre la fréquentation du site (nombre de visites, pages consultées) — jamais
+          à des fins publicitaires. Vous pouvez changer d’avis à tout moment :
+        </p>
+        <p>
+          <button type="button" class="btn btn--ghost" id="revoir-choix-analytics">
+            Revoir mon choix sur la mesure d’audience
+          </button>
         </p>
 
         <h2>Nous contacter</h2>
@@ -93,5 +106,18 @@
 
     <script src="assets/js/contenu-format.js"></script>
     <script src="assets/js/legal.js"></script>
+    <script>
+      // Même clé que assets/js/analytics.js : l'effacer suffit à faire
+      // réapparaître la bannière de consentement au prochain passage par
+      // l'accueil (analytics.js ne tourne que là, contenu.txt en main).
+      document.getElementById('revoir-choix-analytics').addEventListener('click', function () {
+        try {
+          localStorage.removeItem('couture-fil:consentement-analytics');
+        } catch (erreur) {
+          /* sans importance */
+        }
+        window.location.href = 'index.html';
+      });
+    </script>
   </body>
 </html>

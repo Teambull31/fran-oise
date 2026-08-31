@@ -12,7 +12,7 @@
    ========================================================= */
 
 // À changer à chaque mise en ligne d'une nouvelle version du site.
-var VERSION = 'couture-fil-v15';
+var VERSION = 'couture-fil-v16';
 
 var ESSENTIELS = [
   './',
@@ -30,6 +30,7 @@ var ESSENTIELS = [
   './assets/js/contenu.js',
   './assets/js/contenu-format.js',
   './assets/js/legal.js',
+  './assets/js/analytics.js',
   './assets/img/logo.png',
   './assets/img/icone-192.png'
 ];

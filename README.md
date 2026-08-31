@@ -230,6 +230,28 @@ Le message de demande est pré-rempli avec les pièces choisies, les quantités 
 reste qu'à créer le lien de paiement depuis l'application SumUp, sur le même compte que le
 terminal.
 
+## Mesurer la fréquentation (Google Analytics)
+
+Désactivé par défaut : tant que `[BOUTIQUE]` → `Google Analytics` est vide, rien n'est chargé et
+aucune bannière ne s'affiche.
+
+Pour l'activer :
+
+1. Créer un compte sur [analytics.google.com](https://analytics.google.com) (gratuit), puis une
+   propriété pour ce site.
+2. Récupérer l'**identifiant de mesure**, sous la forme `G-XXXXXXX` (Admin → Flux de données →
+   votre flux web).
+3. Le coller dans `[BOUTIQUE]` → `Google Analytics`, depuis la page « Modifier » ou directement
+   dans `contenu.txt`.
+
+Cet identifiant n'est pas un secret (contrairement à la clé SumUp) : il est prévu pour être visible
+dans le code d'un site, comme un numéro de compteur.
+
+Une fois renseigné, une bannière demande l'accord du visiteur avant toute mesure — c'est la CNIL
+qui l'exige pour un outil comme Google Analytics. Le choix (accepté ou refusé) reste mémorisé sur
+son appareil ; un bouton « Revoir mon choix » sur la page « Mentions légales » permet d'en changer.
+Sans accord, rien n'est envoyé à Google.
+
 ## À renseigner avant la mise en service
 
 Le site fonctionne sans, mais ces informations manquent pour qu'il soit complet. Tant qu'un champ
@@ -294,6 +316,7 @@ assets/js/content.js     contenu de secours
 assets/js/admin.js       code d'accès réservé à Françoise
 assets/js/app.js         rendu, filtres, panier, formulaire
 assets/js/legal.js       remplit mentions-legales.html et cgv.html depuis contenu.txt
+assets/js/analytics.js   bannière de consentement, puis Google Analytics si accepté
 assets/img/              photos et logo
 vercel.json              configuration du déploiement
 ```

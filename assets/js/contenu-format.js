@@ -53,6 +53,11 @@
         { cle: 'Instagram', type: 'texte' },
         { cle: 'Boutique en ligne', type: 'texte' },
         {
+          cle: 'Google Analytics',
+          type: 'texte',
+          aide: 'Identifiant de mesure GA4 (ressemble à G-XXXXXXX, disponible sur analytics.google.com). Laissez vide pour ne pas mesurer la fréquentation — rien n’est chargé tant que ce champ est vide, et une bannière demande l’accord du visiteur avant toute mesure.'
+        },
+        {
           cle: 'Taille du texte',
           type: 'choix',
           valeurs: ['Normal', 'Grand', 'Très grand'],

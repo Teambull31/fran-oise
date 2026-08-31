@@ -270,6 +270,39 @@ textarea {
   padding: 0.5rem var(--gutter);
 }
 
+/* ---------- bannière de consentement (mesure d’audience) ---------- */
+
+.cookies-banniere {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 90;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  background: var(--surface);
+  color: var(--ink);
+  padding: 1rem var(--gutter);
+  box-shadow: 0 -4px 18px rgba(0, 0, 0, 0.12);
+  border-top: 1px solid var(--line);
+}
+
+.cookies-banniere p {
+  margin: 0;
+  max-width: 40rem;
+  font-size: 0.9rem;
+  color: var(--ink-soft);
+}
+
+.cookies-banniere-actions {
+  display: flex;
+  gap: 0.6rem;
+  flex-shrink: 0;
+}
+
 .site-header {
   position: sticky;
   top: 0;

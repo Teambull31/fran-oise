@@ -212,6 +212,7 @@
         address: b['Adresse'] || '',
         legalForm: b['Forme juridique'] || '',
         siret: b['SIRET'] || '',
+        analyticsId: String(b['Google Analytics'] || '').trim(),
         hours: [],
         socials: reseaux,
         legalLinks: [
@@ -287,6 +288,15 @@
     var script = document.createElement('script');
     script.src = 'assets/js/app.js';
     document.body.appendChild(script);
+
+    // Séparé d'app.js : la mesure d'audience reste indépendante du reste
+    // du site, et ne se déclenche jamais en mode aperçu (un brouillon non
+    // publié ne doit pas compter dans les statistiques).
+    if (!APERCU) {
+      var scriptAnalytics = document.createElement('script');
+      scriptAnalytics.src = 'assets/js/analytics.js';
+      document.body.appendChild(scriptAnalytics);
+    }
   }
 
   /** Rappel visible qu'on regarde un brouillon, pas le site publié. */
