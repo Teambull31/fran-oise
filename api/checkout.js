@@ -19,6 +19,7 @@
    ========================================================= */
 
 var catalogue = require('./_catalogue.js');
+var baseDeDonnees = require('./_base-donnees.js');
 
 var MONTANT_MAXIMUM = 5000;
 
@@ -63,6 +64,7 @@ module.exports = async function (req, res) {
   var lignes = Array.isArray(corps.lignes) ? corps.lignes : [];
   var description = String(corps.description || 'Commande Couture & Fil').slice(0, 90);
   var origine = req.headers['x-forwarded-proto'] + '://' + req.headers.host;
+  var client = corps.client || {};
 
   if (!lignes.length) {
     res.status(400).json({ erreur: 'Panier vide.' });
@@ -72,16 +74,24 @@ module.exports = async function (req, res) {
   // Le montant vient toujours d'ici, jamais du navigateur : sans ça, un
   // visiteur pourrait modifier le total avant l'envoi et payer moins
   // cher que le vrai prix des articles.
-  var montant;
+  var detail;
   try {
     var reponseContenu = await fetch(origine + '/contenu.txt', { cache: 'no-store' });
     var texteContenu = await reponseContenu.text();
-    montant = catalogue.calculerTotal(texteContenu, lignes);
+    detail = catalogue.detailLignes(texteContenu, lignes);
   } catch (erreur) {
     console.error('Impossible de relire le catalogue :', erreur.message);
     res.status(502).json({ erreur: 'Le paiement n’est pas disponible pour le moment.' });
     return;
   }
+
+  var montant = detail
+    ? Math.round(
+        detail.reduce(function (somme, ligne) {
+          return somme + ligne.prix * ligne.qty;
+        }, 0) * 100
+      ) / 100
+    : null;
 
   if (montant === null || !(montant > 0) || montant > MONTANT_MAXIMUM) {
     res.status(400).json({ erreur: 'Panier invalide.' });
@@ -116,6 +126,24 @@ module.exports = async function (req, res) {
       console.error('SumUp a refusé la création du paiement :', reponse.status);
       res.status(502).json({ erreur: 'SumUp n’a pas pu préparer le paiement.' });
       return;
+    }
+
+    // Avant de répondre : une fois la réponse envoyée, la fonction peut
+    // s'arrêter avant la fin d'un travail encore en cours. Un échec ici
+    // ne doit jamais empêcher de renvoyer l'adresse de paiement — la
+    // base de données n'est peut-être pas encore reliée (voir README).
+    try {
+      await baseDeDonnees.enregistrerCommande({
+        reference: reference,
+        nom: String(client.nom || '').trim().slice(0, 200),
+        email: String(client.email || '').trim().slice(0, 200),
+        telephone: String(client.telephone || '').trim().slice(0, 60),
+        adresse: String(client.adresse || '').trim().slice(0, 500),
+        lignes: detail,
+        total: montant
+      });
+    } catch (erreur) {
+      console.error('Commande non enregistrée en base :', erreur.message);
     }
 
     res.status(200).json({ url: donnees.hosted_checkout_url });

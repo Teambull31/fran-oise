@@ -1,0 +1,340 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Commandes — Couture &amp; Fil</title>
+    <meta name="robots" content="noindex" />
+    <link rel="icon" href="assets/img/logo.png" />
+    <link rel="stylesheet" href="assets/css/styles.css" />
+    <style>
+      .page-commandes {
+        padding: clamp(2rem, 5vw, 3.5rem) 0 clamp(3rem, 6vw, 5rem);
+      }
+
+      .connexion-carte {
+        max-width: 24rem;
+        margin: 3rem auto;
+      }
+
+      .connexion-carte .field {
+        margin: 1rem 0 1.4rem;
+      }
+
+      #erreur-connexion {
+        color: var(--berry-deep);
+        font-weight: 650;
+      }
+
+      .commandes-entete {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 1.5rem;
+      }
+
+      .commandes-outils {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.6rem;
+        align-items: center;
+      }
+
+      .commandes-outils input[type='search'] {
+        border: 2px solid var(--line);
+        border-radius: var(--radius-sm);
+        background: var(--surface);
+        padding: 0.6rem 0.9rem;
+        min-width: 14rem;
+      }
+
+      .commandes-tableau-wrap {
+        overflow-x: auto;
+        border-radius: var(--radius);
+        box-shadow: var(--shadow-sm);
+      }
+
+      table.commandes {
+        width: 100%;
+        border-collapse: collapse;
+        background: var(--surface);
+        font-size: 0.92rem;
+      }
+
+      table.commandes th,
+      table.commandes td {
+        text-align: left;
+        padding: 0.75rem 1rem;
+        border-bottom: 1px solid var(--line);
+        vertical-align: top;
+        white-space: nowrap;
+      }
+
+      table.commandes td.lignes-commande {
+        white-space: normal;
+        max-width: 22rem;
+      }
+
+      table.commandes th {
+        font-weight: 700;
+        color: var(--ink-soft);
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+      }
+
+      table.commandes tr:last-child td {
+        border-bottom: none;
+      }
+    </style>
+  </head>
+
+  <body>
+    <main class="page-commandes shell">
+      <a class="btn btn--ghost" href="modifier.html" style="margin-bottom: 1.5rem; display: inline-block">
+        ← Retour à « Modifier »
+      </a>
+
+      <div id="ecran-connexion">
+        <div class="connexion-carte">
+          <p class="eyebrow">Couture &amp; Fil</p>
+          <h1>Commandes</h1>
+          <p style="color: var(--ink-soft)">
+            Réservé à Françoise. Ce mot de passe est différent du code d'accès de « Modifier ».
+          </p>
+          <div class="field">
+            <label for="champ-mot-de-passe">Mot de passe</label>
+            <input type="password" id="champ-mot-de-passe" autocomplete="current-password" />
+          </div>
+          <p id="erreur-connexion" hidden></p>
+          <button type="button" class="btn btn--primary" id="bouton-connexion">Se connecter</button>
+        </div>
+      </div>
+
+      <div id="ecran-commandes" hidden>
+        <div class="commandes-entete">
+          <h1 style="margin: 0">Commandes</h1>
+          <div class="commandes-outils">
+            <input type="search" id="recherche-commandes" placeholder="Rechercher un nom ou un e-mail…" />
+            <button type="button" class="btn btn--ghost" id="bouton-export">Exporter en CSV</button>
+            <button type="button" class="btn btn--ghost" id="bouton-deconnexion">Se déconnecter</button>
+          </div>
+        </div>
+        <p id="etat-commandes" style="color: var(--ink-soft)"></p>
+        <div class="commandes-tableau-wrap">
+          <table class="commandes">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Client</th>
+                <th>Contact</th>
+                <th>Adresse</th>
+                <th>Commande</th>
+                <th>Total</th>
+                <th>Référence</th>
+              </tr>
+            </thead>
+            <tbody id="corps-tableau-commandes"></tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+
+    <script>
+      (function () {
+        'use strict';
+
+        var ecranConnexion = document.getElementById('ecran-connexion');
+        var ecranCommandes = document.getElementById('ecran-commandes');
+        var champMotDePasse = document.getElementById('champ-mot-de-passe');
+        var erreurConnexion = document.getElementById('erreur-connexion');
+        var boutonConnexion = document.getElementById('bouton-connexion');
+        var boutonDeconnexion = document.getElementById('bouton-deconnexion');
+        var boutonExport = document.getElementById('bouton-export');
+        var recherche = document.getElementById('recherche-commandes');
+        var etatCommandes = document.getElementById('etat-commandes');
+        var corpsTableau = document.getElementById('corps-tableau-commandes');
+
+        var euro = new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' });
+        var dateHeure = new Intl.DateTimeFormat('fr-FR', {
+          day: '2-digit',
+          month: '2-digit',
+          year: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit'
+        });
+
+        var commandesActuelles = [];
+
+        /** La colonne jsonb revient normalement déjà en tableau ; ce garde-fou
+         *  couvre le cas où elle arriverait en texte JSON brut. */
+        function lignesDe(commande) {
+          if (Array.isArray(commande.lignes)) return commande.lignes;
+          try {
+            return JSON.parse(commande.lignes || '[]');
+          } catch (erreur) {
+            return [];
+          }
+        }
+
+        function ligneCommandeTexte(commande) {
+          return lignesDe(commande)
+            .map(function (ligne) {
+              return ligne.qty + '× ' + ligne.nom;
+            })
+            .join(', ');
+        }
+
+        function afficherCommandes(commandes) {
+          corpsTableau.innerHTML = '';
+          commandes.forEach(function (commande) {
+            var ligne = document.createElement('tr');
+
+            var colonnes = [
+              dateHeure.format(new Date(commande.cree_le)),
+              commande.nom,
+              commande.email + (commande.telephone ? ' · ' + commande.telephone : ''),
+              commande.adresse,
+              ligneCommandeTexte(commande),
+              euro.format(commande.total),
+              commande.reference
+            ];
+
+            colonnes.forEach(function (texte, index) {
+              var cellule = document.createElement('td');
+              if (index === 4) cellule.className = 'lignes-commande';
+              cellule.textContent = texte;
+              ligne.appendChild(cellule);
+            });
+
+            corpsTableau.appendChild(ligne);
+          });
+
+          etatCommandes.textContent =
+            commandes.length + ' commande' + (commandes.length > 1 ? 's' : '') + ' affichée' + (commandes.length > 1 ? 's' : '');
+        }
+
+        function filtrerEtAfficher() {
+          var terme = recherche.value.trim().toLowerCase();
+          if (!terme) {
+            afficherCommandes(commandesActuelles);
+            return;
+          }
+          afficherCommandes(
+            commandesActuelles.filter(function (commande) {
+              return (
+                (commande.nom || '').toLowerCase().indexOf(terme) !== -1 ||
+                (commande.email || '').toLowerCase().indexOf(terme) !== -1
+              );
+            })
+          );
+        }
+
+        function afficherEcranConnexion() {
+          ecranCommandes.hidden = true;
+          ecranConnexion.hidden = false;
+          champMotDePasse.value = '';
+          champMotDePasse.focus();
+        }
+
+        /** Appelée au chargement de la page (session déjà valide ?) et
+         *  juste après une connexion réussie : dans les deux cas, une
+         *  lecture de /api/commandes fait foi. */
+        function chargerCommandes() {
+          etatCommandes.textContent = 'Chargement…';
+          fetch('/api/commandes', { credentials: 'same-origin' })
+            .then(function (reponse) {
+              if (reponse.status === 401) {
+                afficherEcranConnexion();
+                return null;
+              }
+              return reponse.json();
+            })
+            .then(function (donnees) {
+              if (!donnees) return;
+              ecranConnexion.hidden = true;
+              ecranCommandes.hidden = false;
+              commandesActuelles = donnees.commandes || [];
+              filtrerEtAfficher();
+            })
+            .catch(function () {
+              etatCommandes.textContent = 'Impossible de charger les commandes pour le moment.';
+            });
+        }
+
+        function tenterConnexion() {
+          erreurConnexion.hidden = true;
+          boutonConnexion.disabled = true;
+          boutonConnexion.textContent = 'Connexion…';
+
+          fetch('/api/commandes-connexion', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'same-origin',
+            body: JSON.stringify({ motDePasse: champMotDePasse.value })
+          })
+            .then(function (reponse) {
+              return reponse.json().then(function (donnees) {
+                if (!reponse.ok) throw new Error(donnees.erreur || 'Connexion refusée.');
+              });
+            })
+            .then(chargerCommandes)
+            .catch(function (erreur) {
+              erreurConnexion.textContent = erreur.message;
+              erreurConnexion.hidden = false;
+            })
+            .finally(function () {
+              boutonConnexion.disabled = false;
+              boutonConnexion.textContent = 'Se connecter';
+            });
+        }
+
+        boutonConnexion.addEventListener('click', tenterConnexion);
+        champMotDePasse.addEventListener('keydown', function (evenement) {
+          if (evenement.key === 'Enter') tenterConnexion();
+        });
+
+        boutonDeconnexion.addEventListener('click', function () {
+          fetch('/api/commandes-deconnexion', { method: 'POST', credentials: 'same-origin' }).finally(
+            afficherEcranConnexion
+          );
+        });
+
+        recherche.addEventListener('input', filtrerEtAfficher);
+
+        boutonExport.addEventListener('click', function () {
+          var entetes = ['Date', 'Client', 'E-mail', 'Téléphone', 'Adresse', 'Commande', 'Total', 'Référence'];
+          var lignesCsv = commandesActuelles.map(function (commande) {
+            return [
+              dateHeure.format(new Date(commande.cree_le)),
+              commande.nom,
+              commande.email,
+              commande.telephone,
+              commande.adresse,
+              ligneCommandeTexte(commande),
+              commande.total,
+              commande.reference
+            ]
+              .map(function (valeur) {
+                return '"' + String(valeur || '').replace(/"/g, '""') + '"';
+              })
+              .join(';');
+          });
+          var csv = [entetes.join(';')].concat(lignesCsv).join('\r\n');
+          var lien = document.createElement('a');
+          lien.href = URL.createObjectURL(new Blob(['﻿' + csv], { type: 'text/csv;charset=utf-8' }));
+          lien.download = 'commandes-couture-et-fil.csv';
+          lien.click();
+          URL.revokeObjectURL(lien.href);
+        });
+
+        // Une session déjà valide (visite précédente, moins de 7 jours) ne
+        // doit pas redemander le mot de passe : on tente directement la
+        // lecture des commandes, /api/commandes renverra 401 sinon.
+        chargerCommandes();
+      })();
+    </script>
+  </body>
+</html>

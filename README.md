@@ -230,6 +230,41 @@ Le message de demande est pré-rempli avec les pièces choisies, les quantités 
 reste qu'à créer le lien de paiement depuis l'application SumUp, sur le même compte que le
 terminal.
 
+## Retrouver les commandes (espace « Commandes »)
+
+Chaque commande réglée par carte sur le site (« 💳 Payer par carte ») est enregistrée dans une
+base de données, en plus de l'e-mail envoyé comme avant — consultable depuis
+**[commandes.html](commandes.html)**, un lien discret « 📦 Voir les commandes » en haut de la
+page « Modifier ». Recherche par nom/e-mail et export CSV inclus.
+
+### Réglage nécessaire (une seule fois)
+
+1. **Créer la base de données** : sur le tableau de bord Vercel du projet → **Storage** →
+   **Neon** (Postgres, gratuit). Vercel relie automatiquement la variable `DATABASE_URL` au
+   projet — rien à copier-coller.
+2. **Choisir un mot de passe** pour l'espace « Commandes » — différent du code d'accès de
+   « Modifier ». Vercel → Project Settings → Environment Variables :
+   - `COMMANDES_MOT_DE_PASSE` — le mot de passe choisi.
+   - `CRON_SECRET` — n'importe quelle suite de caractères (sert uniquement à vérifier que la
+     purge mensuelle ci-dessous vient bien de Vercel, jamais d'ailleurs).
+3. Redéployer (un simple push suffit).
+
+Contrairement au code d'accès de `modifier.html` (une simple gêne côté navigateur, voir
+`assets/js/admin.js`), ce mot de passe est vérifié côté serveur et ne quitte jamais celui-ci —
+une vraie protection, nécessaire puisque ces données incluent noms, e-mails, téléphones et
+adresses de clientes.
+
+### Ce qui est gardé, et combien de temps
+
+Par commande : nom, e-mail, téléphone, adresse de livraison, articles commandés, total, et la
+référence du paiement SumUp. **Supprimé automatiquement 12 mois après la commande** (RGPD :
+`api/purge-commandes.js`, déclenché une fois par mois par Vercel — voir `vercel.json` →
+`crons`). Ce délai se change directement dans ce fichier (`MOIS_CONSERVATION`).
+
+Un souci d'écriture en base ne bloque jamais un paiement : si la base n'est pas encore reliée, le
+site continue de fonctionner exactement comme avant (paiement + e-mail), seul l'espace
+« Commandes » reste vide.
+
 ## Mesurer la fréquentation (Google Analytics)
 
 Désactivé par défaut : tant que `[BOUTIQUE]` → `Google Analytics` est vide, rien n'est chargé et
@@ -307,8 +342,15 @@ modifier.html            formulaire de modification et publication
 merci.html               page affichée après un paiement par carte
 mentions-legales.html    mentions légales (identité, hébergeur, données personnelles)
 cgv.html                 conditions générales de vente
+commandes.html           espace de Françoise : consulter les commandes réglées sur le site
 api/checkout.js          fonction Vercel : crée le paiement chez SumUp (clé secrète)
 api/_catalogue.js        recalcule le prix côté serveur à partir de contenu.txt
+api/_base-donnees.js     lecture/écriture des commandes (Neon Postgres)
+api/_session.js          vérifie le mot de passe et signe le cookie de session
+api/commandes.js         liste des commandes (réservé, session valide requise)
+api/commandes-connexion.js    vérifie le mot de passe, pose le cookie de session
+api/commandes-deconnexion.js  efface le cookie de session
+api/purge-commandes.js   supprime les commandes de plus de 12 mois (cron mensuel)
 assets/css/styles.css    design (couleurs, composants, responsive)
 assets/js/contenu-format.js  format du fichier contenu.txt (lecture / écriture)
 assets/js/contenu.js     chargement du contenu et mode aperçu
