@@ -1,0 +1,6 @@
+# Couture & Fil — tout le site public peut être indexé.
+# La page de modification est déjà exclue via sa balise <meta name="robots">
+# (une seconde couche ici ne coûte rien).
+User-agent: *
+Allow: /
+Disallow: /modifier.html
