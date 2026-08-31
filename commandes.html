@@ -304,6 +304,19 @@
 
         recherche.addEventListener('input', filtrerEtAfficher);
 
+        /**
+         * Un nom ou une adresse commençant par =, +, -, @ (ou une tabulation)
+         * peut être lu comme une formule par Excel/Sheets à l'ouverture du
+         * fichier — ces champs viennent du formulaire de commande, rempli
+         * par la cliente, jamais vérifié sur ce point. L'apostrophe devant
+         * neutralise la formule sans changer ce qui s'affiche.
+         */
+        function neutraliserCsv(valeur) {
+          var texte = String(valeur || '');
+          if (/^[=+\-@\t\r]/.test(texte)) texte = "'" + texte;
+          return '"' + texte.replace(/"/g, '""') + '"';
+        }
+
         boutonExport.addEventListener('click', function () {
           var entetes = ['Date', 'Client', 'E-mail', 'Téléphone', 'Adresse', 'Commande', 'Total', 'Référence'];
           var lignesCsv = commandesActuelles.map(function (commande) {
@@ -317,9 +330,7 @@
               commande.total,
               commande.reference
             ]
-              .map(function (valeur) {
-                return '"' + String(valeur || '').replace(/"/g, '""') + '"';
-              })
+              .map(neutraliserCsv)
               .join(';');
           });
           var csv = [entetes.join(';')].concat(lignesCsv).join('\r\n');
