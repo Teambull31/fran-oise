@@ -85,7 +85,7 @@ Texte: Lingettes et petits accessoires lavables cousus dans des cotons imprimés
 Nom: 🐰 Jean – Peluche lapin au crochet, fait main
 Prix: 54
 Rayon: Peluches & doudous
-Photo:
+Photo: jean.avif
 Cadrage: 50% 50%
 Zoom:
 Étiquette: Grand format
