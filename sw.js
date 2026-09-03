@@ -12,7 +12,7 @@
    ========================================================= */
 
 // À changer à chaque mise en ligne d'une nouvelle version du site.
-var VERSION = 'couture-fil-v16';
+var VERSION = 'couture-fil-v17';
 
 var ESSENTIELS = [
   './',

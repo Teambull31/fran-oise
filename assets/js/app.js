@@ -865,8 +865,13 @@
     lien.click();
     lien.remove();
 
+    // « Devrait » plutôt qu'une certitude : rien ne permet de savoir si un
+    // logiciel de courrier est réellement configuré sur cet appareil (cas
+    // fréquent sur ordinateur professionnel ou partagé) — sans ce doute
+    // affiché, un message resté sans réponse passerait inaperçu.
     status.textContent =
-      'Votre logiciel de courrier s’ouvre avec le message prêt. Il ne reste qu’à l’envoyer.';
+      'Votre logiciel de courrier devrait s’ouvrir avec le message prêt à envoyer. Si rien ne se ' +
+      'passe, écrivez-nous directement à ' + C.shop.email + '.';
   }
 
   /** Sans adresse de contact, un formulaire qui n'envoie rien serait trompeur. */
