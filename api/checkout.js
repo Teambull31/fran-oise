@@ -32,6 +32,7 @@ var MONTANT_MAXIMUM = 5000;
 function origineAutorisee(origine) {
   if (!origine) return true;
   if (origine === 'https://teambull31.github.io') return true;
+  if (origine === 'https://couture-fil.fr' || origine === 'https://www.couture-fil.fr') return true;
   try {
     var hote = new URL(origine).hostname;
     return hote.endsWith('.vercel.app') && hote.indexOf('fran-oise') === 0;

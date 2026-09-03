@@ -339,6 +339,31 @@ cache et de sécurité, et `api/checkout.js` est détecté automatiquement comme
 Chaque push redéploie ensuite automatiquement. C'est le déploiement à utiliser pour que le
 paiement par carte fonctionne (voir « Réglage du paiement par carte » plus haut).
 
+### Nom de domaine (couture-fil.fr)
+
+Le code est prêt côté site (URL canonique, `sitemap.xml`, liste des origines autorisées pour le
+paiement) pour `couture-fil.fr` — préparé avant même l'achat du domaine, pour ne rien avoir à
+retoucher une fois que c'est fait. **Étapes qui restent à faire, une fois le domaine acheté :**
+
+1. **Ajouter le domaine au projet Vercel** : tableau de bord → projet **fran-oise** → **Settings**
+   → **Domains** → saisir `couture-fil.fr` (et `www.couture-fil.fr` si vous voulez que les deux
+   fonctionnent). Vercel indique alors les enregistrements DNS à créer.
+2. **Créer ces enregistrements chez le bureau d'enregistrement** (là où le domaine est acheté) :
+   Vercel les affiche précisément à l'étape précédente — en général un enregistrement `A` pour
+   `couture-fil.fr` et un `CNAME` pour `www`. La propagation prend de quelques minutes à quelques
+   heures.
+3. **Vérifier que le HTTPS est actif** (Vercel le fait automatiquement une fois le DNS validé,
+   sans rien à faire de plus).
+
+**Vercel devient alors l'adresse principale du site** — c'est délibéré : GitHub Pages ne permet
+pas de régler les en-têtes de sécurité (CSP, protection contre le détournement de clic — voir
+l'audit sécurité de cette session) ni le paiement par carte. `teambull31.github.io/fran-oise`
+continue de fonctionner en parallèle (site normal, sans le paiement par carte), mais ne doit plus
+être l'adresse communiquée aux clientes une fois `couture-fil.fr` en place.
+
+Une fois le domaine en ligne, prévenir pour vérification (que la redirection HTTPS, le paiement et
+le nouveau domaine dans les en-têtes fonctionnent bien ensemble).
+
 ## Veille de sécurité
 
 Le dépôt étant public, GitHub propose plusieurs protections gratuites — toutes déjà activées :
