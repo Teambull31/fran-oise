@@ -1,0 +1,45 @@
+name: Veille de sécurité
+
+# Vérifie chaque semaine (et à chaque changement touchant les
+# dépendances) qu'aucune faille connue ne traîne dans le seul
+# paquet npm du site (api/checkout.js, base de données).
+#
+# Le site n'a pas de dépendance tant que la PR ajoutant la base de
+# données n'est pas fusionnée : le contrôle se met alors simplement
+# de côté, plutôt que d'échouer, pour ne pas polluer l'historique
+# avec des échecs qui n'en sont pas.
+
+on:
+  schedule:
+    - cron: '0 6 * * 1' # chaque lundi matin
+  pull_request:
+    paths:
+      - 'package.json'
+      - 'package-lock.json'
+  push:
+    branches: [main]
+    paths:
+      - 'package.json'
+      - 'package-lock.json'
+  workflow_dispatch:
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Vérifier la présence d'un package.json
+        id: presence
+        run: echo "existe=$( [ -f package.json ] && echo oui || echo non )" >> "$GITHUB_OUTPUT"
+
+      - uses: actions/setup-node@v4
+        if: steps.presence.outputs.existe == 'oui'
+        with:
+          node-version: 20
+
+      - name: npm audit (échoue sur faille grave ou critique)
+        if: steps.presence.outputs.existe == 'oui'
+        run: |
+          npm install --package-lock-only --no-audit --no-fund
+          npm audit --audit-level=high
