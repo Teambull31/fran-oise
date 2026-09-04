@@ -339,6 +339,28 @@ cache et de sécurité, et `api/checkout.js` est détecté automatiquement comme
 Chaque push redéploie ensuite automatiquement. C'est le déploiement à utiliser pour que le
 paiement par carte fonctionne (voir « Réglage du paiement par carte » plus haut).
 
+## Veille de sécurité
+
+Le dépôt étant public, GitHub propose plusieurs protections gratuites — toutes déjà activées :
+
+- **Alertes Dependabot** : GitHub prévient dès qu'une dépendance (aujourd'hui, uniquement
+  `@neondatabase/serverless`, côté `api/checkout.js`) a une faille connue, et ouvre lui-même une
+  pull request pour la corriger. Rien d'automatique côté déploiement : chaque PR se relit et se
+  fusionne comme les autres.
+- **Détection de secrets** (`secret_scanning` + `push_protection`) : bloque par défaut un `git
+  push` qui contiendrait par erreur une clé API ou un mot de passe reconnaissable, et alerte si un
+  secret déjà connu se retrouve dans l'historique.
+- **`.github/dependabot.yml`** : programme une vérification hebdomadaire des dépendances (npm) et
+  des actions utilisées par le contrôle ci-dessous.
+- **`.github/workflows/veille-securite.yml`** : lance `npm audit` chaque lundi matin, et à chaque
+  changement de `package.json`/`package-lock.json` — échoue si une faille grave ou critique est
+  trouvée, visible dans l'onglet **Actions** du dépôt GitHub.
+
+Cela couvre les *dépendances* et les *secrets*. Pour le code du site lui-même (comme les audits
+faits pendant cette session), le plus efficace reste une relecture ponctuelle — après un ajout
+important (nouvelle fonction serveur, nouvelle donnée personnelle collectée) ou de temps en temps
+autrement, via `/code-review` ou une revue de sécurité.
+
 ## Contrastes
 
 Les couleurs ont été mesurées selon le critère WCAG AA (4,5:1 en texte courant, 3:1 en grand

@@ -1,0 +1,22 @@
+# Couture & Fil — veille de vulnérabilités : mises à jour automatiques
+#
+# GitHub ouvre lui-même une pull request quand une dépendance a une
+# faille connue (ou juste une nouvelle version) — à relire et fusionner
+# comme n'importe quelle autre PR, rien d'automatique côté déploiement.
+#
+# Deux écosystèmes à surveiller ici : les dépendances npm
+# (api/checkout.js, depuis l'ajout de la base de données) et les
+# actions utilisées par .github/workflows/veille-securite.yml.
+
+version: 2
+updates:
+  - package-ecosystem: 'npm'
+    directory: '/'
+    schedule:
+      interval: 'weekly'
+    open-pull-requests-limit: 5
+
+  - package-ecosystem: 'github-actions'
+    directory: '/'
+    schedule:
+      interval: 'weekly'
