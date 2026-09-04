@@ -33,7 +33,7 @@ jobs:
         id: presence
         run: echo "existe=$( [ -f package.json ] && echo oui || echo non )" >> "$GITHUB_OUTPUT"
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         if: steps.presence.outputs.existe == 'oui'
         with:
           node-version: 20
