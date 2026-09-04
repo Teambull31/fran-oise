@@ -29,7 +29,7 @@
 (function () {
   'use strict';
 
-  var EMPREINTE = 'a34d22c19900d638ab625fa2b1c8e3ebfb1ffc151d318610006f3bf2fbdffd6f';
+  var EMPREINTE = 'bb54753e3e93bb1a21d76a478b732d4b59c936dbebaaf66b8090f2bf9060bb83';
   var CLE = 'couture-fil:admin';
 
   function estAdmin() {
