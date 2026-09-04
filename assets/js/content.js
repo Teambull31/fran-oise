@@ -31,7 +31,7 @@ window.CONTENT = {
     ],
     city: 'Monflanquin',
     region: 'Lot-et-Garonne',
-    sumupUrl: 'https://couturefil.sumupstore.com/',
+    sumupUrl: '',
     // TODO : coordonnées réelles (absentes du PDF). Laisser vide masque la ligne.
     email: '',
     phone: '',

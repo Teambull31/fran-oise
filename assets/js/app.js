@@ -281,7 +281,9 @@
           .join(' · ')
       });
     }
-    infos.push({ icon: '🛍️', label: 'Boutique en ligne', value: C.shop.sumupUrl.replace(/^https?:\/\//, '') });
+    if (C.shop.sumupUrl) {
+      infos.push({ icon: '🛍️', label: 'Boutique en ligne', value: C.shop.sumupUrl.replace(/^https?:\/\//, '') });
+    }
 
     infos.forEach(function (info) {
       var li = el('li');
@@ -297,6 +299,7 @@
     $('#footer-tagline').textContent = C.shop.tagline;
     $('#year').textContent = String(new Date().getFullYear());
     $('#footer-sumup').href = C.shop.sumupUrl;
+    $('#footer-sumup').hidden = !C.shop.sumupUrl;
     $('#modal-sumup').href = C.shop.sumupUrl;
 
     var nav = $('#footer-links');
