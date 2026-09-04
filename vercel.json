@@ -29,5 +29,6 @@
         }
       ]
     }
-  ]
+  ],
+  "crons": [{ "path": "/api/purge-commandes", "schedule": "0 3 1 * *" }]
 }

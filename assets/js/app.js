@@ -741,7 +741,15 @@
         lignes: cart.map(function (ligne) {
           return { id: ligne.id, qty: ligne.qty };
         }),
-        description: resumeLignes().join(' ; ') || 'Commande Couture & Fil'
+        description: resumeLignes().join(' ; ') || 'Commande Couture & Fil',
+        // Pour que la commande apparaisse dans l'espace « Commandes » de
+        // Françoise, en plus de l'e-mail envoyé ci-dessous.
+        client: {
+          nom: champNom.value.trim(),
+          email: champEmail.value.trim(),
+          telephone: champTelephone.value.trim(),
+          adresse: champAdresse.value.trim()
+        }
       })
     })
       .then(function (reponse) {

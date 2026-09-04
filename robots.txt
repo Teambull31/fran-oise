@@ -4,5 +4,6 @@
 User-agent: *
 Allow: /
 Disallow: /modifier.html
+Disallow: /commandes.html
 
 Sitemap: https://couture-fil.fr/sitemap.xml

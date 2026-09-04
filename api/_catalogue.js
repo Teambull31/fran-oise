@@ -30,41 +30,51 @@ function identifiant(nom, secours) {
   return Format.normalise(nom).replace(/\s+/g, '-') || secours;
 }
 
-/** { id: prix } pour chaque produit publié dans contenu.txt. */
+/** { id: { nom, prix } } pour chaque produit publié dans contenu.txt. */
 function catalogue(texteContenu) {
   var blocs = Format.lire(texteContenu);
-  var prixParProduit = {};
+  var parProduit = {};
   blocs
     .filter(function (bloc) {
       return bloc.type === 'produit' && String(bloc.champs['Nom'] || '').trim();
     })
     .forEach(function (bloc, index) {
       var id = identifiant(bloc.champs['Nom'], 'produit-' + index);
-      prixParProduit[id] = prix(bloc.champs['Prix']);
+      parProduit[id] = { nom: String(bloc.champs['Nom']).trim(), prix: prix(bloc.champs['Prix']) };
     });
-  return prixParProduit;
+  return parProduit;
 }
 
 /**
- * Recalcule le total à partir des vraies lignes du panier (id + quantité)
- * envoyées par le client, en ignorant tout prix qu'il aurait pu joindre.
- * Renvoie null si une ligne référence un produit introuvable (catalogue
- * changé entre-temps, ou tentative de triche) — le paiement est alors
- * refusé plutôt que de deviner un prix.
+ * Relit les vraies lignes du panier (id + quantité) envoyées par le
+ * client à la lumière du catalogue, en ignorant tout prix ou nom qu'il
+ * aurait pu joindre. Renvoie null si une ligne référence un produit
+ * introuvable (catalogue changé entre-temps, ou tentative de triche) —
+ * le paiement est alors refusé plutôt que de deviner un prix.
  */
-function calculerTotal(texteContenu, lignes) {
-  var prixParProduit = catalogue(texteContenu);
-  var total = 0;
+function detailLignes(texteContenu, lignes) {
+  var parProduit = catalogue(texteContenu);
+  var resultat = [];
 
   for (var i = 0; i < lignes.length; i++) {
     var ligne = lignes[i];
     var quantite = Math.round(Number(ligne && ligne.qty));
     var id = ligne && String(ligne.id || '');
-    if (!id || !(quantite > 0) || !(id in prixParProduit)) return null;
-    total += prixParProduit[id] * quantite;
+    if (!id || !(quantite > 0) || !(id in parProduit)) return null;
+    resultat.push({ id: id, nom: parProduit[id].nom, prix: parProduit[id].prix, qty: quantite });
   }
 
+  return resultat;
+}
+
+/** Total, arrondi au centime, à partir des mêmes lignes vérifiées. */
+function calculerTotal(texteContenu, lignes) {
+  var detail = detailLignes(texteContenu, lignes);
+  if (!detail) return null;
+  var total = detail.reduce(function (somme, ligne) {
+    return somme + ligne.prix * ligne.qty;
+  }, 0);
   return Math.round(total * 100) / 100;
 }
 
-module.exports = { calculerTotal: calculerTotal };
+module.exports = { calculerTotal: calculerTotal, detailLignes: detailLignes };

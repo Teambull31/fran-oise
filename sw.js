@@ -12,12 +12,13 @@
    ========================================================= */
 
 // À changer à chaque mise en ligne d'une nouvelle version du site.
-var VERSION = 'couture-fil-v21';
+var VERSION = 'couture-fil-v22';
 
 var ESSENTIELS = [
   './',
   './index.html',
   './modifier.html',
+  './commandes.html',
   './merci.html',
   './mentions-legales.html',
   './cgv.html',
@@ -104,8 +105,12 @@ self.addEventListener('fetch', function (evenement) {
   if (requete.method !== 'GET') return;
 
   var adresse = new URL(requete.url);
-  // On ne touche ni aux autres domaines ni à l'API de publication.
+  // On ne touche ni aux autres domaines ni à l'API (paiement, commandes) :
+  // avant, seules des requêtes POST y passaient, exclues juste au-dessus ;
+  // /api/commandes (GET) a besoin de cette exclusion explicite pour ne
+  // jamais mettre en cache des données de commandes.
   if (adresse.origin !== self.location.origin) return;
+  if (adresse.pathname.indexOf('/api/') === 0) return;
 
   var texte =
     requete.mode === 'navigate' ||

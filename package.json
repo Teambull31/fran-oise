@@ -1,0 +1,8 @@
+{
+  "name": "couture-fil",
+  "private": true,
+  "description": "Le site reste statique (aucune étape de build) — ce fichier ne sert qu'à installer la seule dépendance nécessaire à api/checkout.js pour enregistrer les commandes dans la base de données.",
+  "dependencies": {
+    "@neondatabase/serverless": "^1.0.2"
+  }
+}
