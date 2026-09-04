@@ -4,3 +4,5 @@
 User-agent: *
 Allow: /
 Disallow: /modifier.html
+
+Sitemap: https://couture-fil.fr/sitemap.xml
