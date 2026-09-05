@@ -12,7 +12,7 @@
    ========================================================= */
 
 // À changer à chaque mise en ligne d'une nouvelle version du site.
-var VERSION = 'couture-fil-v24';
+var VERSION = 'couture-fil-v25';
 
 var ESSENTIELS = [
   './',
@@ -65,14 +65,31 @@ self.addEventListener('activate', function (evenement) {
   self.clients.claim();
 });
 
+/**
+ * Ne garde que les réponses réussies.
+ *
+ * `fetch` ne signale pas une erreur quand le serveur répond « 502 » ou
+ * « 404 » : la promesse aboutit avec cette réponse-là. Sans ce contrôle,
+ * une panne passagère de l'hébergeur remplacerait dans le cache la
+ * dernière bonne version de contenu.txt par sa page d'erreur — et c'est
+ * elle que la visiteuse verrait ensuite hors connexion, alors que le
+ * cache est justement là pour éviter ça.
+ */
+function garderSiValide(requete, reponse) {
+  if (!reponse || !reponse.ok) return;
+  var copie = reponse.clone();
+  caches.open(VERSION).then(function (cache) {
+    return cache.put(requete, copie);
+  }).catch(function () {
+    /* cache plein ou réponse non stockable : tant pis, on sert le réseau */
+  });
+}
+
 /** Le réseau d'abord ; le cache seulement s'il ne répond pas. */
 function reseauDAbord(requete) {
   return fetch(requete)
     .then(function (reponse) {
-      var copie = reponse.clone();
-      caches.open(VERSION).then(function (cache) {
-        cache.put(requete, copie);
-      });
+      garderSiValide(requete, reponse);
       return reponse;
     })
     .catch(function () {
@@ -87,10 +104,7 @@ function cacheDAbord(requete) {
   return caches.match(requete).then(function (garde) {
     var reseau = fetch(requete)
       .then(function (reponse) {
-        var copie = reponse.clone();
-        caches.open(VERSION).then(function (cache) {
-          cache.put(requete, copie);
-        });
+        garderSiValide(requete, reponse);
         return reponse;
       })
       .catch(function () {

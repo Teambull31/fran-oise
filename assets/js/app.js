@@ -155,10 +155,20 @@
     if (product.variants) body.append(el('p', 'variants-note', 'Autres variantes disponibles'));
     body.append(el('p', null, product.description));
 
+    // Un prix manquant ou non chiffré (« sur demande ») vaut 0 : afficher
+    // « 0,00 € » et un bouton « Ajouter » enverrait la cliente vers un
+    // paiement que le serveur refuse, à juste titre. On propose le contact
+    // à la place, comme pour le sur-mesure.
     var foot = el('div', 'product-foot');
-    foot.append(el('span', 'price', euro.format(product.price)));
+    var vendable = product.price > 0;
+    foot.append(el('span', 'price', vendable ? euro.format(product.price) : 'Prix sur demande'));
 
-    if (product.shopUrl) {
+    if (!vendable) {
+      var demande = el('a', 'add-button', 'Demander');
+      demande.href = '#contact';
+      demande.setAttribute('aria-label', 'Demander le prix de ' + product.name);
+      foot.append(demande);
+    } else if (product.shopUrl) {
       var lien = el('a', 'add-button', 'Commander');
       lien.href = product.shopUrl;
       lien.rel = 'noopener';
@@ -232,6 +242,44 @@
     });
   }
 
+  /**
+   * Une carte Google Maps, affichée seulement si la visiteuse le demande.
+   *
+   * Charger l'iframe d'emblée enverrait son adresse IP à Google et y
+   * déposerait des cookies dès l'ouverture de la page, sans qu'elle ait
+   * rien demandé : c'est un contenu tiers, pas une mesure d'audience, et
+   * il ne relève d'aucune exemption de consentement. Le bouton ci-dessous
+   * est la solution recommandée pour ce cas. Le lien « Voir l'itinéraire »
+   * reste disponible juste en dessous pour qui préfère ouvrir Google Maps
+   * dans un onglet à part.
+   */
+  function carteAuClic(marche) {
+    var lieu = marche.place || marche.city || marche.day || 'ce marché';
+    var carte = el('div', 'market-map');
+
+    var bouton = el('button', 'market-map-demande');
+    bouton.type = 'button';
+    bouton.append(
+      el('span', 'market-map-icone', '🗺️'),
+      el('span', 'market-map-libelle', 'Afficher la carte'),
+      el('span', 'market-map-note', 'Chargée depuis Google Maps')
+    );
+    bouton.setAttribute('aria-label', 'Afficher la carte Google Maps de ' + lieu);
+
+    bouton.addEventListener('click', function () {
+      var iframe = document.createElement('iframe');
+      iframe.src = marche.mapEmbedUrl;
+      iframe.title = 'Carte : ' + lieu;
+      iframe.loading = 'lazy';
+      iframe.referrerPolicy = 'no-referrer-when-downgrade';
+      iframe.setAttribute('allowfullscreen', '');
+      carte.replaceChildren(iframe);
+    });
+
+    carte.append(bouton);
+    return carte;
+  }
+
   function renderMarkets() {
     var section = $('#marches');
     if (!section) return;
@@ -246,15 +294,7 @@
       if (marche.day) card.append(el('span', 'market-day', marche.day));
 
       if (marche.mapEmbedUrl) {
-        var carte = el('div', 'market-map');
-        var iframe = document.createElement('iframe');
-        iframe.src = marche.mapEmbedUrl;
-        iframe.title = 'Carte : ' + (marche.place || marche.city || marche.day);
-        iframe.loading = 'lazy';
-        iframe.referrerPolicy = 'no-referrer-when-downgrade';
-        iframe.setAttribute('allowfullscreen', '');
-        carte.append(iframe);
-        card.append(carte);
+        card.append(carteAuClic(marche));
       }
 
       var lieu = [marche.place, marche.city].filter(Boolean).join(', ');
@@ -376,8 +416,13 @@
     try {
       var raw = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
       if (!Array.isArray(raw)) return [];
+      // Un panier peut dater d'avant une modification du site : on écarte
+      // les articles retirés du catalogue, et ceux dont le prix a disparu
+      // depuis. Le serveur refuse ces derniers au paiement ; les laisser
+      // ici bloquerait la commande sans que la cliente voie pourquoi.
       return raw.filter(function (line) {
-        return findProduct(line.id) && line.qty > 0;
+        var product = findProduct(line.id);
+        return product && product.price > 0 && line.qty > 0;
       });
     } catch (error) {
       return [];
