@@ -708,6 +708,9 @@
     $('#checkout-etape-choix').hidden = false;
     $('#checkout-livraison').hidden = true;
     $('#modal-payer-erreur').hidden = true;
+    // L'acceptation vaut pour une commande, pas pour les suivantes.
+    var caseCgv = $('#checkout-cgv');
+    if (caseCgv) caseCgv.checked = false;
 
     var lignes = resumeLignes();
     var contactPossible = !!C.shop.email;
@@ -818,11 +821,13 @@
     var champEmail = $('#checkout-email');
     var champTelephone = $('#checkout-telephone');
     var champAdresse = $('#checkout-adresse');
+    var caseCgv = $('#checkout-cgv');
 
     if (!champNom.checkValidity()) return champNom.reportValidity();
     if (!champEmail.checkValidity()) return champEmail.reportValidity();
     if (!champTelephone.checkValidity()) return champTelephone.reportValidity();
     if (!champAdresse.checkValidity()) return champAdresse.reportValidity();
+    if (caseCgv && !caseCgv.checkValidity()) return caseCgv.reportValidity();
 
     bouton.disabled = true;
     bouton.textContent = 'Préparation du paiement…';

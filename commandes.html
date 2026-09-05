@@ -233,6 +233,17 @@
         }
 
         function afficherEcranConnexion() {
+          // Masquer l'écran ne suffit pas : sans cet effacement, les
+          // coordonnées des clientes (nom, e-mail, téléphone, adresse)
+          // resteraient dans la page après la déconnexion, lisibles sans
+          // mot de passe par qui rouvre l'ordinateur ensuite. Rien ne
+          // subsiste tant qu'une nouvelle lecture de /api/commandes n'a
+          // pas été autorisée.
+          commandesActuelles = [];
+          corpsTableau.replaceChildren();
+          recherche.value = '';
+          etatCommandes.textContent = '';
+
           ecranCommandes.hidden = true;
           ecranConnexion.hidden = false;
           champMotDePasse.value = '';
