@@ -40,7 +40,8 @@ window.CONTENT = {
     // TODO : horaires réels si l'atelier reçoit sur rendez-vous.
     hours: [],
     socials: [
-      // TODO : liens réels (Facebook / Instagram).
+      { label: 'Facebook', url: 'https://www.facebook.com/p/Couture-Fil-61587529978154/' },
+      { label: 'Instagram', url: 'https://www.instagram.com/coutureetfil/' }
     ],
     legalLinks: [
       { label: 'Mentions légales', url: 'mentions-legales.html' },

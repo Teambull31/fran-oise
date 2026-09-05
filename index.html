@@ -10,7 +10,11 @@
       content="Couture & Fil, l'atelier de Françoise à Monflanquin (Lot-et-Garonne) : peluches et amigurumis au crochet, doudous en tissu, bijoux et accessoires faits main en pièces uniques."
     />
     <meta name="theme-color" content="#c2410c" />
+    <!-- Autorise Google à afficher une grande image et un extrait complet dans
+         ses résultats : utile pour un site dont les photos sont l'argument. -->
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1" />
     <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Couture &amp; Fil" />
     <meta property="og:locale" content="fr_FR" />
     <meta property="og:title" content="Couture & Fil — Peluches au crochet faites main" />
     <meta
@@ -18,6 +22,10 @@
       content="Peluches et amigurumis au crochet, doudous, bijoux et accessoires faits main à Monflanquin (Lot-et-Garonne)."
     />
     <meta property="og:image" content="https://couture-fil.fr/assets/img/og-image.jpg" />
+    <meta
+      property="og:image:alt"
+      content="Peluches et amigurumis au crochet faits main par Couture &amp; Fil"
+    />
     <meta property="og:url" content="https://couture-fil.fr/" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="Couture & Fil — Peluches au crochet faites main" />
@@ -26,6 +34,10 @@
       content="Peluches et amigurumis au crochet, doudous, bijoux et accessoires faits main à Monflanquin (Lot-et-Garonne)."
     />
     <meta name="twitter:image" content="https://couture-fil.fr/assets/img/og-image.jpg" />
+    <meta
+      name="twitter:image:alt"
+      content="Peluches et amigurumis au crochet faits main par Couture &amp; Fil"
+    />
     <link rel="canonical" href="https://couture-fil.fr/" />
     <link rel="icon" href="assets/img/logo.png" />
     <link rel="apple-touch-icon" href="assets/img/icone-192.png" />
@@ -43,16 +55,26 @@
       {
         "@context": "https://schema.org",
         "@type": "Store",
+        "@id": "https://couture-fil.fr/#boutique",
         "name": "Couture & Fil",
         "description": "Créations de peluches et amigurumis au crochet, doudous en tissu, bijoux et accessoires faits main en pièces uniques.",
         "url": "https://couture-fil.fr/",
         "image": "https://couture-fil.fr/assets/img/og-image.jpg",
+        "inLanguage": "fr-FR",
         "address": {
           "@type": "PostalAddress",
           "addressLocality": "Monflanquin",
           "addressRegion": "Lot-et-Garonne",
           "addressCountry": "FR"
-        }
+        },
+        "areaServed": {
+          "@type": "AdministrativeArea",
+          "name": "Lot-et-Garonne"
+        },
+        "sameAs": [
+          "https://www.facebook.com/p/Couture-Fil-61587529978154/",
+          "https://www.instagram.com/coutureetfil/"
+        ]
       }
     </script>
   </head>
@@ -122,7 +144,11 @@
         <div class="shell hero-inner">
           <div class="hero-copy">
             <p class="eyebrow" id="hero-eyebrow"></p>
-            <h1 id="hero-title"></h1>
+            <!-- Ce titre est réécrit par app.js à partir de contenu.txt. Le
+                 texte ci-dessous sert de repli : il est lu par les moteurs de
+                 recherche et les aperçus de lien qui n'exécutent pas le
+                 JavaScript, qui trouveraient sinon un titre vide. -->
+            <h1 id="hero-title">Peluches au crochet, doudous et bijoux faits main</h1>
             <p class="lead" id="hero-lead"></p>
             <div class="hero-cta">
               <a class="btn btn--primary" href="#boutique">Voir les créations</a>

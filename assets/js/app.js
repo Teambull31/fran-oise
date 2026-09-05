@@ -51,6 +51,10 @@
     if (index === -1) {
       title.textContent = heading;
     } else {
+      // Le HTML contient déjà un titre de repli (pour les moteurs de recherche
+      // qui n'exécutent pas le JavaScript) : on le vide avant d'ajouter, sinon
+      // les deux titres s'afficheraient l'un derrière l'autre.
+      title.textContent = '';
       title.append(heading.slice(0, index));
       title.append(el('em', null, phrase));
       title.append(heading.slice(index + phrase.length));
