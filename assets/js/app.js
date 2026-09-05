@@ -765,44 +765,6 @@
   }
 
   /**
-   * Envoie les coordonnées de livraison par e-mail, exactement comme le
-   * bouton « Envoyer ma demande » : le site n'a pas de serveur pour les
-   * garder ailleurs, et la fonction de paiement ne les connaît pas —
-   * SumUp encaisse, mais ne demande ni nom, ni adresse, ni téléphone.
-   */
-  function envoyerCoordonneesLivraison(nom, email, telephone, adresse, urlPaiement) {
-    var reference = urlPaiement.split('/').pop();
-    var corps = [
-      'Commande réglée par carte sur le site (paiement en cours de finalisation).',
-      '',
-      'Client : ' + nom,
-      'E-mail : ' + email,
-      'Téléphone : ' + telephone,
-      '',
-      'Adresse de livraison :',
-      adresse,
-      '',
-      'Commande :',
-      ''
-    ]
-      .concat(resumeLignes())
-      .concat(['', 'Total : ' + euro.format(cartTotal()), '', 'Référence SumUp : ' + reference]);
-
-    var lien = document.createElement('a');
-    lien.href =
-      'mailto:' +
-      encodeURIComponent(C.shop.email) +
-      '?subject=' +
-      encodeURIComponent('Commande à préparer — ' + nom) +
-      '&body=' +
-      encodeURIComponent(corps.join('\n'));
-    lien.style.display = 'none';
-    document.body.appendChild(lien);
-    lien.click();
-    lien.remove();
-  }
-
-  /**
    * « Valider et payer », dans le formulaire de coordonnées : la fonction
    * Vercel /api/checkout crée le paiement chez SumUp avec la clé secrète
    * (jamais présente ici) et renvoie l'adresse de leur page de paiement,
@@ -860,18 +822,10 @@
         });
       })
       .then(function (url) {
-        envoyerCoordonneesLivraison(
-          champNom.value.trim(),
-          champEmail.value.trim(),
-          champTelephone.value.trim(),
-          champAdresse.value.trim(),
-          url
-        );
-        // Un court délai laisse le temps au logiciel de courrier de
-        // s'ouvrir avant que la page ne parte vers le paiement.
-        setTimeout(function () {
-          window.location.href = url;
-        }, 200);
+        // Les coordonnées sont déjà parties avec la commande, que
+        // /api/checkout enregistre en base : rien à faire faire à la
+        // cliente. Elle va droit au paiement.
+        window.location.href = url;
       })
       .catch(function () {
         bouton.disabled = false;

@@ -77,6 +77,17 @@
         max-width: 22rem;
       }
 
+      /* Le texte porte déjà l'information (« payée » / « en attente ») :
+         la couleur ne fait que la rendre repérable d'un coup d'œil. */
+      table.commandes td.payee {
+        color: #067a64;
+        font-weight: 650;
+      }
+
+      table.commandes td.en-attente {
+        color: #6f5a67;
+      }
+
       table.commandes th {
         font-weight: 700;
         color: var(--ink-soft);
@@ -128,6 +139,7 @@
             <thead>
               <tr>
                 <th>Date</th>
+                <th>Paiement</th>
                 <th>Client</th>
                 <th>Contact</th>
                 <th>Adresse</th>
@@ -192,8 +204,12 @@
           commandes.forEach(function (commande) {
             var ligne = document.createElement('tr');
 
+            // Une commande est enregistrée dès que le paiement est
+            // préparé : celles restées « en attente » sont des paniers
+            // abandonnés au moment de payer, à ne pas préparer.
             var colonnes = [
               dateHeure.format(new Date(commande.cree_le)),
+              commande.payee ? '✅ payée' : '⏳ en attente',
               commande.nom,
               commande.email + (commande.telephone ? ' · ' + commande.telephone : ''),
               commande.adresse,
@@ -204,7 +220,8 @@
 
             colonnes.forEach(function (texte, index) {
               var cellule = document.createElement('td');
-              if (index === 4) cellule.className = 'lignes-commande';
+              if (index === 1) cellule.className = commande.payee ? 'payee' : 'en-attente';
+              if (index === 5) cellule.className = 'lignes-commande';
               cellule.textContent = texte;
               ligne.appendChild(cellule);
             });
@@ -329,10 +346,11 @@
         }
 
         boutonExport.addEventListener('click', function () {
-          var entetes = ['Date', 'Client', 'E-mail', 'Téléphone', 'Adresse', 'Commande', 'Total', 'Référence'];
+          var entetes = ['Date', 'Paiement', 'Client', 'E-mail', 'Téléphone', 'Adresse', 'Commande', 'Total', 'Référence'];
           var lignesCsv = commandesActuelles.map(function (commande) {
             return [
               dateHeure.format(new Date(commande.cree_le)),
+              commande.payee ? 'payée' : 'en attente',
               commande.nom,
               commande.email,
               commande.telephone,

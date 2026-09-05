@@ -139,7 +139,16 @@ module.exports = async function (req, res) {
         merchant_code: marchand,
         description: description,
         hosted_checkout: { enabled: true },
-        redirect_url: origine + '/merci.html'
+        // Où renvoyer la cliente dans son navigateur une fois le
+        // paiement fait.
+        redirect_url: origine + '/merci.html',
+        // Où SumUp doit nous prévenir, de serveur à serveur, que le
+        // paiement a abouti (api/sumup-webhook.js). Toujours l'adresse
+        // officielle : un aperçu Vercel n'a pas à recevoir les
+        // notifications des vraies commandes, et la cliente pourrait
+        // fermer sa page avant que redirect_url ne serve à quoi que ce
+        // soit — c'est cet appel-là, pas elle, qui déclenche les e-mails.
+        return_url: ORIGINE_CANONIQUE + '/api/sumup-webhook'
       })
     });
 
