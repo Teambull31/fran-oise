@@ -45,12 +45,26 @@ function catalogue(texteContenu) {
   return parProduit;
 }
 
+/** Vraie fiche du catalogue, et pas une propriété héritée d'Object :
+ *  sans ce contrôle, un panier contenant l'identifiant « toString » ou
+ *  « __proto__ » traverserait la vérification, faute de quoi une ligne
+ *  sans nom ni prix se retrouverait enregistrée avec la commande. */
+function fiche(parProduit, id) {
+  return Object.prototype.hasOwnProperty.call(parProduit, id) ? parProduit[id] : null;
+}
+
 /**
  * Relit les vraies lignes du panier (id + quantité) envoyées par le
  * client à la lumière du catalogue, en ignorant tout prix ou nom qu'il
  * aurait pu joindre. Renvoie null si une ligne référence un produit
  * introuvable (catalogue changé entre-temps, ou tentative de triche) —
  * le paiement est alors refusé plutôt que de deviner un prix.
+ *
+ * Un produit publié sans prix chiffré (champ vide, ou « sur demande »)
+ * est refusé de la même façon. Son prix vaudrait sinon 0 : accompagné
+ * d'un seul article payant, le total resterait positif et il partirait
+ * gratuitement. La page « Modifier » signale les fiches sans prix mais
+ * ne bloque pas leur publication — c'est donc ici que ça se joue.
  */
 function detailLignes(texteContenu, lignes) {
   var parProduit = catalogue(texteContenu);
@@ -60,8 +74,12 @@ function detailLignes(texteContenu, lignes) {
     var ligne = lignes[i];
     var quantite = Math.round(Number(ligne && ligne.qty));
     var id = ligne && String(ligne.id || '');
-    if (!id || !(quantite > 0) || !(id in parProduit)) return null;
-    resultat.push({ id: id, nom: parProduit[id].nom, prix: parProduit[id].prix, qty: quantite });
+    if (!id || !(quantite > 0)) return null;
+
+    var produit = fiche(parProduit, id);
+    if (!produit || !(produit.prix > 0)) return null;
+
+    resultat.push({ id: id, nom: produit.nom, prix: produit.prix, qty: quantite });
   }
 
   return resultat;
