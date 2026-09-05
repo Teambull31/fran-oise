@@ -786,6 +786,34 @@
           lien.textContent = 'Se déconnecter';
           lien.addEventListener('click', function (evenement) {
             evenement.preventDefault();
+
+            // Se déconnecter sans effacer le code GitHub laisserait la vraie
+            // clé sur l'appareil : le code d'accès de cette page n'est qu'une
+            // gêne cosmétique, alors que ce code-là permet de modifier tout le
+            // site. Sur un ordinateur prêté ou partagé, une déconnexion qui
+            // laisse la clé derrière elle ne protège rien.
+            // Même clé que CLE_CODE, défini plus bas dans cette page.
+            var codeGitHub = '';
+            try {
+              codeGitHub = localStorage.getItem('couture-fil:code') || '';
+            } catch (erreur) {
+              /* stockage indisponible : rien à effacer */
+            }
+
+            if (codeGitHub) {
+              var accepte = window.confirm(
+                'Se déconnecter efface aussi le code GitHub gardé sur cet appareil.\n\n' +
+                  'Il faudra le ressaisir à la prochaine modification du site. ' +
+                  'Le bouton « Annuler » permet de rester connectée.'
+              );
+              if (!accepte) return;
+              try {
+                localStorage.removeItem('couture-fil:code');
+              } catch (erreur) {
+                /* sans importance */
+              }
+            }
+
             window.AdminGate.seDeconnecter();
             window.location.reload();
           });
