@@ -47,6 +47,13 @@ async function assurerTable() {
       cree_le TIMESTAMPTZ NOT NULL DEFAULT now()
     )
   `;
+  // Une commande est enregistrée dès que le paiement est préparé, donc
+  // avant d'être réglée : une cliente peut renoncer sur la page SumUp.
+  // Ces deux colonnes distinguent ce qui a vraiment été payé. Ajoutées à
+  // part parce que « CREATE TABLE IF NOT EXISTS » ne touche pas à une
+  // table qui existe déjà, créée avant l'ajout de ces colonnes.
+  await sql`ALTER TABLE commandes ADD COLUMN IF NOT EXISTS payee BOOLEAN NOT NULL DEFAULT false`;
+  await sql`ALTER TABLE commandes ADD COLUMN IF NOT EXISTS payee_le TIMESTAMPTZ`;
   tablePrete = true;
 }
 
@@ -73,11 +80,30 @@ async function listerCommandes(limite) {
   await assurerTable();
   var sql = requete();
   return sql`
-    SELECT reference, nom, email, telephone, adresse, lignes, total, cree_le
+    SELECT reference, nom, email, telephone, adresse, lignes, total, cree_le, payee, payee_le
     FROM commandes
     ORDER BY cree_le DESC
     LIMIT ${limite}
   `;
+}
+
+/**
+ * Marque une commande comme payée, et renvoie son contenu — mais
+ * seulement si elle ne l'était pas déjà. SumUp renvoie plusieurs fois le
+ * même événement (et réessaie en cas d'erreur) : sans cette condition,
+ * Françoise et la cliente recevraient l'e-mail de confirmation autant de
+ * fois. Renvoie null si la commande est introuvable ou déjà réglée.
+ */
+async function marquerPayee(reference) {
+  await assurerTable();
+  var sql = requete();
+  var lignes = await sql`
+    UPDATE commandes
+    SET payee = true, payee_le = now()
+    WHERE reference = ${reference} AND payee = false
+    RETURNING reference, nom, email, telephone, adresse, lignes, total
+  `;
+  return lignes.length ? lignes[0] : null;
 }
 
 /** Supprime les commandes plus anciennes que `moisConservation` mois. */
@@ -95,5 +121,6 @@ async function purgerCommandes(moisConservation) {
 module.exports = {
   enregistrerCommande: enregistrerCommande,
   listerCommandes: listerCommandes,
+  marquerPayee: marquerPayee,
   purgerCommandes: purgerCommandes
 };

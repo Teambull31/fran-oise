@@ -402,6 +402,16 @@
             <label for="checkout-adresse">Adresse de livraison</label>
             <textarea id="checkout-adresse" rows="3" required autocomplete="street-address"></textarea>
           </div>
+          <!-- L'acceptation des conditions de vente doit être donnée avant
+               le paiement, et de façon active : c'est pour ça que la case
+               n'est pas cochée d'avance. -->
+          <div class="field field--case">
+            <input id="checkout-cgv" type="checkbox" required />
+            <label for="checkout-cgv">
+              J’ai lu et j’accepte les
+              <a href="cgv.html" target="_blank" rel="noopener">conditions générales de vente</a>.
+            </label>
+          </div>
           <p class="form-status" id="modal-payer-erreur" hidden></p>
           <div class="modal-actions">
             <button class="btn btn--primary" id="modal-payer" type="button">Valider et payer</button>

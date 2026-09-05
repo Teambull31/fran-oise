@@ -1257,6 +1257,26 @@ textarea {
   font-weight: 650;
 }
 
+/* Case à cocher : l'étiquette se place à côté, pas au-dessus. */
+.field--case {
+  grid-template-columns: auto 1fr;
+  align-items: start;
+  gap: 0.6rem;
+  margin-top: 0.4rem;
+}
+
+.field--case input {
+  width: 1.15rem;
+  height: 1.15rem;
+  margin-top: 0.1rem;
+  accent-color: var(--berry);
+}
+
+.field--case label {
+  font-weight: 500;
+  line-height: 1.45;
+}
+
 .field input,
 .field textarea {
   border: 2px solid var(--line);

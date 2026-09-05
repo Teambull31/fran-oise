@@ -40,5 +40,18 @@
         <p><a class="btn btn--primary" href="index.html">Retour au site</a></p>
       </div>
     </div>
+
+    <script>
+      // On n'arrive ici qu'au retour de SumUp, le paiement passé : le
+      // panier a fait son office. Sans cet effacement, la cliente
+      // retrouvait au retour les articles qu'elle venait de régler —
+      // de quoi croire que la commande n'était pas partie, et la payer
+      // une seconde fois. Même clé que assets/js/app.js.
+      try {
+        localStorage.removeItem('couture-fil:cart');
+      } catch (erreur) {
+        /* mode privé : le panier disparaîtra de toute façon */
+      }
+    </script>
   </body>
 </html>

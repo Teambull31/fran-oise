@@ -206,10 +206,31 @@ ni dans `contenu.txt`, ni visibles par personne d'autre que le compte Vercel.
 
 `api/checkout.js` ne fait jamais confiance au montant envoyé par le navigateur : il recalcule
 lui-même le prix à partir des identifiants et quantités du panier et des vrais tarifs dans
-`contenu.txt`, pour qu'un visiteur ne puisse pas modifier le total avant l'envoi. Limite
-volontaire de cette première version : il n'y a pas de confirmation automatique de commande
-après paiement, seulement la notification que SumUp envoie déjà de son côté (comme le message
-envoyé par e-mail aujourd'hui). À améliorer plus tard si le volume de commandes le justifie.
+`contenu.txt`, pour qu'un visiteur ne puisse pas modifier le total avant l'envoi. Un produit
+publié sans prix chiffré est refusé plutôt que compté à zéro.
+
+### Confirmation automatique après paiement
+
+Quand le paiement aboutit, SumUp prévient le site à l'adresse `/api/sumup-webhook` (donnée à la
+création du paiement, rien à régler chez SumUp). Cet appel n'est pas signé et n'importe qui
+pourrait l'imiter : le site ne le croit donc sur rien et redemande lui-même l'état du paiement à
+SumUp avec la clé secrète. C'est seulement si SumUp répond `PAID` que la commande est marquée
+payée et que deux messages partent — un à Françoise, un à la cliente. Un même événement renvoyé
+plusieurs fois (SumUp réessaie) n'envoie pas les messages en double.
+
+Pour que ces messages puissent être envoyés, ajouter dans Vercel → Project Settings →
+Environment Variables :
+
+- `RESEND_API_KEY` — une clé créée sur <https://resend.com> (gratuit jusqu'à 3 000 messages par
+  mois). Sans elle, rien n'est envoyé : la commande est quand même enregistrée et visible dans
+  l'espace « Commandes ».
+- `EMAIL_BOUTIQUE` — facultatif, l'adresse qui reçoit les commandes. Par défaut
+  `couturefil47@gmail.com`.
+- `EMAIL_EXPEDITEUR` — facultatif. Tant que le domaine `couture-fil.fr` n'est pas vérifié chez
+  Resend, laisser vide : les messages partent de `onboarding@resend.dev`, ce qui fonctionne mais
+  finit plus souvent dans les indésirables. Pour y remédier, ajouter le domaine dans Resend →
+  **Domains** et créer les enregistrements DNS indiqués, puis mettre par exemple
+  `Couture & Fil <commandes@couture-fil.fr>`.
 
 ## Encaisser sans la boutique SumUp
 
@@ -233,9 +254,14 @@ terminal.
 ## Retrouver les commandes (espace « Commandes »)
 
 Chaque commande réglée par carte sur le site (« 💳 Payer par carte ») est enregistrée dans une
-base de données, en plus de l'e-mail envoyé comme avant — consultable depuis
-**[commandes.html](commandes.html)**, un lien discret « 📦 Voir les commandes » en haut de la
-page « Modifier ». Recherche par nom/e-mail et export CSV inclus.
+base de données — consultable depuis **[commandes.html](commandes.html)**, un lien discret
+« 📦 Voir les commandes » en haut de la page « Modifier ». Recherche par nom/e-mail et export CSV
+inclus.
+
+La colonne **Paiement** distingue les commandes réellement réglées (« ✅ payée ») de celles
+restées « ⏳ en attente » : une commande est enregistrée dès que le paiement est préparé, donc
+avant que la cliente ait payé — celles qui restent en attente sont des paniers abandonnés au
+moment de payer, à ne pas préparer.
 
 ### Réglage nécessaire (une seule fois)
 
