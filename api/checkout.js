@@ -30,16 +30,41 @@ var MONTANT_MAXIMUM = 5000;
  * serveur) n'envoie souvent pas cet en-tête : ce n'est donc pas un vrai
  * contrôle d'accès, seulement une gêne de plus pour l'abus le plus courant.
  */
+var ORIGINE_CANONIQUE = 'https://couture-fil.fr';
+
+/** Un nom de domaine qui est réellement celui de ce site. */
+function hoteDuSite(hote) {
+  if (hote === 'couture-fil.fr' || hote === 'www.couture-fil.fr') return true;
+  return hote.endsWith('.vercel.app') && hote.indexOf('fran-oise') === 0;
+}
+
 function origineAutorisee(origine) {
   if (!origine) return true;
   if (origine === 'https://teambull31.github.io') return true;
-  if (origine === 'https://couture-fil.fr' || origine === 'https://www.couture-fil.fr') return true;
   try {
-    var hote = new URL(origine).hostname;
-    return hote.endsWith('.vercel.app') && hote.indexOf('fran-oise') === 0;
+    return hoteDuSite(new URL(origine).hostname);
   } catch (erreur) {
     return false;
   }
+}
+
+/**
+ * L'adresse de ce site, pour aller y relire les prix et pour dire à SumUp
+ * où renvoyer la cliente après le paiement.
+ *
+ * Déduite de l'en-tête « Host », mais seulement s'il désigne un domaine
+ * qui est vraiment le nôtre : cet en-tête vient de l'appelant. Un appel
+ * forgé qui annoncerait un autre domaine ferait autrement relire le
+ * catalogue chez lui — donc à ses propres prix, ce qui viderait de son
+ * sens la vérification des montants côté serveur — et renverrait la
+ * cliente sur sa page après le paiement. En cas de doute, on retombe sur
+ * le domaine officiel.
+ */
+function origineDuSite(req) {
+  var hote = String(req.headers.host || '').toLowerCase();
+  if (!hoteDuSite(hote)) return ORIGINE_CANONIQUE;
+  var protocole = req.headers['x-forwarded-proto'] === 'http' ? 'http' : 'https';
+  return protocole + '://' + hote;
 }
 
 module.exports = async function (req, res) {
@@ -63,7 +88,7 @@ module.exports = async function (req, res) {
   var corps = req.body || {};
   var lignes = Array.isArray(corps.lignes) ? corps.lignes : [];
   var description = String(corps.description || 'Commande Couture & Fil').slice(0, 90);
-  var origine = req.headers['x-forwarded-proto'] + '://' + req.headers.host;
+  var origine = origineDuSite(req);
   var client = corps.client || {};
 
   if (!lignes.length) {
