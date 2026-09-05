@@ -7,6 +7,7 @@
    ========================================================= */
 
 var Session = require('./_session.js');
+var Limite = require('./_limite-tentatives.js');
 
 module.exports = async function (req, res) {
   if (req.method !== 'POST') {
@@ -19,14 +20,28 @@ module.exports = async function (req, res) {
     return;
   }
 
+  // Trop d'échecs récents depuis cette adresse : on refuse avant même de
+  // regarder le mot de passe, pour ne pas laisser essayer sans fin.
+  var attente = Limite.attenteRequise(req);
+  if (attente > 0) {
+    res.setHeader('Retry-After', String(attente));
+    res.status(429).json({
+      erreur:
+        'Trop de tentatives. Réessayez dans ' + Math.ceil(attente / 60) + ' minute(s).'
+    });
+    return;
+  }
+
   var corps = req.body || {};
   var motDePasse = String(corps.motDePasse || '');
 
   if (!Session.motDePasseCorrect(motDePasse)) {
+    Limite.enregistrerEchec(req);
     res.status(401).json({ erreur: 'Mot de passe incorrect.' });
     return;
   }
 
+  Limite.reinitialiser(req);
   res.setHeader('Set-Cookie', Session.creerCookieSession());
   res.status(200).json({ ok: true });
 };
