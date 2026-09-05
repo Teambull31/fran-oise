@@ -1290,6 +1290,44 @@ textarea {
   font-size: 0.9rem;
 }
 
+/* Réseaux sociaux : ronds cliquables assez grands pour le doigt (44 px,
+   le minimum confortable sur téléphone), reconnaissables à leur logo. */
+.footer-socials {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: center;
+}
+
+.social-btn {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: #fff;
+  color: var(--berry);
+  border: 1px solid var(--line);
+  transition: transform 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+
+.social-btn:hover,
+.social-btn:focus-visible {
+  color: var(--ink);
+  border-color: currentColor;
+  transform: translateY(-2px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .social-btn {
+    transition: none;
+  }
+
+  .social-btn:hover,
+  .social-btn:focus-visible {
+    transform: none;
+  }
+}
+
 .footer-legal {
   border-top: 1px solid var(--line);
   padding-top: 1.25rem;
