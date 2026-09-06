@@ -211,7 +211,9 @@
         phone: b['Téléphone'] || '',
         address: b['Adresse'] || '',
         legalForm: b['Forme juridique'] || '',
-        siret: b['SIRET'] || '',
+        // L'ancien nom « SIRET » est ramené sur « SIREN » dès la lecture
+        // du fichier (voir ALIAS_CLES dans contenu-format.js).
+        siren: b['SIREN'] || '',
         analyticsId: String(b['Google Analytics'] || '').trim(),
         hours: [],
         socials: reseaux,

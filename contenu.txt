@@ -29,7 +29,7 @@ Ville: Monflanquin
 Département: Lot-et-Garonne
 Adresse: Chateau 47150 Monflanquin France
 Forme juridique: Entrepreneur individuel
-SIRET: 749967147
+SIREN: 749967147
 E-mail: couturefil47@gmail.com
 Téléphone: 06 24 85 23 11
 Facebook: https://www.facebook.com/p/Couture-Fil-61587529978154/

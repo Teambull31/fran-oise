@@ -7,7 +7,7 @@
    pour que Françoise puisse les tenir à jour depuis « Modifier »
    sans jamais toucher au code.
 
-   Si un champ n'est pas encore rempli (SIRET, par exemple), le
+   Si un champ n'est pas encore rempli (le SIREN, par exemple), le
    texte d'origine du HTML reste affiché — un rappel visible que
    l'information manque encore, plutôt qu'un blanc silencieux.
    ========================================================= */

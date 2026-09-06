@@ -324,7 +324,7 @@ est vide, la ligne correspondante disparaît simplement du site — rien ne s'af
 | Téléphone, adresse | `[BOUTIQUE]` | les lignes n'apparaissent pas dans « Contact » |
 | Facebook, Instagram | `[BOUTIQUE]` | pas de liens en pied de page |
 | Adresse de chaque fiche produit | `[PRODUIT]` → `Lien boutique` | le bouton ajoute au panier au lieu de mener à la fiche |
-| Forme juridique, SIRET | `[BOUTIQUE]` | la page « Mentions légales » affiche « à compléter » à la place |
+| Forme juridique, SIREN | `[BOUTIQUE]` | la page « Mentions légales » affiche « à compléter » à la place |
 
 Les pages **Mentions légales** (`mentions-legales.html`) et **Conditions générales de vente**
 (`cgv.html`), accessibles depuis le pied de page, sont un modèle de départ — pas un avis
