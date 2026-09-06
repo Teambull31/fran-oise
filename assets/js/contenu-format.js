@@ -46,7 +46,11 @@
           type: 'texte',
           aide: 'Par exemple « Entrepreneur individuel (micro-entreprise) ». Affiché sur la page « Mentions légales ».'
         },
-        { cle: 'SIRET', type: 'texte', aide: 'Le numéro à 14 chiffres. Affiché sur la page « Mentions légales ».' },
+        {
+          cle: 'SIREN',
+          type: 'texte',
+          aide: 'Le numéro à 9 chiffres de l’entreprise. Affiché sur la page « Mentions légales ».'
+        },
         { cle: 'E-mail', type: 'texte' },
         { cle: 'Téléphone', type: 'texte' },
         { cle: 'Facebook', type: 'texte', aide: 'L’adresse complète de la page.' },
@@ -194,7 +198,13 @@
     image: 'Photo',
     mail: 'E-mail',
     courriel: 'E-mail',
-    region: 'Département'
+    region: 'Département',
+    // Le champ s'est d'abord appelé « SIRET », alors qu'il reçoit un
+    // SIREN — 9 chiffres, quand un SIRET en compte 14. Un contenu.txt
+    // publié depuis une page « Modifier » restée ouverte porte encore
+    // l'ancien nom : sans cette ligne, le numéro serait purement et
+    // simplement ignoré à la lecture, et disparaîtrait des pages légales.
+    siret: 'SIREN'
   };
   BLOCS.forEach(function (bloc) {
     bloc.champs.forEach(function (champ) {
