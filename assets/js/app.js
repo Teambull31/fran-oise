@@ -19,6 +19,18 @@
     return match ? match[1] : '🧶';
   }
 
+  /* Les noms de produits contiennent parfois des emoji (« 🐰 Jean – … »).
+     Ils décorent le titre à l'écran, mais dans le texte d'une image un
+     lecteur d'écran les énonce un par un (« lapin », « cœur bleu ») avant
+     le nom : autant de bruit avant l'information. On les retire donc du
+     texte de remplacement, sans toucher au titre affiché. */
+  function sansEmoji(texte) {
+    return String(texte || '')
+      .replace(/[\p{Extended_Pictographic}️]/gu, '')
+      .replace(/\s{2,}/g, ' ')
+      .trim();
+  }
+
   /** Applique le cadrage choisi dans la page de modification. */
   function cadrerPhoto(img, source) {
     if (source.focus) img.style.objectPosition = source.focus;
@@ -100,14 +112,29 @@
 
   function renderUniverses() {
     var grid = $('#universe-grid');
-    C.universes.forEach(function (universe) {
+
+    /* Les rayons de la boutique se déduisent des produits : une famille
+       annoncée ici sans aucun produit à son rayon renvoie donc vers un
+       filtre qui n'existe pas, et applyFilter() se rabat silencieusement
+       sur « Tout voir ». La visiteuse qui cliquait « Zéro déchet » se
+       retrouvait devant les lapins et les boucles d'oreilles, sans un mot
+       d'explication. Tant qu'une famille n'a rien à montrer, on ne la
+       montre pas : elle réapparaît d'elle-même dès qu'un produit porte
+       son rayon, sans rien à régler. */
+    var familles = C.universes.filter(function (universe) {
+      return C.categories.some(function (categorie) {
+        return categorie.id === universe.id;
+      });
+    });
+
+    familles.forEach(function (universe) {
       var card = el('button', 'universe-card reveal');
       card.type = 'button';
 
       var media = el('div', 'media');
       var img = el('img');
       img.src = universe.image;
-      img.alt = universe.title;
+      img.alt = sansEmoji(universe.title);
       img.loading = 'lazy';
       img.width = 1200;
       img.height = 675;
@@ -137,7 +164,7 @@
     if (product.image) {
       var img = el('img');
       img.src = product.image;
-      img.alt = product.name;
+      img.alt = sansEmoji(product.name);
       img.loading = 'lazy';
       img.width = 900;
       img.height = 900;
@@ -166,13 +193,13 @@
     if (!vendable) {
       var demande = el('a', 'add-button', 'Demander');
       demande.href = '#contact';
-      demande.setAttribute('aria-label', 'Demander le prix de ' + product.name);
+      demande.setAttribute('aria-label', 'Demander le prix de ' + sansEmoji(product.name));
       foot.append(demande);
     } else if (product.shopUrl) {
       var lien = el('a', 'add-button', 'Commander');
       lien.href = product.shopUrl;
       lien.rel = 'noopener';
-      lien.setAttribute('aria-label', 'Commander ' + product.name + ' sur la boutique');
+      lien.setAttribute('aria-label', 'Commander ' + sansEmoji(product.name) + ' sur la boutique');
       foot.append(lien);
     } else {
       var add = el('button', 'add-button', 'Ajouter');
