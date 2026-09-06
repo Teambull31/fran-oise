@@ -1690,6 +1690,22 @@ textarea {
   margin: -0.4rem 0 0;
 }
 
+/* Mention d'information sur les données, juste avant le bouton de
+   paiement : discrète, mais lisible — ce n'est pas une note de bas de
+   page, c'est ce que le RGPD demande de porter à la connaissance. */
+.checkout-donnees {
+  color: var(--ink-soft);
+  font-size: 0.86rem;
+  line-height: 1.5;
+  margin: 0.2rem 0 0;
+}
+
+.checkout-donnees a {
+  color: inherit;
+  text-decoration: underline;
+  white-space: nowrap;
+}
+
 /* ---------- toast ---------- */
 
 .toast {
