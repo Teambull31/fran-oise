@@ -1,9 +1,14 @@
 # Couture & Fil — tout le site public peut être indexé.
 # La page de modification est déjà exclue via sa balise <meta name="robots">
 # (une seconde couche ici ne coûte rien).
+#
+# Les deux formes sont listées : cleanUrls (vercel.json) sert ces pages
+# sous /modifier et /commandes, l'adresse en .html ne faisant que rediriger.
 User-agent: *
 Allow: /
+Disallow: /modifier
 Disallow: /modifier.html
+Disallow: /commandes
 Disallow: /commandes.html
 
 Sitemap: https://couture-fil.fr/sitemap.xml

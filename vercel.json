@@ -2,6 +2,14 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "cleanUrls": true,
   "trailingSlash": false,
+  "redirects": [
+    {
+      "source": "/(.*)",
+      "has": [{ "type": "host", "value": "www.couture-fil.fr" }],
+      "destination": "https://couture-fil.fr/$1",
+      "permanent": true
+    }
+  ],
   "headers": [
     {
       "source": "/assets/img/(.*)",

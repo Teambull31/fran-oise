@@ -1,20 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- Les adresses sont écrites sans « .html » : vercel.json active
+     cleanUrls, donc /cgv.html redirige (308) vers /cgv. Déclarer ici
+     l'adresse qui redirige faisait classer ces pages « Page avec
+     redirection » par Google, qui n'indexait alors ni l'une ni l'autre. -->
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://couture-fil.fr/</loc>
-    <lastmod>2026-09-05</lastmod>
+    <lastmod>2026-09-21</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://couture-fil.fr/mentions-legales.html</loc>
-    <lastmod>2026-09-05</lastmod>
+    <loc>https://couture-fil.fr/mentions-legales</loc>
+    <lastmod>2026-09-21</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.2</priority>
   </url>
   <url>
-    <loc>https://couture-fil.fr/cgv.html</loc>
-    <lastmod>2026-09-05</lastmod>
+    <loc>https://couture-fil.fr/cgv</loc>
+    <lastmod>2026-09-21</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.2</priority>
   </url>

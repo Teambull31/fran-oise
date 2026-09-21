@@ -146,18 +146,22 @@
 
         <div class="shell hero-inner">
           <div class="hero-copy">
-            <p class="eyebrow" id="hero-eyebrow"></p>
+            <p class="eyebrow" id="hero-eyebrow"><!--contenu:hero-accroche-->Couture &amp; Fil · Monflanquin (Lot-et-Garonne)<!--/contenu:hero-accroche--></p>
             <!-- Ce titre est réécrit par app.js à partir de contenu.txt. Le
                  texte ci-dessous sert de repli : il est lu par les moteurs de
                  recherche et les aperçus de lien qui n'exécutent pas le
                  JavaScript, qui trouveraient sinon un titre vide. -->
-            <h1 id="hero-title">Peluches au crochet, doudous et bijoux faits main</h1>
-            <p class="lead" id="hero-lead"></p>
+            <h1 id="hero-title"><!--contenu:hero-titre-->Peluches au crochet, doudous et bijoux <em>faits main</em><!--/contenu:hero-titre--></h1>
+            <p class="lead" id="hero-lead"><!--contenu:hero-phrase-->Bienvenue dans mon univers doux et coloré ! Je suis Françoise, créatrice de peluches et amigurumis faits main au crochet, installée à Monflanquin, en Lot-et-Garonne.<!--/contenu:hero-phrase--></p>
             <div class="hero-cta">
               <a class="btn btn--primary" href="#boutique">Voir les créations</a>
               <a class="btn btn--ghost" href="#contact">Demander une pièce sur mesure</a>
             </div>
-            <ul class="highlights" id="highlights"></ul>
+            <ul class="highlights" id="highlights"><!--contenu:hero-chiffres-->
+<li><strong>100 %</strong><span>fait main au crochet</span></li>
+<li><strong>Pièces uniques</strong><span>jamais deux fois la même</span></li>
+<li><strong>Monflanquin</strong><span>atelier en Lot-et-Garonne</span></li>
+<!--/contenu:hero-chiffres--></ul>
           </div>
 
           <div class="hero-media">
@@ -207,7 +211,10 @@
               Tout est crocheté ou cousu à la main dans l’atelier, en petites quantités.
             </p>
           </header>
-          <div class="universe-grid" id="universe-grid"></div>
+          <div class="universe-grid" id="universe-grid"><!--contenu:univers-->
+<button class="universe-card" type="button"><div class="media"><img src="assets/img/cat-peluches.avif" alt="Peluches &amp; doudous" loading="lazy" width="1200" height="675" style="object-position:51% 100%" /></div><div class="body"><h3>Peluches &amp; doudous</h3><p>Lapins, oursons et compagnons au crochet, montés et rembourrés à la main.</p><span class="more">Voir les pièces →</span></div></button>
+<button class="universe-card" type="button"><div class="media"><img src="assets/img/cat-bijoux.avif" alt="Bijoux" loading="lazy" width="1200" height="675" style="object-position:50% 50%" /></div><div class="body"><h3>Bijoux</h3><p>Boucles d’oreilles fleuries au crochet fin, montées sur crochets argentés.</p><span class="more">Voir les pièces →</span></div></button>
+<!--/contenu:univers--></div>
         </div>
       </section>
 
@@ -222,9 +229,22 @@
             </p>
           </header>
 
-          <div class="filters" id="filters" role="group" aria-label="Filtrer par catégorie"></div>
+          <div class="filters" id="filters" role="group" aria-label="Filtrer par catégorie"><!--contenu:filtres-->
+<button class="filter" type="button" data-category="all" aria-pressed="true">Tout voir</button>
+<button class="filter" type="button" data-category="peluches-doudous" aria-pressed="false">Peluches &amp; doudous</button>
+<button class="filter" type="button" data-category="bijoux" aria-pressed="false">Bijoux</button>
+<!--/contenu:filtres--></div>
 
-          <div class="product-grid" id="product-grid"></div>
+          <div class="product-grid" id="product-grid"><!--contenu:produits-->
+<article class="product-card"><div class="product-media"><img src="assets/img/jean.avif" alt="Jean – Peluche lapin au crochet, fait main" loading="lazy" width="900" height="900" style="object-position:50% 50%" /><span class="badge">Grand format</span></div><div class="product-body"><h3>🐰 Jean – Peluche lapin au crochet, fait main</h3><p>Grand lapin crocheté dans un fil chiné, col volanté écru. Une pièce unique, entièrement montée à la main.</p><div class="product-foot"><span class="price">54,00 €</span><button class="add-button" type="button">Ajouter</button></div></div></article>
+<article class="product-card"><div class="product-media"><img src="assets/img/justin.avif" alt="Justin – Peluche lapin amigurumi au crochet" loading="lazy" width="900" height="900" style="object-position:50% 50%" /></div><div class="product-body"><h3>🐰 Justin – Peluche lapin amigurumi au crochet</h3><p>Lapin amigurumi bleu ciel au museau brodé, finition douce et col en dentelle crochetée.</p><div class="product-foot"><span class="price">28,00 €</span><button class="add-button" type="button">Ajouter</button></div></div></article>
+<article class="product-card"><div class="product-media"><img src="assets/img/lucien.avif" alt="Lucien – Peluche lapin amigurumi au crochet" loading="lazy" width="900" height="900" style="object-position:50% 50%" /></div><div class="product-body"><h3>🐰 Lucien – Peluche lapin amigurumi au crochet</h3><p>Lapin amigurumi écru et son grand nœud blanc, tout en rondeur. Idéal pour une naissance.</p><div class="product-foot"><span class="price">28,00 €</span><button class="add-button" type="button">Ajouter</button></div></div></article>
+<article class="product-card"><div class="product-media"><img src="assets/img/polo.avif" alt="Polo, le lapin au crochet" loading="lazy" width="900" height="900" style="object-position:50% 50%" /></div><div class="product-body"><h3>Polo, le lapin au crochet</h3><p>Petit lapin blanc au pull vert et à la besace, format nomade qui tient dans la main.</p><div class="product-foot"><span class="price">21,00 €</span><button class="add-button" type="button">Ajouter</button></div></div></article>
+<article class="product-card"><div class="product-media"><img src="assets/img/rubis.avif" alt="Rubis – L’Ourson Rouge au Grand Cœur" loading="lazy" width="900" height="900" style="object-position:50% 50%" /><span class="badge">Coup de cœur</span></div><div class="product-body"><h3>🧸 Rubis – L’Ourson Rouge au Grand Cœur 🧸</h3><p>Ourson rouge vif au nœud papillon blanc, crocheté serré pour un câlin qui dure.</p><div class="product-foot"><span class="price">28,00 €</span><button class="add-button" type="button">Ajouter</button></div></div></article>
+<article class="product-card"><div class="product-media"><img src="assets/img/bleuet.avif" alt="Boucles d’oreilles “Bleuet”" loading="lazy" width="900" height="900" style="object-position:50% 50%" /></div><div class="product-body"><h3>🌼 Boucles d’oreilles “Bleuet” 🌼</h3><p class="variants-note">Autres variantes disponibles</p><p>Fleurs crochetées en fil bleu ciel, cœur de perle nacrée, montées sur crochets argentés.</p><div class="product-foot"><span class="price">19,00 €</span><button class="add-button" type="button">Ajouter</button></div></div></article>
+<article class="product-card"><div class="product-media"><div class="placeholder"><span>💙</span><span>Photo à venir</span></div></div><div class="product-body"><h3>💙 Boucles d’oreilles “Bleu Nuit” 💙</h3><p class="variants-note">Autres variantes disponibles</p><p>Le même modèle fleuri, décliné dans un bleu profond. Légères et faites une par une.</p><div class="product-foot"><span class="price">19,00 €</span><button class="add-button" type="button">Ajouter</button></div></div></article>
+<article class="product-card"><div class="product-media"><img src="assets/img/fleur-rose.avif" alt="Boucles d’oreilles “Fleur Rose”" loading="lazy" width="900" height="900" style="object-position:50% 50%" /></div><div class="product-body"><h3>🩷 Boucles d’oreilles “Fleur Rose” 🩷</h3><p class="variants-note">Autres variantes disponibles</p><p>Fleurs au crochet rose vif et perle claire au centre. Se portent aussi bien l’été que l’hiver.</p><div class="product-foot"><span class="price">19,00 €</span><button class="add-button" type="button">Ajouter</button></div></div></article>
+<!--/contenu:produits--></div>
           <p class="grid-empty" id="grid-empty" hidden>Aucune création dans cette catégorie.</p>
         </div>
       </section>
@@ -239,7 +259,11 @@
               Les modèles se déclinent : coloris, taille, prénom brodé. Écrivez-moi, on en parle.
             </p>
           </header>
-          <div class="service-grid" id="service-grid"></div>
+          <div class="service-grid" id="service-grid"><!--contenu:services-->
+<article class="service-card"><h3>Commande personnalisée</h3><span class="service-price">sur demande</span><p>Un coloris précis, un prénom, un modèle revisité : les créations peuvent être adaptées à votre demande.</p><ul><li>Choix des fils et des coloris</li><li>Modèles déclinables</li><li>Réponse à chaque message</li></ul></article>
+<article class="service-card"><h3>Cadeau de naissance</h3><span class="service-price">sur demande</span><p>Doudous et peluches crochetés dans des matières douces, pensés pour accompagner les tout-petits.</p><ul><li>Pièces uniques</li><li>Matières de qualité</li><li>Emballage soigné</li></ul></article>
+<article class="service-card"><h3>Bijoux au crochet</h3><span class="service-price">à partir de 19 €</span><p>Boucles d’oreilles fleuries réalisées à l’unité, avec d’autres variantes de couleurs disponibles.</p><ul><li>Crochet fin et perles</li><li>Crochets argentés</li><li>Autres coloris sur demande</li></ul></article>
+<!--/contenu:services--></div>
         </div>
       </section>
 
@@ -253,7 +277,11 @@
               Couture &amp; Fil est aussi un atelier itinérant : retrouvez-moi sur ces marchés pour vos retouches.
             </p>
           </header>
-          <div class="market-grid" id="marche-grid"></div>
+          <div class="market-grid" id="marche-grid"><!--contenu:marches-->
+<article class="market-card"><span class="market-day">Mercredi</span><p class="market-place">Place du village, Saint-Sylvestre-sur-Lot</p><p class="market-hours">8h30 - 13h</p><a class="market-link" href="https://www.google.com/maps/search/?api=1&amp;query=Place%20du%20village%2C%20Saint-Sylvestre-sur-Lot" target="_blank" rel="noopener">📍 Voir l’itinéraire</a></article>
+<article class="market-card"><span class="market-day">Jeudi</span><p class="market-place">Parking Eysses, Villeneuve-sur-Lot</p><p class="market-hours">8h30 - 13h</p><a class="market-link" href="https://www.google.com/maps/search/?api=1&amp;query=Parking%20Eysses%2C%20Villeneuve-sur-Lot" target="_blank" rel="noopener">📍 Voir l’itinéraire</a></article>
+<article class="market-card"><span class="market-day">Vendredi</span><p class="market-place">Gamm Vert, Monflanquin</p><p class="market-hours">8h30 - 13h</p><a class="market-link" href="https://www.google.com/maps/search/?api=1&amp;query=Gamm%20Vert%2C%20Monflanquin" target="_blank" rel="noopener">📍 Voir l’itinéraire</a></article>
+<!--/contenu:marches--></div>
         </div>
       </section>
 
@@ -261,13 +289,21 @@
       <section class="section section--tinted" id="atelier">
         <div class="shell about">
           <figure class="about-media reveal">
-            <img id="about-image" src="" alt="" width="680" height="630" loading="lazy" />
+            <!--contenu:atelier-image--><img id="about-image" src="assets/img/atelier.avif" alt="Créations de l’atelier : ours en tissu fleuri et poupées au crochet" width="680" height="630" loading="lazy" style="object-position:50% 50%" /><!--/contenu:atelier-image-->
           </figure>
           <div class="about-copy reveal">
             <p class="eyebrow">L’atelier</p>
-            <h2 id="about-title"></h2>
-            <div id="about-text"></div>
-            <ul class="skills" id="about-skills"></ul>
+            <h2 id="about-title"><!--contenu:atelier-titre-->L’atelier de Françoise<!--/contenu:atelier-titre--></h2>
+            <div id="about-text"><!--contenu:atelier-texte-->
+<p>Couture &amp; Fil, c’est un atelier à taille humaine à Monflanquin, en Lot-et-Garonne. Françoise y crochète et y coud chaque pièce à la main, une par une.</p>
+<p>Peluches et amigurumis au crochet, doudous en tissu, bijoux fleuris, accessoires zéro déchet : les créations se font sans série, avec des matières choisies pour durer entre les mains d’un enfant comme dans une chambre d’adulte.</p>
+<!--/contenu:atelier-texte--></div>
+            <ul class="skills" id="about-skills"><!--contenu:atelier-savoir-faire-->
+<li>Crochet et amigurumi faits main</li>
+<li>Couture en tissus imprimés</li>
+<li>Matières de qualité, pièces uniques</li>
+<li>Personnalisation possible sur demande</li>
+<!--/contenu:atelier-savoir-faire--></ul>
           </div>
         </div>
       </section>
@@ -282,7 +318,11 @@
               Une commande personnalisée, une question sur une pièce, un cadeau à préparer :
               écrivez-moi et je vous réponds.
             </p>
-            <ul class="contact-infos" id="contact-infos"></ul>
+            <ul class="contact-infos" id="contact-infos"><!--contenu:contact-->
+<li><span class="ico">📍</span><div><strong>L’atelier</strong><span>Chateau 47150 Monflanquin France — Monflanquin (Lot-et-Garonne)</span></div></li>
+<li><span class="ico">✉️</span><div><strong>E-mail</strong><span>couturefil47@gmail.com</span></div></li>
+<li><span class="ico">📞</span><div><strong>Téléphone</strong><span>06 24 85 23 11</span></div></li>
+<!--/contenu:contact--></ul>
           </div>
 
           <form class="contact-form reveal" id="contact-form" novalidate>
@@ -309,9 +349,13 @@
       <div class="shell footer-inner">
         <div>
           <img src="assets/img/logo.png" alt="" width="56" height="56" />
-          <p id="footer-tagline"></p>
+          <p id="footer-tagline"><!--contenu:pied-accroche-->Créations de peluches &amp; amigurumi au crochet et en tissu, bijoux et accessoires faits main en pièces uniques<!--/contenu:pied-accroche--></p>
         </div>
-        <nav aria-label="Liens de pied de page" id="footer-links"></nav>
+        <nav aria-label="Liens de pied de page" id="footer-links"><!--contenu:pied-liens-->
+<a href="#contact">Contactez-nous</a>
+<a href="mentions-legales.html">Mentions légales</a>
+<a href="cgv.html">Conditions générales de vente</a>
+<!--/contenu:pied-liens--></nav>
         <!-- Boutons Facebook / Instagram, remplis par app.js à partir des
              adresses saisies dans contenu.txt. Masqué si aucune n'est
              renseignée. -->

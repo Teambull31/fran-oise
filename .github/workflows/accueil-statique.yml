@@ -1,0 +1,53 @@
+name: Contenu de l'accueil
+
+# Recopie contenu.txt dans index.html dès qu'il change sur main.
+#
+# Le site s'affiche à partir de contenu.txt, lu par le navigateur.
+# Google, lui, lit la page avant d'exécuter le JavaScript : sans ce
+# travail, il n'y trouve ni produit, ni prix, ni marché. Françoise
+# publie depuis la page « modifier » comme avant — c'est ce workflow
+# qui remet index.html d'aplomb derrière elle.
+#
+# Le commit produit ne touche que index.html, et ce workflow n'écoute
+# que contenu.txt : il ne peut donc pas se rappeler lui-même.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'contenu.txt'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+# Si Françoise publie deux fois coup sur coup, seule la dernière
+# exécution va au bout : inutile de committer un état déjà dépassé.
+concurrency:
+  group: accueil-statique
+  cancel-in-progress: true
+
+jobs:
+  regenerer:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 20
+
+      - name: Recopier le contenu dans index.html
+        run: npm run contenu
+
+      - name: Publier si la page a changé
+        run: |
+          if git diff --quiet -- index.html; then
+            echo "index.html était déjà à jour, rien à publier."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html
+          git commit -m "Recopie le contenu du site dans la page d'accueil"
+          git push

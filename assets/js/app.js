@@ -103,6 +103,7 @@
     $('#hero-lead').textContent = C.shop.intro[0];
 
     var list = $('#highlights');
+    list.replaceChildren();
     C.highlights.forEach(function (item) {
       var li = el('li');
       li.append(el('strong', null, item.value), el('span', null, item.label));
@@ -112,6 +113,7 @@
 
   function renderUniverses() {
     var grid = $('#universe-grid');
+    grid.replaceChildren();
 
     /* Les rayons de la boutique se déduisent des produits : une famille
        annoncée ici sans aucun produit à son rayon renvoie donc vers un
@@ -217,6 +219,7 @@
 
   function renderFilters() {
     var bar = $('#filters');
+    bar.replaceChildren();
     C.categories.forEach(function (category) {
       var button = el('button', 'filter', category.label);
       button.type = 'button';
@@ -253,6 +256,7 @@
 
   function renderServices() {
     var grid = $('#service-grid');
+    grid.replaceChildren();
     C.services.forEach(function (service) {
       var card = el('article', 'service-card reveal');
       card.append(
@@ -316,6 +320,7 @@
     }
 
     var grid = $('#marche-grid');
+    grid.replaceChildren();
     C.markets.forEach(function (marche) {
       var card = el('article', 'market-card reveal');
       if (marche.day) card.append(el('span', 'market-day', marche.day));
@@ -342,17 +347,21 @@
 
   function renderAbout() {
     var image = $('#about-image');
-    image.src = C.about.image;
-    image.alt = C.about.imageAlt;
-    cadrerPhoto(image, C.about);
+    if (image) {
+      image.src = C.about.image;
+      image.alt = C.about.imageAlt;
+      cadrerPhoto(image, C.about);
+    }
     $('#about-title').textContent = C.about.title;
 
     var text = $('#about-text');
+    text.replaceChildren();
     C.about.paragraphs.forEach(function (paragraph) {
       text.append(el('p', null, paragraph));
     });
 
     var skills = $('#about-skills');
+    skills.replaceChildren();
     C.about.skills.forEach(function (skill) {
       skills.append(el('li', null, skill));
     });
@@ -360,6 +369,7 @@
 
   function renderContact() {
     var list = $('#contact-infos');
+    list.replaceChildren();
     var infos = [];
 
     infos.push({
@@ -402,6 +412,7 @@
     $('#modal-sumup').href = C.shop.sumupUrl;
 
     var nav = $('#footer-links');
+    nav.replaceChildren();
     var links = [{ label: 'Contactez-nous', url: '#contact' }].concat(C.shop.legalLinks || []);
     links.forEach(function (link) {
       var anchor = el('a', null, link.label);

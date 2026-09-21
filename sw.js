@@ -12,16 +12,20 @@
    ========================================================= */
 
 // À changer à chaque mise en ligne d'une nouvelle version du site.
-var VERSION = 'couture-fil-v28';
+var VERSION = 'couture-fil-v29';
 
+// Adresses sans « .html » : vercel.json active cleanUrls, donc
+// « ./cgv.html » répond par une redirection (308). cache.add() la suit
+// et range alors une réponse marquée « redirigée », qu'un navigateur
+// refuse de servir telle quelle à une navigation — la page restait
+// blanche hors connexion. L'adresse propre évite tout ce détour.
 var ESSENTIELS = [
   './',
-  './index.html',
-  './modifier.html',
-  './commandes.html',
-  './merci.html',
-  './mentions-legales.html',
-  './cgv.html',
+  './modifier',
+  './commandes',
+  './merci',
+  './mentions-legales',
+  './cgv',
   './contenu.txt',
   './manifest.webmanifest',
   './assets/css/styles.css',
@@ -94,7 +98,7 @@ function reseauDAbord(requete) {
     })
     .catch(function () {
       return caches.match(requete).then(function (garde) {
-        return garde || caches.match('./index.html');
+        return garde || caches.match('./');
       });
     });
 }
