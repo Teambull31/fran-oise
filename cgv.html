@@ -90,13 +90,17 @@
 
         <h2>Article 3 — Prix</h2>
         <p>
-          Les prix affichés sont en euros, toutes taxes comprises.
-          <!-- Ce texte portait data-champ="Forme juridique", qui n'a rien à
-               voir : legal.js y écrivait la forme juridique, et l'article se
-               lisait « … toutes taxes comprises. Entrepreneur individuel. »
-               Il n'existe pas encore de champ « Statut TVA » dans contenu.txt ;
-               l'espace réservé reste donc visible, ce qui est le rappel voulu. -->
-          <span>Statut TVA à compléter</span>.
+          <!-- Françoise relève de la franchise en base de TVA : elle ne la
+               facture pas et ne la récupère pas. La mention de l'article 293 B
+               est obligatoire sur les documents de vente, et « toutes taxes
+               comprises » n'a pas de sens ici puisqu'il n'y a pas de taxe —
+               d'où « nets de taxe ».
+
+               À revoir le jour où le chiffre d'affaires dépasse le seuil de la
+               franchise : la mention devra alors disparaître et les prix
+               s'afficher TTC. -->
+          Les prix affichés sont en euros et s’entendent nets de taxe.
+          <strong>TVA non applicable, article 293 B du Code général des impôts.</strong>
         </p>
 
         <h2>Article 4 — Commande et paiement</h2>
