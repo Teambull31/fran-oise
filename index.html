@@ -7,7 +7,7 @@
     <title>Couture &amp; Fil — Peluches au crochet, bijoux et créations faites main</title>
     <meta
       name="description"
-      content="Couture & Fil, l'atelier de Françoise à Monflanquin (Lot-et-Garonne) : peluches et amigurumis au crochet, doudous en tissu, bijoux et accessoires faits main en pièces uniques."
+      content="Peluches et amigurumis au crochet, doudous, bijoux et accessoires faits main à Monflanquin (Lot-et-Garonne). Pièces uniques de l’atelier de Françoise."
     />
     <meta name="theme-color" content="#c2410c" />
     <!-- Autorise Google à afficher une grande image et un extrait complet dans
@@ -22,6 +22,8 @@
       content="Peluches et amigurumis au crochet, doudous, bijoux et accessoires faits main à Monflanquin (Lot-et-Garonne)."
     />
     <meta property="og:image" content="https://couture-fil.fr/assets/img/og-image.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
     <meta
       property="og:image:alt"
       content="Peluches et amigurumis au crochet faits main par Couture &amp; Fil"
@@ -54,32 +56,233 @@
     <link rel="stylesheet" href="assets/css/styles.css" />
 
     <script defer src="https://cdn.vercel-insights.com/v1/script.js"></script>
+    <!--contenu:donnees-structurees-->
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
-        "@type": "Store",
-        "@id": "https://couture-fil.fr/#boutique",
-        "name": "Couture & Fil",
-        "description": "Créations de peluches et amigurumis au crochet, doudous en tissu, bijoux et accessoires faits main en pièces uniques.",
-        "url": "https://couture-fil.fr/",
-        "image": "https://couture-fil.fr/assets/img/og-image.jpg",
-        "inLanguage": "fr-FR",
-        "address": {
-          "@type": "PostalAddress",
-          "addressLocality": "Monflanquin",
-          "addressRegion": "Lot-et-Garonne",
-          "addressCountry": "FR"
-        },
-        "areaServed": {
-          "@type": "AdministrativeArea",
-          "name": "Lot-et-Garonne"
-        },
-        "sameAs": [
-          "https://www.facebook.com/p/Couture-Fil-61587529978154/",
-          "https://www.instagram.com/coutureetfil/"
+        "@graph": [
+          {
+            "@type": "Store",
+            "@id": "https://couture-fil.fr/#boutique",
+            "name": "Couture & Fil",
+            "description": "Créations de peluches & amigurumi au crochet et en tissu, bijoux et accessoires faits main en pièces uniques",
+            "url": "https://couture-fil.fr/",
+            "image": "https://couture-fil.fr/assets/img/og-image.jpg",
+            "inLanguage": "fr-FR",
+            "address": {
+              "@type": "PostalAddress",
+              "streetAddress": "Chateau 47150 Monflanquin France",
+              "addressLocality": "Monflanquin",
+              "addressRegion": "Lot-et-Garonne",
+              "addressCountry": "FR"
+            },
+            "areaServed": {
+              "@type": "AdministrativeArea",
+              "name": "Lot-et-Garonne"
+            },
+            "sameAs": [
+              "https://www.facebook.com/p/Couture-Fil-61587529978154/",
+              "https://www.instagram.com/coutureetfil/"
+            ],
+            "email": "couturefil47@gmail.com",
+            "telephone": "+33624852311",
+            "priceRange": "19 € – 54 €"
+          },
+          {
+            "@type": "ItemList",
+            "@id": "https://couture-fil.fr/#creations",
+            "name": "Créations disponibles",
+            "numberOfItems": 8,
+            "itemListElement": [
+              {
+                "@type": "ListItem",
+                "position": 1,
+                "item": {
+                  "@type": "Product",
+                  "name": "🐰 Jean – Peluche lapin au crochet, fait main",
+                  "description": "Grand lapin crocheté dans un fil chiné, col volanté écru. Une pièce unique, entièrement montée à la main.",
+                  "url": "https://couture-fil.fr/#produit-jean-peluche-lapin-au-crochet-fait-main",
+                  "image": "https://couture-fil.fr/assets/img/jean.avif",
+                  "category": "Peluches & doudous",
+                  "offers": {
+                    "@type": "Offer",
+                    "price": "54.00",
+                    "priceCurrency": "EUR",
+                    "availability": "https://schema.org/InStock",
+                    "itemCondition": "https://schema.org/NewCondition",
+                    "url": "https://couture-fil.fr/#produit-jean-peluche-lapin-au-crochet-fait-main",
+                    "seller": {
+                      "@id": "https://couture-fil.fr/#boutique"
+                    }
+                  }
+                }
+              },
+              {
+                "@type": "ListItem",
+                "position": 2,
+                "item": {
+                  "@type": "Product",
+                  "name": "🐰 Justin – Peluche lapin amigurumi au crochet",
+                  "description": "Lapin amigurumi bleu ciel au museau brodé, finition douce et col en dentelle crochetée.",
+                  "url": "https://couture-fil.fr/#produit-justin-peluche-lapin-amigurumi-au-crochet",
+                  "image": "https://couture-fil.fr/assets/img/justin.avif",
+                  "category": "Peluches & doudous",
+                  "offers": {
+                    "@type": "Offer",
+                    "price": "28.00",
+                    "priceCurrency": "EUR",
+                    "availability": "https://schema.org/InStock",
+                    "itemCondition": "https://schema.org/NewCondition",
+                    "url": "https://couture-fil.fr/#produit-justin-peluche-lapin-amigurumi-au-crochet",
+                    "seller": {
+                      "@id": "https://couture-fil.fr/#boutique"
+                    }
+                  }
+                }
+              },
+              {
+                "@type": "ListItem",
+                "position": 3,
+                "item": {
+                  "@type": "Product",
+                  "name": "🐰 Lucien – Peluche lapin amigurumi au crochet",
+                  "description": "Lapin amigurumi écru et son grand nœud blanc, tout en rondeur. Idéal pour une naissance.",
+                  "url": "https://couture-fil.fr/#produit-lucien-peluche-lapin-amigurumi-au-crochet",
+                  "image": "https://couture-fil.fr/assets/img/lucien.avif",
+                  "category": "Peluches & doudous",
+                  "offers": {
+                    "@type": "Offer",
+                    "price": "28.00",
+                    "priceCurrency": "EUR",
+                    "availability": "https://schema.org/InStock",
+                    "itemCondition": "https://schema.org/NewCondition",
+                    "url": "https://couture-fil.fr/#produit-lucien-peluche-lapin-amigurumi-au-crochet",
+                    "seller": {
+                      "@id": "https://couture-fil.fr/#boutique"
+                    }
+                  }
+                }
+              },
+              {
+                "@type": "ListItem",
+                "position": 4,
+                "item": {
+                  "@type": "Product",
+                  "name": "Polo, le lapin au crochet",
+                  "description": "Petit lapin blanc au pull vert et à la besace, format nomade qui tient dans la main.",
+                  "url": "https://couture-fil.fr/#produit-polo-le-lapin-au-crochet",
+                  "image": "https://couture-fil.fr/assets/img/polo.avif",
+                  "category": "Peluches & doudous",
+                  "offers": {
+                    "@type": "Offer",
+                    "price": "21.00",
+                    "priceCurrency": "EUR",
+                    "availability": "https://schema.org/InStock",
+                    "itemCondition": "https://schema.org/NewCondition",
+                    "url": "https://couture-fil.fr/#produit-polo-le-lapin-au-crochet",
+                    "seller": {
+                      "@id": "https://couture-fil.fr/#boutique"
+                    }
+                  }
+                }
+              },
+              {
+                "@type": "ListItem",
+                "position": 5,
+                "item": {
+                  "@type": "Product",
+                  "name": "🧸 Rubis – L’Ourson Rouge au Grand Cœur 🧸",
+                  "description": "Ourson rouge vif au nœud papillon blanc, crocheté serré pour un câlin qui dure.",
+                  "url": "https://couture-fil.fr/#produit-rubis-l-ourson-rouge-au-grand-c-ur",
+                  "image": "https://couture-fil.fr/assets/img/rubis.avif",
+                  "category": "Peluches & doudous",
+                  "offers": {
+                    "@type": "Offer",
+                    "price": "28.00",
+                    "priceCurrency": "EUR",
+                    "availability": "https://schema.org/InStock",
+                    "itemCondition": "https://schema.org/NewCondition",
+                    "url": "https://couture-fil.fr/#produit-rubis-l-ourson-rouge-au-grand-c-ur",
+                    "seller": {
+                      "@id": "https://couture-fil.fr/#boutique"
+                    }
+                  }
+                }
+              },
+              {
+                "@type": "ListItem",
+                "position": 6,
+                "item": {
+                  "@type": "Product",
+                  "name": "🌼 Boucles d’oreilles “Bleuet” 🌼",
+                  "description": "Fleurs crochetées en fil bleu ciel, cœur de perle nacrée, montées sur crochets argentés.",
+                  "url": "https://couture-fil.fr/#produit-boucles-d-oreilles-bleuet",
+                  "image": "https://couture-fil.fr/assets/img/bleuet.avif",
+                  "category": "Bijoux",
+                  "offers": {
+                    "@type": "Offer",
+                    "price": "19.00",
+                    "priceCurrency": "EUR",
+                    "availability": "https://schema.org/InStock",
+                    "itemCondition": "https://schema.org/NewCondition",
+                    "url": "https://couture-fil.fr/#produit-boucles-d-oreilles-bleuet",
+                    "seller": {
+                      "@id": "https://couture-fil.fr/#boutique"
+                    }
+                  }
+                }
+              },
+              {
+                "@type": "ListItem",
+                "position": 7,
+                "item": {
+                  "@type": "Product",
+                  "name": "💙 Boucles d’oreilles “Bleu Nuit” 💙",
+                  "description": "Le même modèle fleuri, décliné dans un bleu profond. Légères et faites une par une.",
+                  "url": "https://couture-fil.fr/#produit-boucles-d-oreilles-bleu-nuit",
+                  "category": "Bijoux",
+                  "offers": {
+                    "@type": "Offer",
+                    "price": "19.00",
+                    "priceCurrency": "EUR",
+                    "availability": "https://schema.org/InStock",
+                    "itemCondition": "https://schema.org/NewCondition",
+                    "url": "https://couture-fil.fr/#produit-boucles-d-oreilles-bleu-nuit",
+                    "seller": {
+                      "@id": "https://couture-fil.fr/#boutique"
+                    }
+                  }
+                }
+              },
+              {
+                "@type": "ListItem",
+                "position": 8,
+                "item": {
+                  "@type": "Product",
+                  "name": "🩷 Boucles d’oreilles “Fleur Rose” 🩷",
+                  "description": "Fleurs au crochet rose vif et perle claire au centre. Se portent aussi bien l’été que l’hiver.",
+                  "url": "https://couture-fil.fr/#produit-boucles-d-oreilles-fleur-rose",
+                  "image": "https://couture-fil.fr/assets/img/fleur-rose.avif",
+                  "category": "Bijoux",
+                  "offers": {
+                    "@type": "Offer",
+                    "price": "19.00",
+                    "priceCurrency": "EUR",
+                    "availability": "https://schema.org/InStock",
+                    "itemCondition": "https://schema.org/NewCondition",
+                    "url": "https://couture-fil.fr/#produit-boucles-d-oreilles-fleur-rose",
+                    "seller": {
+                      "@id": "https://couture-fil.fr/#boutique"
+                    }
+                  }
+                }
+              }
+            ]
+          }
         ]
       }
     </script>
+    <!--/contenu:donnees-structurees-->
   </head>
 
   <body>
@@ -236,14 +439,14 @@
 <!--/contenu:filtres--></div>
 
           <div class="product-grid" id="product-grid"><!--contenu:produits-->
-<article class="product-card"><div class="product-media"><img src="assets/img/jean.avif" alt="Jean – Peluche lapin au crochet, fait main" loading="lazy" width="900" height="900" style="object-position:50% 50%" /><span class="badge">Grand format</span></div><div class="product-body"><h3>🐰 Jean – Peluche lapin au crochet, fait main</h3><p>Grand lapin crocheté dans un fil chiné, col volanté écru. Une pièce unique, entièrement montée à la main.</p><div class="product-foot"><span class="price">54,00 €</span><button class="add-button" type="button">Ajouter</button></div></div></article>
-<article class="product-card"><div class="product-media"><img src="assets/img/justin.avif" alt="Justin – Peluche lapin amigurumi au crochet" loading="lazy" width="900" height="900" style="object-position:50% 50%" /></div><div class="product-body"><h3>🐰 Justin – Peluche lapin amigurumi au crochet</h3><p>Lapin amigurumi bleu ciel au museau brodé, finition douce et col en dentelle crochetée.</p><div class="product-foot"><span class="price">28,00 €</span><button class="add-button" type="button">Ajouter</button></div></div></article>
-<article class="product-card"><div class="product-media"><img src="assets/img/lucien.avif" alt="Lucien – Peluche lapin amigurumi au crochet" loading="lazy" width="900" height="900" style="object-position:50% 50%" /></div><div class="product-body"><h3>🐰 Lucien – Peluche lapin amigurumi au crochet</h3><p>Lapin amigurumi écru et son grand nœud blanc, tout en rondeur. Idéal pour une naissance.</p><div class="product-foot"><span class="price">28,00 €</span><button class="add-button" type="button">Ajouter</button></div></div></article>
-<article class="product-card"><div class="product-media"><img src="assets/img/polo.avif" alt="Polo, le lapin au crochet" loading="lazy" width="900" height="900" style="object-position:50% 50%" /></div><div class="product-body"><h3>Polo, le lapin au crochet</h3><p>Petit lapin blanc au pull vert et à la besace, format nomade qui tient dans la main.</p><div class="product-foot"><span class="price">21,00 €</span><button class="add-button" type="button">Ajouter</button></div></div></article>
-<article class="product-card"><div class="product-media"><img src="assets/img/rubis.avif" alt="Rubis – L’Ourson Rouge au Grand Cœur" loading="lazy" width="900" height="900" style="object-position:50% 50%" /><span class="badge">Coup de cœur</span></div><div class="product-body"><h3>🧸 Rubis – L’Ourson Rouge au Grand Cœur 🧸</h3><p>Ourson rouge vif au nœud papillon blanc, crocheté serré pour un câlin qui dure.</p><div class="product-foot"><span class="price">28,00 €</span><button class="add-button" type="button">Ajouter</button></div></div></article>
-<article class="product-card"><div class="product-media"><img src="assets/img/bleuet.avif" alt="Boucles d’oreilles “Bleuet”" loading="lazy" width="900" height="900" style="object-position:50% 50%" /></div><div class="product-body"><h3>🌼 Boucles d’oreilles “Bleuet” 🌼</h3><p class="variants-note">Autres variantes disponibles</p><p>Fleurs crochetées en fil bleu ciel, cœur de perle nacrée, montées sur crochets argentés.</p><div class="product-foot"><span class="price">19,00 €</span><button class="add-button" type="button">Ajouter</button></div></div></article>
-<article class="product-card"><div class="product-media"><div class="placeholder"><span>💙</span><span>Photo à venir</span></div></div><div class="product-body"><h3>💙 Boucles d’oreilles “Bleu Nuit” 💙</h3><p class="variants-note">Autres variantes disponibles</p><p>Le même modèle fleuri, décliné dans un bleu profond. Légères et faites une par une.</p><div class="product-foot"><span class="price">19,00 €</span><button class="add-button" type="button">Ajouter</button></div></div></article>
-<article class="product-card"><div class="product-media"><img src="assets/img/fleur-rose.avif" alt="Boucles d’oreilles “Fleur Rose”" loading="lazy" width="900" height="900" style="object-position:50% 50%" /></div><div class="product-body"><h3>🩷 Boucles d’oreilles “Fleur Rose” 🩷</h3><p class="variants-note">Autres variantes disponibles</p><p>Fleurs au crochet rose vif et perle claire au centre. Se portent aussi bien l’été que l’hiver.</p><div class="product-foot"><span class="price">19,00 €</span><button class="add-button" type="button">Ajouter</button></div></div></article>
+<article class="product-card" id="produit-jean-peluche-lapin-au-crochet-fait-main"><div class="product-media"><img src="assets/img/jean.avif" alt="Jean – Peluche lapin au crochet, fait main" loading="lazy" width="900" height="900" style="object-position:50% 50%" /><span class="badge">Grand format</span></div><div class="product-body"><h3>🐰 Jean – Peluche lapin au crochet, fait main</h3><p>Grand lapin crocheté dans un fil chiné, col volanté écru. Une pièce unique, entièrement montée à la main.</p><div class="product-foot"><span class="price">54,00 €</span><button class="add-button" type="button">Ajouter</button></div></div></article>
+<article class="product-card" id="produit-justin-peluche-lapin-amigurumi-au-crochet"><div class="product-media"><img src="assets/img/justin.avif" alt="Justin – Peluche lapin amigurumi au crochet" loading="lazy" width="900" height="900" style="object-position:50% 50%" /></div><div class="product-body"><h3>🐰 Justin – Peluche lapin amigurumi au crochet</h3><p>Lapin amigurumi bleu ciel au museau brodé, finition douce et col en dentelle crochetée.</p><div class="product-foot"><span class="price">28,00 €</span><button class="add-button" type="button">Ajouter</button></div></div></article>
+<article class="product-card" id="produit-lucien-peluche-lapin-amigurumi-au-crochet"><div class="product-media"><img src="assets/img/lucien.avif" alt="Lucien – Peluche lapin amigurumi au crochet" loading="lazy" width="900" height="900" style="object-position:50% 50%" /></div><div class="product-body"><h3>🐰 Lucien – Peluche lapin amigurumi au crochet</h3><p>Lapin amigurumi écru et son grand nœud blanc, tout en rondeur. Idéal pour une naissance.</p><div class="product-foot"><span class="price">28,00 €</span><button class="add-button" type="button">Ajouter</button></div></div></article>
+<article class="product-card" id="produit-polo-le-lapin-au-crochet"><div class="product-media"><img src="assets/img/polo.avif" alt="Polo, le lapin au crochet" loading="lazy" width="900" height="900" style="object-position:50% 50%" /></div><div class="product-body"><h3>Polo, le lapin au crochet</h3><p>Petit lapin blanc au pull vert et à la besace, format nomade qui tient dans la main.</p><div class="product-foot"><span class="price">21,00 €</span><button class="add-button" type="button">Ajouter</button></div></div></article>
+<article class="product-card" id="produit-rubis-l-ourson-rouge-au-grand-c-ur"><div class="product-media"><img src="assets/img/rubis.avif" alt="Rubis – L’Ourson Rouge au Grand Cœur" loading="lazy" width="900" height="900" style="object-position:50% 50%" /><span class="badge">Coup de cœur</span></div><div class="product-body"><h3>🧸 Rubis – L’Ourson Rouge au Grand Cœur 🧸</h3><p>Ourson rouge vif au nœud papillon blanc, crocheté serré pour un câlin qui dure.</p><div class="product-foot"><span class="price">28,00 €</span><button class="add-button" type="button">Ajouter</button></div></div></article>
+<article class="product-card" id="produit-boucles-d-oreilles-bleuet"><div class="product-media"><img src="assets/img/bleuet.avif" alt="Boucles d’oreilles “Bleuet”" loading="lazy" width="900" height="900" style="object-position:50% 50%" /></div><div class="product-body"><h3>🌼 Boucles d’oreilles “Bleuet” 🌼</h3><p class="variants-note">Autres variantes disponibles</p><p>Fleurs crochetées en fil bleu ciel, cœur de perle nacrée, montées sur crochets argentés.</p><div class="product-foot"><span class="price">19,00 €</span><button class="add-button" type="button">Ajouter</button></div></div></article>
+<article class="product-card" id="produit-boucles-d-oreilles-bleu-nuit"><div class="product-media"><div class="placeholder"><span>💙</span><span>Photo à venir</span></div></div><div class="product-body"><h3>💙 Boucles d’oreilles “Bleu Nuit” 💙</h3><p class="variants-note">Autres variantes disponibles</p><p>Le même modèle fleuri, décliné dans un bleu profond. Légères et faites une par une.</p><div class="product-foot"><span class="price">19,00 €</span><button class="add-button" type="button">Ajouter</button></div></div></article>
+<article class="product-card" id="produit-boucles-d-oreilles-fleur-rose"><div class="product-media"><img src="assets/img/fleur-rose.avif" alt="Boucles d’oreilles “Fleur Rose”" loading="lazy" width="900" height="900" style="object-position:50% 50%" /></div><div class="product-body"><h3>🩷 Boucles d’oreilles “Fleur Rose” 🩷</h3><p class="variants-note">Autres variantes disponibles</p><p>Fleurs au crochet rose vif et perle claire au centre. Se portent aussi bien l’été que l’hiver.</p><div class="product-foot"><span class="price">19,00 €</span><button class="add-button" type="button">Ajouter</button></div></div></article>
 <!--/contenu:produits--></div>
           <p class="grid-empty" id="grid-empty" hidden>Aucune création dans cette catégorie.</p>
         </div>

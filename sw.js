@@ -12,7 +12,7 @@
    ========================================================= */
 
 // À changer à chaque mise en ligne d'une nouvelle version du site.
-var VERSION = 'couture-fil-v29';
+var VERSION = 'couture-fil-v30';
 
 // Adresses sans « .html » : vercel.json active cleanUrls, donc
 // « ./cgv.html » répond par une redirection (308). cache.add() la suit

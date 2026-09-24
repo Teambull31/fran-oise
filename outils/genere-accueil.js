@@ -37,7 +37,12 @@ var Format = require('../assets/js/contenu-format.js');
 var RACINE = path.join(__dirname, '..');
 var FICHIER_CONTENU = path.join(RACINE, 'contenu.txt');
 var FICHIER_PAGE = path.join(RACINE, 'index.html');
+var PAGES_LEGALES = ['mentions-legales.html', 'cgv.html'].map(function (nom) {
+  return path.join(RACINE, nom);
+});
+var FICHIER_SITEMAP = path.join(RACINE, 'sitemap.xml');
 var DOSSIER_PHOTOS = 'assets/img/';
+var SITE = 'https://couture-fil.fr';
 
 var euro = new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' });
 
@@ -182,6 +187,8 @@ function construire(texte) {
       email: b['E-mail'] || '',
       phone: b['Téléphone'] || '',
       address: b['Adresse'] || '',
+      legalForm: b['Forme juridique'] || '',
+      siret: b['SIRET'] || '',
       hours: [],
       legalLinks: [
         { label: 'Mentions légales', url: 'mentions-legales.html' },
@@ -389,7 +396,7 @@ function fiche(produit) {
   }
   corps += '</div></div>';
 
-  return '<article class="product-card">' + media + corps + '</article>';
+  return '<article class="product-card" id="produit-' + att(produit.id) + '">' + media + corps + '</article>';
 }
 
 function produits(C) {
@@ -495,6 +502,125 @@ function liensPied(C) {
 }
 
 /* ---------------------------------------------------------
+   Données structurées (schema.org)
+
+   Ce que Google lit pour comprendre QUOI est vendu, et à quel
+   prix. Sans ça, il voit du texte ; avec, il peut afficher le
+   prix et la disponibilité directement dans ses résultats.
+
+   Les huit créations vivent sur une seule page : le format
+   attendu dans ce cas est une liste (ItemList) dont chaque
+   entrée est un Product, et non huit Product isolés.
+   --------------------------------------------------------- */
+
+/** Le commerce lui-même : adresse, contact, fourchette de prix. */
+function ficheBoutique(C) {
+  var prixConnus = C.products
+    .map(function (p) {
+      return p.price;
+    })
+    .filter(function (v) {
+      return v > 0;
+    });
+
+  var fiche = {
+    '@type': 'Store',
+    '@id': SITE + '/#boutique',
+    name: C.shop.name,
+    description: C.shop.tagline,
+    url: SITE + '/',
+    image: SITE + '/assets/img/og-image.jpg',
+    inLanguage: 'fr-FR',
+    address: {
+      '@type': 'PostalAddress',
+      streetAddress: C.shop.address || undefined,
+      addressLocality: C.shop.city,
+      addressRegion: C.shop.region,
+      addressCountry: 'FR'
+    },
+    areaServed: { '@type': 'AdministrativeArea', name: C.shop.region },
+    sameAs: [
+      'https://www.facebook.com/p/Couture-Fil-61587529978154/',
+      'https://www.instagram.com/coutureetfil/'
+    ]
+  };
+
+  if (C.shop.email) fiche.email = C.shop.email;
+  // Format international : c'est celui que Google attend.
+  if (C.shop.phone) fiche.telephone = telephoneInternational(C.shop.phone);
+  if (prixConnus.length) {
+    fiche.priceRange =
+      Math.min.apply(null, prixConnus) + ' € – ' + Math.max.apply(null, prixConnus) + ' €';
+  }
+  return fiche;
+}
+
+/** « 06 24 85 23 11 » → « +33624852311 ». Laisse tel quel si ce n'est pas un numéro français. */
+function telephoneInternational(brut) {
+  var chiffres = String(brut).replace(/[^0-9+]/g, '');
+  if (/^0[1-9][0-9]{8}$/.test(chiffres)) return '+33' + chiffres.slice(1);
+  return chiffres || String(brut);
+}
+
+/**
+ * Une création. Le prix n'est annoncé que s'il est chiffré : une pièce
+ * « sur demande » vaudrait 0 €, ce que Google afficherait tel quel.
+ */
+function ficheProduit(produit, rang) {
+  var fiche = {
+    '@type': 'Product',
+    name: produit.name,
+    description: produit.description,
+    url: SITE + '/#produit-' + produit.id
+  };
+  if (produit.image) fiche.image = SITE + '/' + produit.image;
+  if (produit.rayon) fiche.category = produit.rayon;
+  if (produit.price > 0) {
+    fiche.offers = {
+      '@type': 'Offer',
+      price: produit.price.toFixed(2),
+      priceCurrency: 'EUR',
+      // Chaque pièce est unique et retirée de contenu.txt une fois vendue :
+      // ce qui reste annoncé sur le site est donc réellement disponible.
+      availability: 'https://schema.org/InStock',
+      itemCondition: 'https://schema.org/NewCondition',
+      url: SITE + '/#produit-' + produit.id,
+      seller: { '@id': SITE + '/#boutique' }
+    };
+  }
+  return { '@type': 'ListItem', position: rang + 1, item: fiche };
+}
+
+function donneesStructurees(C) {
+  var graphe = [ficheBoutique(C)];
+
+  if (C.products.length) {
+    graphe.push({
+      '@type': 'ItemList',
+      '@id': SITE + '/#creations',
+      name: 'Créations disponibles',
+      numberOfItems: C.products.length,
+      itemListElement: C.products.map(ficheProduit)
+    });
+  }
+
+  // La balise <script> est produite ici, et non laissée dans index.html :
+  // le contenu d'un script est du texte brut, donc un repère en commentaire
+  // HTML placé à l'intérieur ferait partie du JSON et le rendrait illisible.
+  // Google ignorerait alors le bloc entier, sans rien signaler.
+  return (
+    '\n    <script type="application/ld+json">\n' +
+    JSON.stringify({ '@context': 'https://schema.org', '@graph': graphe }, null, 2)
+      .split('\n')
+      .map(function (ligne) {
+        return '      ' + ligne;
+      })
+      .join('\n') +
+    '\n    </' + 'script>\n    '
+  );
+}
+
+/* ---------------------------------------------------------
    Injection dans index.html
    --------------------------------------------------------- */
 
@@ -521,7 +647,8 @@ function zones(C) {
     'atelier-savoir-faire': entoure(atelierSavoirFaire(C)),
     contact: entoure(contact(C)),
     'pied-accroche': txt(C.shop.tagline),
-    'pied-liens': entoure(liensPied(C))
+    'pied-liens': entoure(liensPied(C)),
+    'donnees-structurees': donneesStructurees(C)
   };
 }
 
@@ -541,35 +668,147 @@ function injecter(page, nom, html) {
   return page.slice(0, debut + ouvre.length) + html + page.slice(fin);
 }
 
+/* ---------------------------------------------------------
+   Pages légales
+
+   mentions-legales.html et cgv.html portent des espaces
+   réservés « à compléter » qu'assets/js/legal.js remplace au
+   chargement. Sans JavaScript — donc au premier passage de
+   Google — la page annonçait « SIRET : à compléter » et
+   « Adresse : à compléter », alors que les valeurs existent
+   dans contenu.txt. Or l'identité de l'éditeur doit être
+   librement accessible (LCEN, article 6-III).
+
+   On remplit donc les mêmes champs à l'avance, par le même
+   attribut data-champ. legal.js continue de faire son travail
+   par-dessus : il reste la source de vérité si contenu.txt
+   change entre deux régénérations.
+   --------------------------------------------------------- */
+
+/** Les valeurs de [BOUTIQUE], telles que legal.js les lit. */
+function champsBoutique(texte) {
+  var blocs = Format.lire(texte);
+  var boutique = blocs.filter(function (bloc) {
+    return bloc.type === 'boutique';
+  })[0];
+  return boutique ? boutique.champs : {};
+}
+
+/**
+ * Remplit <span data-champ="SIRET">à compléter</span>.
+ * Un champ absent de contenu.txt garde son texte d'origine : c'est
+ * volontaire, un « à compléter » visible vaut mieux qu'un blanc.
+ *
+ * Le motif est volontairement étroit :
+ *   - [^<>]* dans les attributs : le début de balise ne peut pas en
+ *     enjamber une autre ;
+ *   - [^<]* pour le contenu : la capture s'arrête à la toute première
+ *     balise suivante, donc à la fermeture de CE span ;
+ *   - <\/\2\s*> : le code de ces pages met parfois le « > » de fermeture
+ *     à la ligne (</span\n  >).
+ *
+ * Une première version acceptait [\s\S]*? entre les deux balises et
+ * exigeait « </span> » d'un seul tenant. Sur une fermeture coupée en
+ * deux lignes, elle filait jusqu'au « </span> » suivant — plusieurs
+ * paragraphes plus bas — et emportait tout au passage : un article
+ * entier des CGV avait disparu. D'où aussi le contrôle ci-dessous.
+ */
+function remplirChampsLegaux(page, champs) {
+  var resultat = page.replace(
+    /(<(\w+)[^<>]*\sdata-champ="([^"]+)"[^<>]*>)([^<]*)(<\/\2\s*>)/g,
+    function (tout, ouvrante, balise, nom, contenu, fermante) {
+      var valeur = champs[nom];
+      if (!valeur) return tout;
+      return ouvrante + txt(valeur) + fermante;
+    }
+  );
+
+  // Seul du texte entre balises a le droit de changer : le nombre de
+  // balises, lui, doit être rigoureusement le même. Si ce n'est pas le
+  // cas, c'est que le remplacement a mordu sur la structure de la page —
+  // on s'arrête plutôt que d'écrire des mentions légales amputées.
+  if (compterBalises(resultat) !== compterBalises(page)) {
+    throw new Error(
+      'Le remplissage des champs légaux a modifié la structure de la page : rien n’est écrit.'
+    );
+  }
+  return resultat;
+}
+
+/** Nombre de balises ouvrantes et fermantes d'un document. */
+function compterBalises(html) {
+  return (html.match(/<[a-zA-Z/!]/g) || []).length;
+}
+
+/* ---------------------------------------------------------
+   Sitemap : la date de dernière modification
+   --------------------------------------------------------- */
+
+/** Aujourd'hui, en AAAA-MM-JJ. */
+function dateDuJour() {
+  return new Date().toISOString().slice(0, 10);
+}
+
+/**
+ * Met <lastmod> à la date du jour sur toutes les adresses.
+ * Cette fonction ne tourne que lorsque contenu.txt a changé (voir le
+ * workflow) : la date annoncée correspond donc bien à une vraie
+ * modification du site, pas à un passage à vide.
+ */
+function rafraichirSitemap(xml, jour) {
+  return xml.replace(/<lastmod>[^<]*<\/lastmod>/g, '<lastmod>' + jour + '</lastmod>');
+}
+
 function main() {
   var verifie = process.argv.includes('--verifie');
 
-  var C = construire(fs.readFileSync(FICHIER_CONTENU, 'utf8'));
-  var avant = fs.readFileSync(FICHIER_PAGE, 'utf8');
-  var apres = avant;
+  var texteContenu = fs.readFileSync(FICHIER_CONTENU, 'utf8');
+  var C = construire(texteContenu);
+  var champs = champsBoutique(texteContenu);
 
+  // { chemin: nouveau contenu } — rien n'est écrit avant que tout soit calculé.
+  var aEcrire = {};
+
+  var page = fs.readFileSync(FICHIER_PAGE, 'utf8');
   var contenus = zones(C);
+  var accueil = page;
   Object.keys(contenus).forEach(function (nom) {
-    apres = injecter(apres, nom, contenus[nom]);
+    accueil = injecter(accueil, nom, contenus[nom]);
+  });
+  if (accueil !== page) aEcrire[FICHIER_PAGE] = accueil;
+
+  PAGES_LEGALES.forEach(function (chemin) {
+    var avant = fs.readFileSync(chemin, 'utf8');
+    var apres = remplirChampsLegaux(avant, champs);
+    if (apres !== avant) aEcrire[chemin] = apres;
   });
 
-  if (apres === avant) {
-    console.log('index.html est déjà à jour.');
+  var sitemapAvant = fs.readFileSync(FICHIER_SITEMAP, 'utf8');
+  var sitemapApres = rafraichirSitemap(sitemapAvant, dateDuJour());
+  if (sitemapApres !== sitemapAvant) aEcrire[FICHIER_SITEMAP] = sitemapApres;
+
+  var fichiers = Object.keys(aEcrire);
+
+  if (!fichiers.length) {
+    console.log('Tout est déjà à jour.');
     return;
   }
 
   if (verifie) {
     console.error(
-      'index.html ne correspond plus à contenu.txt.\n' +
-        'Lancez « npm run contenu » et ajoutez index.html au commit.'
+      'Ces fichiers ne correspondent plus à contenu.txt :\n' +
+        fichiers.map(function (f) { return '  - ' + path.relative(RACINE, f); }).join('\n') +
+        '\nLancez « npm run contenu » et ajoutez-les au commit.'
     );
     process.exit(1);
   }
 
-  fs.writeFileSync(FICHIER_PAGE, apres);
+  fichiers.forEach(function (chemin) {
+    fs.writeFileSync(chemin, aEcrire[chemin]);
+    console.log('  mis à jour : ' + path.relative(RACINE, chemin));
+  });
   console.log(
-    'index.html mis à jour : ' +
-      C.products.length + ' produits, ' +
+    C.products.length + ' produits, ' +
       C.universes.length + ' familles, ' +
       C.markets.length + ' marchés, ' +
       C.services.length + ' prestations.'

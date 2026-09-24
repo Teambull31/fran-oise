@@ -161,6 +161,10 @@
 
   function productCard(product) {
     var card = el('article', 'product-card reveal');
+    // Même ancre que dans le HTML généré (outils/genere-accueil.js) : c'est
+    // l'adresse que les données structurées annoncent à Google pour chaque
+    // création, et elle doit continuer d'exister après le rendu.
+    card.id = 'produit-' + product.id;
 
     var media = el('div', 'product-media');
     if (product.image) {
