@@ -527,9 +527,11 @@ function ficheBoutique(C) {
     '@type': 'Store',
     '@id': SITE + '/#boutique',
     name: C.shop.name,
+    alternateName: NOMS_ALTERNATIFS,
     description: C.shop.tagline,
     url: SITE + '/',
     image: SITE + '/assets/img/og-image.jpg',
+    logo: SITE + '/assets/img/icone-512.png',
     inLanguage: 'fr-FR',
     address: {
       '@type': 'PostalAddress',
@@ -591,8 +593,27 @@ function ficheProduit(produit, rang) {
   return { '@type': 'ListItem', position: rang + 1, item: fiche };
 }
 
+/**
+ * Le nom du site, tel que Google l'affiche au-dessus du résultat. Les
+ * variantes couvrent la façon dont on tape le nom : « et » au lieu de « & »,
+ * avec la ville, ou l'adresse du site.
+ */
+var NOMS_ALTERNATIFS = ['Couture et Fil', 'Couture & Fil Monflanquin', 'couture-fil.fr'];
+
+function ficheSite(C) {
+  return {
+    '@type': 'WebSite',
+    '@id': SITE + '/#site',
+    url: SITE + '/',
+    name: C.shop.name,
+    alternateName: NOMS_ALTERNATIFS,
+    inLanguage: 'fr-FR',
+    publisher: { '@id': SITE + '/#boutique' }
+  };
+}
+
 function donneesStructurees(C) {
-  var graphe = [ficheBoutique(C)];
+  var graphe = [ficheSite(C), ficheBoutique(C)];
 
   if (C.products.length) {
     graphe.push({
