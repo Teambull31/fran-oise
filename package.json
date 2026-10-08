@@ -6,6 +6,6 @@
     "contenu": "node outils/genere-accueil.js"
   },
   "dependencies": {
-    "@neondatabase/serverless": "^1.0.2"
+    "@neondatabase/serverless": "^1.2.0"
   }
 }
